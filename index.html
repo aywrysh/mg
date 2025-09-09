@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title data-i18n="title">Dynex – تسجيل دخول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg-img: url('https.png');
+      --ink:#1f2937;
+      --muted:#94a3b8;
+      --stroke:#e5e7eb;
+      --panel:#ffffffcc;
+      --input:#ffffffb3;
+      --accent:#f97316;
+      --plane:#ff6a00;
+      --radius:20px;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink);
+      background: var(--bg-img) center/cover no-repeat fixed;
+      min-height:100vh; display:grid; place-items:center;
+      position: relative;
+    }
+    .wrap{width:min(560px, 92vw);}
+    .lang-btn{position:fixed; top:14px; inset-inline-end:14px; background:#ffffff99; border:1px solid var(--stroke); backdrop-filter:blur(6px);
+      width:44px; height:44px; border-radius:12px; font-size:18px; display:grid; place-items:center; cursor:pointer; z-index:10}
+    .topbar{display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:8px}
+    .logo-mini{width:76px; height:76px; border-radius:14px; display:grid; place-items:center; 
+      color:white; font-weight:800; letter-spacing:.5px; overflow:hidden}
+    .logo-mini img{width:100%; height:100%; object-fit:cover}
+    .promo{height:150px; border-radius:24px; background:#eef2f7; border:1px solid var(--stroke); box-shadow:var(--shadow); overflow:hidden;
+      position:relative; margin:12px 0 22px}
+    .promo::after{content:""; position:absolute; inset:0; border-radius:inherit; box-shadow:inset 0 0 0 1px rgba(0,0,0,.03)}
+    .promo-img{position:absolute; inset:0; background-size:cover; background-position:center;}
+    .slide-in{animation:slideIn 600ms ease both}
+    @keyframes slideIn{from{transform:translateX(100%)} to{transform:translateX(0)}}
+    .card{background:var(--panel); border:1px solid var(--stroke); border-radius:28px; padding:24px 18px; box-shadow:var(--shadow)}
+    .title{margin:0 0 14px; text-align:center; font-size:26px}
+    .field{position:relative; margin:12px 0}
+    .input{width:100%; padding:16px 46px; background:var(--input); border:1px solid var(--stroke); border-radius:16px; outline:none;
+      font-size:16px; color:var(--ink)}
+    .input::placeholder{color:#94a3b8}
+    .icon{position:absolute; top:50%; transform:translateY(-50%); inset-inline-start:12px; width:22px; height:22px; opacity:.75}
+    .toggle{position:absolute; top:50%; transform:translateY(-50%); inset-inline-end:12px; width:28px; height:28px; border:none; background:transparent; cursor:pointer}
+    .btn{display:block; width:100%; padding:16px; border-radius:16px; border:none; cursor:pointer; font-weight:700}
+    .btn-primary{background:var(--accent); color:white; box-shadow:0 10px 20px rgba(249,115,22,.25)}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:14px}
+    .btn-outline{background:#ffffffb0; border:1px solid var(--stroke); color:#var(--ink); display:flex; align-items:center; justify-content:center; gap:8px}
+    .plane{width:18px; height:18px}
+    .under{display:flex; justify-content:space-between; align-items:center; margin-top:10px}
+    .under a{font-size:13px; color:#334155}
+    .sheet-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; visibility:hidden; transition:.25s; z-index:9}
+    .sheet{position:fixed; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.2);
+      transform:translateY(100%); transition:.3س; z-index:10; padding:14px 16px}
+    .sheet.active{transform:translateY(0)}
+    .sheet-backdrop.active{opacity:1; visibility:visible}
+    .sheet .grab{width:42px; height:5px; border-radius:3px; background:#e5e7eb; margin:6px auto 12px}
+    .sheet .langs{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .sheet .langs button{padding:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff; cursor:pointer; font-weight:700}
+    .toast{
+      position:fixed; bottom:22px; left:50%; transform:translateX(-50%) scale(.96);
+      background:rgba(17,17,17,.92); color:#fff; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12px;
+      opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:99;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) scale(1)}
+  </style>
+  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f97316">
+  
+  
+  
+  <!-- Open Graph (لـ واتساب/فيسبوك/تليجرام) -->
+<meta property="og:type"        content="website">
+<meta property="og:url"         content="https://aywrysh.github.io/mm/">
+<meta property="og:title"       content="Dynex – الرئيسية">
+<meta property="og:description" content="لوحة التحكم – تداول، سحب وإيداع بسهولة.">
+<meta property="og:image"       content="https://aywrysh.github.io/mm/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height"content="630">
+
+<!-- Twitter Card (بعض التطبيقات تستخدمها) -->
+<meta name="twitter:card"        content="summary_large_image">
+<meta name="twitter:title"       content="Dynex – الرئيسية">
+<meta name="twitter:description" content="لوحة التحكم – تداول، سحب وإيداع بسهولة.">
+<meta name="twitter:image"       content="https://aywrysh.github.io/mm/share.jpg">
+  
+  
+  
+</head>
+<body>
+  <button class="lang-btn" id="langBtn" title="language">؏</button>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo-mini" title="Dynex"><img src="https1.png" alt="Dynex"></div>
+    </div>
+
+    <div class="promo">
+      <div class="promo-img" id="promo" style="background-image:url('https4.png')"></div>
+    </div>
+
+    <form class="card" id="loginForm" autocomplete="on">
+      <h1 class="title" data-i18n="login_title">تسجيل دخول</h1>
+
+      <div class="field">
+        <input class="input" id="username" name="username" type="text" placeholder="اسم المستخدم" data-i18n-ph="username_ph" required>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" stroke="currentColor" stroke-width="1.5"/><path d="M21 22a9 9 0 1 0-18 0" stroke="currentColor" stroke-width="1.5"/></svg>
+      </div>
+
+      <div class="field">
+        <input class="input" id="password" name="password" type="password" placeholder="كلمة السر" data-i18n-ph="password_ph" required>
+        <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 10V8a5 5 0 1 1 10 0v2" stroke="currentColor" stroke-width="1.5"/></svg>
+        <button class="toggle" type="button" id="togglePwd" aria-label="إظهار/إخفاء">
+          <svg id="eyeOn" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg id="eyeOff" style="display:none" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 4.1A10.7 10.7 0 0 1 12 4c6 0 10 8 10 8a18.3 18.3 0 0 1-4.1 5.1M6.2 6.2A17.6 17.6 0 0 0 2 12ص4 8 10 8c1.3 0 2.5-.3 3.6-.8" stroke="currentColor" stroke-width="1.5"/></svg>
+        </button>
+      </div>
+
+      <button class="btn btn-primary" id="loginBtn" type="submit" data-i18n="login_btn">تسجيل دخول</button>
+
+      <div class="row">
+        <a class="btn btn-outline" href="https://t.me/artikarTrading" target="_blank" rel="noopener">
+          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3ل1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6l2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6ل3.9 1.2 9-5.7c.4-.3.7-.1.4.2ل-7.2 7z"/></svg>
+          <span data-i18n="group_btn">مجموعة</span>
+        </a>
+        <a class="btn btn-outline" href="https://t.me/artikarbot" target="_blank" rel="noopener">
+          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3ل1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6ل2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6ل3.9 1.2 9-5.7c.4-.3.7-.1.4.2ل-7.2 7z"/></svg>
+          <span data-i18n="create_btn">انشاء حساب</span>
+        </a>
+      </div>
+
+      <div class="under">
+        <a href="#" data-i18n="forgot">نسيت كلمة السر؟</a>
+        <a href="#" data-i18n="support">الدعم</a>
+      </div>
+    </form>
+
+  </div>
+
+  <div class="sheet-backdrop" id="sheetBack"></div>
+
+  <!-- شيت اللغة -->
+  <div class="sheet" id="langSheet">
+    <div class="grab"></div>
+    <div class="langs">
+      <button data-setlang="ar" id="btnAr">العربية</button>
+      <button data-setlang="en" id="btnEn">English</button>
+    </div>
+  </div>
+
+  <!-- ✅ شيت رمز الدعوة -->
+  <div class="sheet" id="inviteSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
+    <h3 style="margin:0 0 8px;font-weight:900">أدخل رمز الدعوة</h3>
+    <div class="field" style="margin-top:6px">
+      <input id="inviteInput" class="input" type="text" inputmode="latin"
+             placeholder="مثال: L3KMPV أو 994151775" />
+    </div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn btn-outline" id="inviteSkip" type="button">تخطي</button>
+      <button class="btn btn-primary" id="inviteConfirm" type="button">تأكيد</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <script src="i18n.js"></script>
+
+  <script>
+    // سلايدر
+    const promo = document.getElementById('promo');
+    const slides = ['https2.png','https3.png','https4.png'];
+    let i = 0;
+    setInterval(()=>{
+      i = (i+1) % slides.length;
+      promo.classList.remove('slide-in');
+      void promo.offsetWidth;
+      promo.style.backgroundImage = `url('${slides[i]}')`;
+      promo.classList.add('slide-in');
+    }, 3000);
+
+    // إظهار/إخفاء كلمة السر
+    const pwd = document.getElementById('password');
+    const toggle = document.getElementById('togglePwd');
+    const eyeOn = document.getElementById('eyeOn');
+    const eyeOff = document.getElementById('eyeOff');
+    toggle.addEventListener('click', ()=>{
+      const isHidden = pwd.type === 'password';
+      pwd.type = isHidden ? 'text' : 'password';
+      eyeOn.style.display = isHidden ? 'none' : 'block';
+      eyeOff.style.display = isHidden ? 'block' : 'none';
+    });
+
+    // لغة
+    if (typeof applyLang === 'function') {
+      applyLang(localStorage.getItem('lang') || 'ar');
+    }
+    const sheet = document.getElementById('langSheet');
+    const back = document.getElementById('sheetBack');
+    const fab  = document.getElementById('langBtn');
+    const openSheet = ()=>{ sheet.classList.add('active'); back.classList.add('active'); };
+    const closeSheet= ()=>{ sheet.classList.remove('active'); back.classList.remove('active'); };
+    document.getElementById('langBtn')?.addEventListener('click', openSheet);
+    back.addEventListener('click', closeSheet);
+    document.querySelectorAll('.langs button').forEach(b=>{
+      b.addEventListener('click', ()=>{ if (typeof applyLang==='function'){applyLang(b.dataset.setlang);} closeSheet(); });
+    });
+
+    // التوست + تعبئة آخر اسم مستخدم
+    (function(){
+      const box = document.getElementById('toast');
+      let timer = null;
+      window.toast = function(msg='تم'){
+        box.textContent = msg;
+        box.classList.add('show');
+        clearTimeout(timer);
+        timer = setTimeout(()=>box.classList.remove('show'), 1600);
+      };
+      const last = localStorage.getItem('last_username');
+      if (last) document.getElementById('username').value = last;
+    })();
+  </script>
+
+  <!-- ===== Firebase (Compat CDN) ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      authDomain: "dynex-f4486.firebaseapp.com",
+      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+      projectId: "dynex-f4486",
+      storageBucket: "dynex-f4486.firebasestorage.app"
+    };
+
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db  = firebase.database();
+    const HOME_PAGE = "index1.html";
+    const SESSION_TTL_MS = 6 * 60 * 60 * 1000; // 6 ساعات
+
+    /* دخول تلقائي لو الجلسة ما انتهت */
+    (function autoLoginIfValid(){
+      try{
+        const s = JSON.parse(localStorage.getItem('dynex_session')||'null');
+        if(s && s.loginAt && (Date.now() - Number(s.loginAt) < SESSION_TTL_MS)){
+          window.location.replace(HOME_PAGE);
+        }
+      }catch(_){}
+    })();
+
+    /* يساعد يرجّع أول مستخدم مع uid */
+    async function getFirstWithUid(qSnap){
+      if (!qSnap.exists()) return null;
+      let obj = null;
+      qSnap.forEach(ch => {
+        if (!obj) obj = { uid: ch.key, ...(ch.val()||{}) };
+      });
+      return obj;
+    }
+
+    // يحاول username ثم name ثم REST — ويرجع دائماً uid
+    async function findUserByUserField(input){
+      const key = (input||'').trim();
+      if (!key) return null;
+
+      try{
+        const s1 = await db.ref('users').orderByChild('username').equalTo(key).get();
+        const u1 = await getFirstWithUid(s1);
+        if (u1) return u1;
+      }catch(e){ console.warn('username query failed', e?.message||e); }
+
+      try{
+        const s2 = await db.ref('users').orderByChild('name').equalTo(key).get();
+        const u2 = await getFirstWithUid(s2);
+        if (u2) return u2;
+      }catch(e){ console.warn('name query failed', e?.message||e); }
+
+      // Fallback REST
+      try{
+        const res = await fetch(firebaseConfig.databaseURL + "/users.json");
+        const all = await res.json() || {};
+        for (const k in all){
+          const u = all[k] || {};
+          if (String(u.username||'').trim() === key || String(u.name||'').trim() === key){
+            return { uid:k, ...u };
+          }
+        }
+      }catch(e){ console.warn('REST fallback failed', e?.message||e); }
+
+      return null;
+    }
+
+    /* =========================================
+       ✅ أدوات تطبيع رمز الدعوة
+       ========================================= */
+    function normalizeCode(s){
+      if(!s) return "";
+      const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9'};
+      s = String(s).trim().replace(/\s+/g,'');
+      s = s.replace(/[٠-٩]/g, ch => map[ch] ?? ch); // أرقام عربية -> إنجليزية
+      return s.toUpperCase(); // أحرف كبيرة
+    }
+    function onlyDigits(s){
+      return (String(s).match(/\d+/g) || []).join("");
+    }
+
+    /* ✅ البحث عن صاحب الرمز بثلاث طرق مع Fallback */
+    async function findInviterByCode(codeRaw){
+      const code = normalizeCode(codeRaw);
+      if(!code) return null;
+
+      // 1) inviteCode مطابق
+      try{
+        const s1 = await db.ref('users').orderByChild('inviteCode').equalTo(code).get();
+        if (s1.exists()){
+          let uid = null; s1.forEach(ch=>{ if(!uid) uid = ch.key; });
+          if (uid) return uid;
+        }
+      }catch(_){}
+
+      // 2) accountId (أرقام فقط)
+      try{
+        const digits = onlyDigits(code);
+        if (digits){
+          const s2 = await db.ref('users').orderByChild('accountId').equalTo(digits).get();
+          if (s2.exists()){
+            let uid = null; s2.forEach(ch=>{ if(!uid) uid = ch.key; });
+            if (uid) return uid;
+          }
+        }
+      }catch(_){}
+
+      // 3) REST fallback — يفحص يدويًا (يتعامل مع مسافات/حروف مختلفة)
+      try{
+        const res = await fetch(firebaseConfig.databaseURL + "/users.json");
+        const all = await res.json() || {};
+        const digits = onlyDigits(code);
+        for (const k in all){
+          const u = all[k] || {};
+          const ic = normalizeCode(u.inviteCode||'');
+          const aid = onlyDigits(u.accountId||'');
+          if (ic && ic === code) return k;
+          if (digits && aid && aid === digits) return k;
+        }
+      }catch(_){}
+
+      return null;
+    }
+
+    /* شيت رمز الدعوة */
+    function showInviteSheet(){
+      return new Promise(resolve=>{
+        const sheet = document.getElementById('inviteSheet');
+        const input = document.getElementById('inviteInput');
+        const okBtn = document.getElementById('inviteConfirm');
+        const skipBtn = document.getElementById('inviteSkip');
+        const back   = document.getElementById('sheetBack');
+
+        function close(val){
+          sheet.classList.remove('active');
+          back.classList.remove('active');
+          okBtn.removeEventListener('click', onOk);
+          skipBtn.removeEventListener('click', onSkip);
+          back.removeEventListener('click', onSkip);
+          resolve(val);
+        }
+        function onOk(){ close((input.value || '').trim()); }
+        function onSkip(){ close(null); }
+
+        sheet.classList.add('active');
+        back.classList.add('active');
+        input.value = '';
+        setTimeout(()=> input.focus(), 0);
+
+        okBtn.addEventListener('click', onOk);
+        skipBtn.addEventListener('click', onSkip);
+        back.addEventListener('click', onSkip);
+      });
+    }
+
+    // مكافأة 1 USDT — مرّة واحدة لكل مستخدم
+    async function askInviteAndReward(currentUser){
+      try{
+        if(!currentUser || !currentUser.uid) return;
+
+        // لو مسجّلة مسبقاً لا نطلب
+        const invitedBySnap = await db.ref('users/' + currentUser.uid + '/invitedBy').get();
+        if (invitedBySnap.exists()) return;
+
+        // منع الظهور المتكرر
+        const localFlag = 'inv_prompt_' + (currentUser.uid || currentUser.username || '');
+        if (localStorage.getItem(localFlag) === '1') return;
+        localStorage.setItem(localFlag, '1');
+
+        // افتح الشيت
+        const raw = await showInviteSheet();
+        const code = normalizeCode(raw);
+        if(!code) return;
+
+        // لا يستعمل كوده
+        if (normalizeCode(currentUser.inviteCode||'') === code ||
+            normalizeCode(currentUser.accountId||'') === code){
+          toast('لا يمكنك استخدام رمزك الخاص'); 
+          return;
+        }
+
+        // ✅ استعمل الدالة الجديدة
+        const inviterUid = await findInviterByCode(code);
+        if(!inviterUid){ toast('رمز الدعوة غير صحيح'); return; }
+        if(inviterUid === currentUser.uid){ toast('لا يمكنك استخدام رمزك الخاص'); return; }
+
+        // تأكد أنه ما تحسب قبل
+        const memberMarkRef = db.ref('referrals/'+inviterUid+'/members/'+currentUser.uid);
+        const memberMark = await memberMarkRef.get();
+        if (memberMark.exists()){
+          await db.ref('users/'+currentUser.uid).update({
+            invitedBy: inviterUid, inviteCodeUsed: code, invitedAt: Date.now()
+          });
+          return;
+        }
+
+        // +1 USDT لصاحب الرمز
+        await db.ref('users/'+inviterUid+'/balance')
+          .transaction(v => +(Number(v||0) + 1).toFixed(2));
+
+        // وسم المدعو
+        await db.ref('users/'+currentUser.uid).update({
+          invitedBy: inviterUid,
+          inviteCodeUsed: code,
+          invitedAt: Date.now()
+        });
+
+        // تحديث إحصاءات
+        await db.ref('referrals/'+inviterUid).transaction(cur=>{
+          const c = (cur && typeof cur==='object') ? cur : {};
+          return {
+            count: (c.count||0) + 1,
+            earnings: +(Number(c.earnings||0) + 1).toFixed(2),
+            lastAt: Date.now(),
+            members: {...(c.members||{}), [currentUser.uid]: true}
+          };
+        });
+
+        toast('تم تسجيل دخول');
+      }catch(e){
+        console.warn('invite flow:', e?.message||e);
+      }
+    }
+
+    const form = document.getElementById('loginForm');
+    const btn  = document.getElementById('loginBtn');
+
+    form.addEventListener('submit', async (e)=>{
+      e.preventDefault();
+
+      const userInput = document.getElementById('username').value.trim();
+      const passInput = document.getElementById('password').value;
+
+      if(!userInput || !passInput){ toast('أدخل اسم المستخدم وكلمة السر'); return; }
+
+      const prev = btn.textContent; btn.disabled = true; btn.textContent = 'جاري التحقق...';
+
+      try{
+        const user = await findUserByUserField(userInput);
+        if(!user){ toast('المستخدم غير موجود'); return; }
+        if(String(user.password) !== String(passInput)){ toast('كلمة المرور غير صحيحة'); return; }
+
+        // جلسة مع uid الصحيح
+        const now = Date.now();
+        localStorage.setItem('dynex_session', JSON.stringify({
+          uid: user.uid,
+          accountId: user.accountId || null,
+          name: user.name || '',
+          username: user.username || userInput,
+          phone: user.phone || '',
+          loginAt: now,
+          expiresAt: now + SESSION_TTL_MS
+        }));
+        localStorage.setItem('last_username', user.username || userInput);
+
+        toast('تم تسجيل الدخول');
+
+        // نافذة الدعوة مرّة واحدة
+        await askInviteAndReward(user);
+
+        // انتقال
+        setTimeout(()=> window.location.replace(HOME_PAGE), 300);
+      }catch(err){
+        console.error(err);
+        toast('تعذّر الاتصال بالقاعدة');
+      }finally{
+        btn.disabled = false; btn.textContent = prev;
+      }
+    });
+  </script>
+  
+  <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js")
+      .then(reg => console.log("✔ Service Worker registered"))
+      .catch(err => console.error("❌ Service Worker failed:", err));
+  }
+  </script>
+</body>
+</html>
