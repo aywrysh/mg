@@ -130,22 +130,60 @@
     
     
 /* === شريط معاملات وهمية متحرّك === */
-.tx-ticker{width:80%; margin:6px 0 12px}
-.tx-viewport{
-  --rows: 2;                  /* كم سطر يظهر مرئيًا (عدّلها لو حبيت) */
-  border:1px solid #e5e7eb; border-radius:12px; background:#fff;
-  overflow:hidden; height:calc(var(--rows) * 44px);
+.tx-ticker {
+  width: 80%;
+  margin: 12px auto;       /* يخليه في الوسط أفقيًا */
+  display: flex;
+  justify-content: center; /* يوسّط داخليًا */
 }
-.tx-track{will-change: transform; transition:transform .45s ease}
-.txi{
-  display:flex; justify-content:space-between; align-items:center;
-  height:44px; padding:0 10px; border-bottom:1px dashed #eee;
+
+.tx-viewport {
+  --rows: 2; /* عدد الأسطر الظاهرة */
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  height: calc(var(--rows) * 44px);
+  margin: 0 auto;          /* يوسّط البوكس نفسه */
+  box-shadow: 0 4px 10px rgba(0,0,0,.06); /* لمسة ظل خفيفة */
 }
-.txi:last-child{border-bottom:0}
-.txl{display:flex; align-items:center; gap:8px; font-weight:800}
-.txa{font-weight:900}
-.badge{font-size:11px; padding:2px 6px; border-radius:999px; background:#f9fafb; border:1px solid #e5e7eb}
-    
+
+.tx-track {
+  will-change: transform;
+  transition: transform .45s ease;
+}
+
+.txi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 44px;
+  padding: 0 12px;
+  border-bottom: 1px dashed #eee;
+  font-size: 14px;          /* حجم خط مناسب */
+}
+.txi:last-child { border-bottom: 0; }
+
+.txl {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.txa {
+  font-weight: 900;
+  color: #111827;
+}
+
+.badge {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+} 
     
     /* === قسم الشركات الداعمة === */
 .partners {
@@ -332,14 +370,16 @@
 
 
 
-    </section>
 <div class="tx-ticker">
   <div class="tx-viewport">
     <div class="tx-track" id="txTrack" aria-live="polite"></div>
   </div>
 </div>
-<!-- شريط معاملات (إيداع/سحب) متحرّك -->
 
+    </section>
+
+<!-- شريط معاملات (إيداع/سحب) متحرّك -->
+  
 
     <!-- ===== حسابي (مطابق للصورة) ===== -->
     <section id="view-account" class="view">
