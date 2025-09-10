@@ -159,6 +159,11 @@
                background:#ef4444;display:none;box-shadow:0 0 0 2px #fff"></span>
 </button>
 
+
+<button class="icon-btn ripple-container" id="installBtn" title="تثبيت كتطبيق" style="display:none">
+  <span class="ms">download_for_offline</span>
+</button>
+
 <!-- (اختياري) توست عام إن كان عندك عنصر #toast في صفحتك -->
 
 <button class="icon-btn ripple-container" id="langBtn" title="تغيير اللغة" style="font-weight:800;color:var(--accent)">؏</button>
@@ -792,6 +797,61 @@ if(MREF){
       .catch(err => console.error("❌ Service Worker failed:", err));
   }
 </script>
+  
+  
+  <script>
+(function(){
+  const installBtn = document.getElementById('installBtn');
+  let deferredPrompt = null;
+
+  // إخفاء الزر إذا التطبيق مثبّت بالفعل
+  function hideIfInstalled(){
+    const installed = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+    if (installed && installBtn) installBtn.style.display = 'none';
+  }
+  hideIfInstalled();
+
+  // يشتغل لما الموقع يصبح مؤهّل للتثبيت
+  window.addEventListener('beforeinstallprompt', (e)=>{
+    e.preventDefault();           // منع كروم من إظهار البانر الافتراضي
+    deferredPrompt = e;           // نخزّن الحدث
+    if (installBtn) installBtn.style.display = 'grid'; // أظهر الزر
+  });
+
+  // عند الضغط على الزر: افتح نافذة التثبيت الأصلية
+  installBtn?.addEventListener('click', async (ev)=>{
+    try{ ripple && ripple(ev); }catch(_){}
+    if (!deferredPrompt){
+      // مش مؤهّل الآن (أو iOS لا يدعم البرمجة)
+      try{ showToast && showToast('غير متاح للتثبيت الآن'); }catch(_){}
+      return;
+    }
+    installBtn.disabled = true;
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice; // { outcome: 'accepted' | 'dismissed' }
+    if (choice && choice.outcome === 'accepted'){
+      try{ showToast && showToast('جارٍ التثبيت…'); }catch(_){}
+    } else {
+      try{ showToast && showToast('تم الإلغاء'); }catch(_){}
+    }
+    deferredPrompt = null;
+    installBtn.disabled = false;
+    // نخفي الزر، وإذا أراد المستخدم يُظهر لاحقًا حين يصبح مؤهّل
+    installBtn.style.display = 'none';
+  });
+
+  // إذا تم التثبيت بنجاح
+  window.addEventListener('appinstalled', ()=>{
+    try{ showToast && showToast('تم التثبيت على الشاشة الرئيسية'); }catch(_){}
+    hideIfInstalled();
+  });
+
+  // ملاحظة: iOS لا يدعم beforeinstallprompt — لازم “مشاركة > أضِف إلى الشاشة الرئيسية”
+  // نقدر نخفي الزر على iOS:
+  if(/iPad|iPhone|iPod/i.test(navigator.userAgent)){ if (installBtn) installBtn.style.display = 'none'; }
+})();
+</script>
+  
   
 </body>
 </html>
