@@ -136,7 +136,7 @@
   
   
    <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f97316">
+  <meta name="theme-color" content="#e5e7eb">
 
 </head>
 <body>
@@ -333,6 +333,7 @@
     <div class="langs">
       <button data-setlang="ar" id="btnAr">العربية</button>
       <button data-setlang="en" id="btnEn">English</button>
+      
     </div>
   </div>
 
@@ -631,7 +632,7 @@
     const title = (m.title||'بدون عنوان').trim();
     const body  = (m.body||m.text||'').trim().replace(/\n/g,'<br>');
     const ts    = Number(m.createdAt||0);
-    const date  = ts ? new Date(ts).toLocaleString('ar-EG',{hour12:false}) : '';
+    const date  = ts ? new Date(ts).toLocaleString('ar-EG-u-nu-latn', { hour12:false }) : '';
     return (
       '<article class="msg-card">' +
         '<div class="msg-head">' +

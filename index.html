@@ -67,10 +67,49 @@
       opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:99;
     }
     .toast.show{opacity:1; transform:translateX(-50%) scale(1)}
+    
+    
+/* زر "المجموعة" و "انشاء حساب" باللون الأسود فقط */
+/* تخصيص زر "Group" و "Create account" */
+a.btn.btn-outline[href*="artikarTrading"],
+a.btn.btn-outline[href*="artikarbot"] {
+  background:#fff;             /* خلفية بيضاء */
+  color:#000;                  /* النص أسود */
+  border:1px solid #e5e7eb;    /* نفس حدودك */
+  font-weight:700;
+}
+
+a.btn.btn-outline[href*="artikarTrading"] svg,
+a.btn.btn-outline[href*="artikarbot"] svg {
+  color: var(--accent);        /* الأيقونة برتقالية */
+  fill: currentColor;          /* تلوين الـSVG حسب اللون */
+}
+
+/* تأثير عند المرور */
+a.btn.btn-outline[href*="artikarTrading"]:hover,
+a.btn.btn-outline[href*="artikarbot"]:hover {
+  background:#f9fafb;
+  border-color:#d1d5db;
+}
+    
+a.btn.btn-outline[href*="artikarTrading"] svg,
+a.btn.btn-outline[href*="artikarbot"] svg {
+  color: var(--accent);
+  fill: currentColor;
+}
+
+/* زر صغير "تعريف" تحت الأزرار */
+.btn-mini{
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:10px 14px; border-radius:12px; border:1px solid var(--stroke);
+  background:#fff; color:#000; font-weight:700; width:auto;
+}
+.btn-mini:hover{ background:#f9fafb; border-color:#d1d5db; }
+.center{text-align:center; margin-top:10px;}
   </style>
   
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f97316">
+  <meta name="theme-color" content="#e5e7eb">
   
   
   
@@ -116,22 +155,31 @@
         <svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="18" height="11" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 10V8a5 5 0 1 1 10 0v2" stroke="currentColor" stroke-width="1.5"/></svg>
         <button class="toggle" type="button" id="togglePwd" aria-label="إظهار/إخفاء">
           <svg id="eyeOn" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12Z" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5"/></svg>
-          <svg id="eyeOff" style="display:none" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 4.1A10.7 10.7 0 0 1 12 4c6 0 10 8 10 8a18.3 18.3 0 0 1-4.1 5.1M6.2 6.2A17.6 17.6 0 0 0 2 12ص4 8 10 8c1.3 0 2.5-.3 3.6-.8" stroke="currentColor" stroke-width="1.5"/></svg>
+          <svg id="eyeOff" style="display:none" viewBox="0 0 24 24" width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3l18 18" stroke="currentColor" stroke-width="1.5"/><path d="M10.6 4.1A10.7 10.7 0 0 1 12 4c6 0 10 8 10 8a18.3 18.3 0 0 1-4.1 5.1M6.2 6.2A17.6 17.6 0 0 0 2 12c4 8 10 8 1.3 0 2.5-.3 3.6-.8" stroke="currentColor" stroke-width="1.5"/></svg>
         </button>
       </div>
 
       <button class="btn btn-primary" id="loginBtn" type="submit" data-i18n="login_btn">تسجيل دخول</button>
 
+      <!-- ✅ رجّعت الأزرار جنب بعض داخل .row -->
       <div class="row">
         <a class="btn btn-outline" href="https://t.me/artikarTrading" target="_blank" rel="noopener">
-          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3ل1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6l2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6ل3.9 1.2 9-5.7c.4-.3.7-.1.4.2ل-7.2 7z"/></svg>
+          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3l1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6l2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6l3.9 1.2 9-5.7c.4-.3.7-.1.4.2l-7.2 7z"/>
+          </svg>
           <span data-i18n="group_btn">مجموعة</span>
         </a>
+
         <a class="btn btn-outline" href="https://t.me/artikarbot" target="_blank" rel="noopener">
-          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor"><path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3ل1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6ل2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6ل3.9 1.2 9-5.7c.4-.3.7-.1.4.2ل-7.2 7z"/></svg>
+          <svg class="plane" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+            <path d="M9.9 13.2l-.3 4.3c.4 0 .5-.2 .7-.3l1.7-1.7 3.6 2.7c.7.4 1.2.2 1.4-.6l2.5-11.7c.2-.9-.3-1.2-1-1L4 9.6C3.1 9.9 3.1 10.4 3.8 10.6l3.9 1.2 9-5.7c.4-.3.7-.1.4.2l-7.2 7z"/>
+          </svg>
           <span data-i18n="create_btn">انشاء حساب</span>
         </a>
       </div>
+
+      <!-- زر صغير تحتهم يفتح صفحة جديدة -->
+    
 
       <div class="under">
         <a href="#" data-i18n="forgot">نسيت كلمة السر؟</a>
@@ -149,6 +197,7 @@
     <div class="langs">
       <button data-setlang="ar" id="btnAr">العربية</button>
       <button data-setlang="en" id="btnEn">English</button>
+     
     </div>
   </div>
 
@@ -158,7 +207,7 @@
     <h3 style="margin:0 0 8px;font-weight:900">أدخل رمز الدعوة</h3>
     <div class="field" style="margin-top:6px">
       <input id="inviteInput" class="input" type="text" inputmode="latin"
-             placeholder="مثال: L3KMPV أو 994151775" />
+             placeholder="مثال: kkkkk أو 990000000" />
     </div>
     <div class="row" style="margin-top:8px">
       <button class="btn btn-outline" id="inviteSkip" type="button">تخطي</button>

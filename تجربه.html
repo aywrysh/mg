@@ -81,8 +81,8 @@
     @keyframes ripple{to{transform:scale(3);opacity:0}}
   </style>
   
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#e5e7eb">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f97316">
   
 </head>
 <body>
@@ -112,17 +112,13 @@
     </div>
 
     <!-- تحذير -->
-    <div class="warn card">
+    <div class="warn card" data-i18n-skip>
       <span class="ms" aria-hidden="true">warning</span>
-     <div class="warn card">
-  <span class="ms" aria-hidden="true" data-i18n-skip>warning</span>
-  <div>
-    <div style="font-weight:900" data-i18n="warn_title">تنبيه مهم</div>
-    <div class="muted" data-i18n="warn_body">
-      أرسل فقط على الشبكة الصحيحة. التحويل على شبكة خاطئة قد يؤدي لفقدان الرصيد.
-    </div>
-  </div>
-</div>
+      <div>
+        <div style="font-weight:900" data-i18n="warn_title">تنبيه مهم</div>
+        <div class="muted" data-i18n="warn_body">
+          أرسل فقط على الشبكة الصحيحة. التحويل على شبكة خاطئة قد يؤدي لفقدان الرصيد.
+        </div>
       </div>
     </div>
 
@@ -206,12 +202,12 @@
   <div class="sheet" id="passSheet" aria-modal="true" role="dialog">
     <div class="grab"></div>
     <div class="field">
-      <label><b>تأكيد كلمة المرور</b></label>
+      <label><b data-i18n="pass_confirm">تأكيد كلمة المرور</b></label>
       <div class="input"><span class="ms">lock</span><input id="passInput" type="password" placeholder="••••••••" autocomplete="current-password"/></div>
     </div>
     <div class="row" style="gap:8px;margin-top:8px">
-      <button class="btn-solid" id="passCancel">إلغاء</button>
-      <button class="btn-solid primary" id="passOk">تأكيد</button>
+      <button class="btn-solid" id="passCancel" data-i18n="cancel">إلغاء</button>
+      <button class="btn-solid primary" id="passOk" data-i18n="confirm">تأكيد</button>
     </div>
   </div>
 
@@ -230,7 +226,12 @@
     const $=s=>document.querySelector(s); const $$=s=>document.querySelectorAll(s);
     function ripple(ev){const t=ev.currentTarget||ev.target.closest('.ripple-container'); if(!t) return; const r=document.createElement('span'); const d=Math.max(t.clientWidth,t.clientHeight); const rect=t.getBoundingClientRect(); r.className='ripple'; r.style.width=r.style.height=d+'px'; r.style.left=(ev.clientX-rect.left-d/2)+'px'; r.style.top=(ev.clientY-rect.top-d/2)+'px'; const old=t.querySelector('.ripple'); if(old) old.remove(); t.appendChild(r); setTimeout(()=>r.remove(),600);}
     function toast(msg){const t=$("#toast"); if(!t) return; t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1400);}
+    window.toast = toast; // حتى i18n.js يقدر يلف التوست
     document.querySelectorAll('.btn, .btn-solid, .net').forEach(el=>el.addEventListener('click', ripple));
+
+    // === i18n (ديناميكي) ===
+    const curLang = ()=> localStorage.getItem('lang') || 'ar';
+    const tr = (ar,en)=> (curLang()==='en'? en : ar);
 
     /* ===== language sheet ===== */
     const langSheet=$("#langSheet"), back=$("#sheetBack");
@@ -239,7 +240,11 @@
     $$('#langSheet [data-setlang]').forEach(b=>b.addEventListener('click', ()=>{
       const l=b.dataset.setlang; localStorage.setItem('lang', l);
       if(typeof window.applyLang==='function') window.applyLang(l); else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
+      document.title = (l==='en' ? 'Dynex – Withdraw' : 'Dynex – السحب');
       back.click();
+      renderSummary(); // يعيد صياغة النص الديناميكي حسب اللغة
+      refreshLockBtn(); // يحدّث نص زر التأكيد إذا كان مقفول
+      $("#limits") && renderSummary();
     }));
 
     /* ===== header actions ===== */
@@ -259,27 +264,13 @@
 
     /* ===== session ===== */
     const SESSION = (function(){ try{return JSON.parse(localStorage.getItem('dynex_session')||'null');}catch(_){return null;} })();
-    if(!SESSION || !SESSION.uid){ toast('الرجاء تسجيل الدخول'); setTimeout(()=>{ window.location.replace('index.html'); }, 900); return; }
+    if(!SESSION || !SESSION.uid){ toast(tr('الرجاء تسجيل الدخول','Please sign in')); setTimeout(()=>{ window.location.replace('index.html'); }, 900); return; }
     const UID = SESSION.uid;
-
-    /* ================== تحقق حد السحب عبر "العقد المقفل" ================== */
-    async function hasMinLocked(uid, min){
-      try{
-        const uSnap = await firebase.database().ref('users/'+uid).get();
-        const u = uSnap.val() || {};
-        const locked = Number(u.lockedAmount || 0); // نعتمد على قيمة العقد المقفل
-        return locked >= min;
-      }catch(e){
-        console.error('minLocked check error:', e);
-        return false;
-      }
-    }
-    /* ======================================================================= */
 
     /* ===== balance live ===== */
     let BAL = 0;
     function renderBal(){ $("#balNow").textContent = (Number(BAL)||0).toFixed(2); }
-    db.ref('users/'+UID+'/balance').on('value', s=>{ BAL = Number(s.val()||0); renderBal(); }, err=>{ console.error(err); toast('تعذّر جلب الرصيد'); });
+    db.ref('users/'+UID+'/balance').on('value', s=>{ BAL = Number(s.val()||0); renderBal(); }, err=>{ console.error(err); toast(tr('تعذّر جلب الرصيد','Failed to fetch balance')); });
     $("#refreshBal").addEventListener('click', renderBal);
 
     /* ===== withdraw form ===== */
@@ -303,7 +294,11 @@
       const fee = a>0 ? cfg.fee : 0; const recv = Math.max(0, a - fee);
       sumFee.textContent  = formatUSDT(fee);
       sumRecv.textContent = formatUSDT(recv);
-      limits.textContent  = `الحد الأدنى: ${cfg.min} USDT | الرسوم: ${cfg.fee} USDT`;
+      // limits حسب اللغة
+      limits.textContent  = tr(
+        `الحد الأدنى: ${cfg.min} USDT | الرسوم: ${cfg.fee} USDT`,
+        `Minimum: ${cfg.min} USDT | Fee: ${cfg.fee} USDT`
+      );
     }
     renderSummary();
     $$('input[name="net"]').forEach(r=>r.addEventListener('change', renderSummary));
@@ -314,11 +309,11 @@
       const net=currentNet(), cfg=networks[net];
       const a = parseFloat(amount.value||'0')||0;
       const ad = (addr.value||'').trim();
-      if(!ad){ toast('أدخل العنوان'); return false; }
-      if(!cfg.regex.test(ad)){ toast('شكل العنوان لا يطابق الشبكة المختارة'); return false; }
-      if(a < cfg.min){ toast(`الحد الأدنى ${cfg.min} USDT`); return false; }
-      if(a <= cfg.fee){ toast('المبلغ يجب أن يكون أكبر من الرسوم'); return false; }
-      if(a > BAL){ toast('الرصيد غير كافٍ'); return false; }
+      if(!ad){ toast(tr('أدخل العنوان','Enter address')); return false; }
+      if(!cfg.regex.test(ad)){ toast(tr('شكل العنوان لا يطابق الشبكة المختارة','Address format does not match the selected network')); return false; }
+      if(a < cfg.min){ toast(tr(`الحد الأدنى ${cfg.min} USDT`,`Minimum is ${cfg.min} USDT`)); return false; }
+      if(a <= cfg.fee){ toast(tr('المبلغ يجب أن يكون أكبر من الرسوم','Amount must be greater than the fee')); return false; }
+      if(a > BAL){ toast(tr('الرصيد غير كافٍ','Insufficient balance')); return false; }
       return true;
     }
 
@@ -343,6 +338,9 @@
       }
     });
 
+    function refreshLockBtn(){
+      submitBtn.textContent = tr('تأكيد السحب','Confirm withdrawal'); // default
+    }
     function lockForm(rec){
       // ثبّت الشبكة والعنوان والمبلغ ولا تسمح بالتغيير
       if(rec.network){ const r = document.querySelector(`input[name="net"][value="${rec.network}"]`); if(r){ r.checked=true; } }
@@ -351,43 +349,35 @@
       renderSummary();
       $$('input[name="net"]').forEach(r=>{ r.disabled=true; r.parentElement.style.opacity=.7; });
       addr.readOnly = true; amount.readOnly = true; clearBtn.disabled = true;
-      submitBtn.disabled = true; submitBtn.textContent = 'طلب قيد المراجعة';
+      submitBtn.disabled = true; submitBtn.textContent = tr('طلب قيد المراجعة','Request under review');
     }
     function unlockForm(){
       $$('input[name="net"]').forEach(r=>{ r.disabled=false; r.parentElement.style.opacity=1; });
       addr.readOnly = false; amount.readOnly = false; clearBtn.disabled = false;
-      submitBtn.disabled = false; submitBtn.textContent = 'تأكيد السحب';
+      submitBtn.disabled = false; refreshLockBtn();
     }
 
-    /* ===== submit flow (تعديل الاستدعاء هنا فقط) ===== */
-    submitBtn.addEventListener('click', async ()=>{
+    /* ===== submit flow ===== */
+    submitBtn.addEventListener('click', ()=>{
       if(!validate()) return;
-
-      // ✅ السحب يتطلب أن يكون "العقد المقفل" ≥ 30 USDT
-      const ok = await hasMinLocked(UID, 30);
-      if(!ok){
-        toast('لا يمكنك السحب قبل أن يكون العقد المقفل 30 USDT أو أكثر');
-        return;
-      }
-
-      openPass(); // بعد التحقق يفتح شيت كلمة المرور
+      openPass(); // بعد الإدخال نتحقق وننفّذ
     });
 
     passOk.addEventListener('click', async ()=>{
       const pass = (passInput.value||'').trim();
-      if(!pass){ toast('أدخل كلمة المرور'); return; }
+      if(!pass){ toast(tr('أدخل كلمة المرور','Enter your password')); return; }
       try{
         // تحقق كلمة المرور
         const uSnap = await db.ref('users/'+UID).get();
-        if(!uSnap.exists()){ toast('الحساب غير موجود'); return; }
+        if(!uSnap.exists()){ toast(tr('الحساب غير موجود','Account not found')); return; }
         const user = uSnap.val()||{};
-        if(String(user.password||'') !== String(pass)){ toast('كلمة المرور غير صحيحة'); return; }
+        if(String(user.password||'') !== String(pass)){ toast(tr('كلمة المرور غير صحيحة','Incorrect password')); return; }
 
         // نفّذ السحب
         await doWithdraw();
         closePass();
       }catch(e){
-        console.error(e); toast('تعذّر التنفيذ');
+        console.error(e); toast(tr('تعذّر التنفيذ','Action failed'));
       }
     });
 
@@ -409,7 +399,7 @@
         if(err) console.error(err);
         committed = !!ok;
       });
-      if(!committed){ toast('الرصيد غير كافٍ'); return; }
+      if(!committed){ toast(tr('الرصيد غير كافٍ','Insufficient balance')); return; }
 
       // أنشئ سجل السحب
       const listRef = db.ref('withdrawals/'+UID);
@@ -423,18 +413,21 @@
       await pushRef.set(rec);
       await CURRENT_REF.set(wid); // قفل الشبكة/العنوان
       lockForm(rec);
-      toast('تم إرسال طلب السحب');
+      toast(tr('تم إرسال طلب السحب','Withdrawal submitted'));
     }
 
-    // عبارات إضافية للترجمة لو ناقصة
+    // أزواج ترجمة إضافية
     if (window.DynexI18N && typeof DynexI18N.addPairs==='function'){
       DynexI18N.addPairs([
+        ['Dynex – السحب','Dynex – Withdraw'],
         ['سحب USDT','Withdraw USDT'],
         ['الرصيد الحالي','Current Balance'],
         ['تحديث','Refresh'],
         ['تنبيه مهم','Important Notice'],
         ['أرسل فقط على الشبكة الصحيحة. التحويل على شبكة خاطئة قد يؤدي لفقدان الرصيد.','Send only on the correct network. Transfers on the wrong network may lead to loss of funds.'],
         ['اختر الشبكة:','Select network:'],
+        ['رسوم منخفضة، وصول سريع','Low fees, fast arrival'],
+        ['رسوم أعلى، ازدحام محتمل','Higher fees, possible congestion'],
         ['عنوان المحفظة','Wallet address'],
         ['المبلغ','Amount'],
         ['الشبكة','Network'],
@@ -446,26 +439,36 @@
         ['أدخل العنوان','Enter address'],
         ['شكل العنوان لا يطابق الشبكة المختارة','Address format does not match the selected network'],
         ['الحد الأدنى','Minimum'],
-        ['المبلغ يجب أن يكون أكبر من الرسوم','Amount must be greater than fees'],
+        ['المبلغ يجب أن يكون أكبر من الرسوم','Amount must be greater than the fee'],
         ['الرصيد غير كافٍ','Insufficient balance'],
-        ['الرجاء تسجيل الدخول','Please sign in']
+        ['الرجاء تسجيل الدخول','Please sign in'],
+        ['طلب قيد المراجعة','Request under review'],
+        ['تأكيد كلمة المرور','Confirm password'],
+        ['إلغاء','Cancel'],
+        ['تأكيد','Confirm'],
+        ['أدخل كلمة المرور','Enter your password'],
+        ['الحساب غير موجود','Account not found'],
+        ['كلمة المرور غير صحيحة','Incorrect password'],
+        ['تعذّر التنفيذ','Action failed']
       ]);
     }
 
     // طبّق اللغة المحفوظة
     const L = localStorage.getItem('lang') || 'ar';
     if (typeof window.applyLang==='function'){ window.applyLang(L); }
+    document.title = (L==='en' ? 'Dynex – Withdraw' : 'Dynex – السحب');
+    renderSummary();
 
   })();
   </script>
   
-    <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("✔ Service Worker registered"))
-      .catch(err => console.error("❌ Service Worker failed:", err));
-  }
-</script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(reg => console.log("✔ Service Worker registered"))
+        .catch(err => console.error("❌ Service Worker failed:", err));
+    }
+  </script>
   
 </body>
 </html>
