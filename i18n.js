@@ -394,10 +394,23 @@
   
   
   
+   ['تم التثبيت على الشاشة الرئيسية','Pinned to home screen'],
   
-  
-  
+ 
+ 
+ ['غير متاح للتثبيت الآن','Not available for installation now'],
 
+
+ 
+  ['...جارٍ التثبيت','Installing...'],
+
+  
+   ['تم الإلغاء','Cancelled'],
+ 
+  
+ ['الشركات الداعمة','Supporting companies'],
+  ['هذه الشركات العالمية التي تدعم منصتنا الاستثمارية','These are the global companies that support our investment platform.'],
+ ['الإجمالي','Total'],
   ['الرسائل','Messages'],
   ['صندوق الرسائل','Inbox'],
   ['زر الرسائل','Messages button'],

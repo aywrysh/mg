@@ -129,6 +129,74 @@
 .acct-item .txt { color: inherit; }
     
     
+/* === شريط معاملات وهمية متحرّك === */
+.tx-ticker{width:80%; margin:6px 0 12px}
+.tx-viewport{
+  --rows: 2;                  /* كم سطر يظهر مرئيًا (عدّلها لو حبيت) */
+  border:1px solid #e5e7eb; border-radius:12px; background:#fff;
+  overflow:hidden; height:calc(var(--rows) * 44px);
+}
+.tx-track{will-change: transform; transition:transform .45s ease}
+.txi{
+  display:flex; justify-content:space-between; align-items:center;
+  height:44px; padding:0 10px; border-bottom:1px dashed #eee;
+}
+.txi:last-child{border-bottom:0}
+.txl{display:flex; align-items:center; gap:8px; font-weight:800}
+.txa{font-weight:900}
+.badge{font-size:11px; padding:2px 6px; border-radius:999px; background:#f9fafb; border:1px solid #e5e7eb}
+    
+    
+    /* === قسم الشركات الداعمة === */
+.partners {
+  width: 100%;
+  margin: 30px 0;
+  text-align: center;
+}
+
+.partners h3 {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #0f172a;
+}
+
+.partners p {
+  margin: 0 0 24px;
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.partner-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  max-width: 440px;
+  margin: 0 auto;
+}
+
+.partner {
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, .06);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.partner:hover {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, .12);
+}
+
+.partner img {
+  max-width: 65%;
+  max-height: 65%;
+  object-fit: contain;
+}
     
     
     
@@ -243,7 +311,35 @@
     <span class="label" data-i18n="invite">دعوة صديق</span>
   </a>
 </div>
+
+<!-- بطاقة العمليات الوهمية (إيداع/سحب) -->
+<!-- الشركات الداعمة -->
+<div class="partners">
+  <h3>الشركات الداعمة</h3>
+  <p>هذه الشركات العالمية التي تدعم منصتنا الاستثمارية</p>
+  <div class="partner-grid">
+    <div class="partner"><img src="الشريكاة.png" alt="Binance"></div>
+    <div class="partner"><img src="الشريكاة1.png" alt="OKX"></div>
+    <div class="partner"><img src="الشريكاة2.png" alt="Huobi"></div>
+    <div class="partner"><img src="الشريكاة3" alt="KuCoin"></div>
+    <div class="partner"><img src="الشريكاة4" alt="Coinbase"></div>
+    <div class="partner"><img src="الشريكاة5" alt="Gate.io"></div>
+    <div class="partner"><img src="الشريكاة6" alt="Bitfinex"></div>
+    <div class="partner"><img src="الشريكاة7" alt="Kraken"></div>
+    <div class="partner"><img src="الشريكاة8" alt="Bybit"></div>
+  </div>
+</div>
+
+
+
     </section>
+<div class="tx-ticker">
+  <div class="tx-viewport">
+    <div class="tx-track" id="txTrack" aria-live="polite"></div>
+  </div>
+</div>
+<!-- شريط معاملات (إيداع/سحب) متحرّك -->
+
 
     <!-- ===== حسابي (مطابق للصورة) ===== -->
     <section id="view-account" class="view">
@@ -800,7 +896,7 @@ if(MREF){
 </script>
   
   
-  <script>
+   <script>
 (function(){
   const installBtn = document.getElementById('installBtn');
   let deferredPrompt = null;
@@ -853,6 +949,107 @@ if(MREF){
 })();
 </script>
   
+  
+<script>
+/* معاملات وهمية + تمرير تلقائي كل 3 ثوان
+   - استبدال "إيداع/سحب" بـ ID مقنّع مثل 9958&&&&&&
+   - توزيع غير مرتب: كل 5 عناصر = 3 سحب + 2 إيداع (عشوائي الترتيب) */
+(function(){
+  const track = document.getElementById('txTrack');
+  if(!track) return;
+
+  const nets = ['BEP20','ERC20','TON','SOL','TRC20'];
+
+  const ACTS = {
+    deposit: { icon:'south_west', color:'#16a34a' }, // أخضر
+    withdraw:{ icon:'north_east', color:'#ef4444' }  // أحمر
+  };
+
+  const rnd = (min,max)=> Math.random()*(max-min)+min;
+  const pickNet = ()=> nets[Math.floor(Math.random()*nets.length)];
+  const makeId  = ()=> String(Math.floor(1000 + Math.random()*9000)) + '&&&';
+
+  // دالة خلط بسيطة
+  function shuffle(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j = Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]] = [arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  // نكوّن عناصر بـ 5-حِزم: (3 سحب + 2 إيداع) بترتيب عشوائي
+  let items = [];
+  while(items.length < 10){
+    const pack = shuffle(['withdraw','withdraw','withdraw','deposit','deposit']);
+    items.push(...pack);
+  }
+  items = items.slice(0,10);
+
+  // ابني الـ HTML
+  let html = '';
+  for(let i=0;i<items.length;i++){
+    const kind = items[i];
+    const a = ACTS[kind];
+    const amt = rnd(80, 520);
+    const net = pickNet();
+    const id  = makeId();
+
+    html += `
+      <div class="txi">
+        <div class="txl">
+          <span class="ms" style="color:${a.color}">${a.icon}</span>
+          <span class="tx-id">ID ${id}</span>
+        </div>
+        <div class="txr">
+          <span class="txa">${amt.toFixed(2)} USDT</span>
+          <span class="badge">${net}</span>
+        </div>
+      </div>`;
+  }
+  track.innerHTML = html;
+
+  // نسخة أول صف لعمل لفة سلسة
+  const firstClone = track.firstElementChild.cloneNode(true);
+  track.appendChild(firstClone);
+
+  const rowH   = track.firstElementChild.getBoundingClientRect().height || 44;
+  const totalO = track.children.length - 1; // بدون النسخة
+  let index = 0;
+  let timer = null;
+
+  function step(){
+    index += 1;
+    track.style.transition = 'transform .45s ease';
+    track.style.transform  = `translateY(${-index*rowH}px)`;
+  }
+
+  track.addEventListener('transitionend', ()=>{
+    if(index === totalO){
+      track.style.transition = 'none';
+      index = 0;
+      track.style.transform = 'translateY(0)';
+      void track.offsetHeight; // reflow
+      track.style.transition = 'transform .45s ease';
+    }
+  });
+
+  function start(){ if(timer) return; timer = setInterval(step, 3000); }
+  function stop(){ clearInterval(timer); timer = null; }
+
+  start();
+
+  // إيقاف مؤقت أثناء اللمس
+  if(track.parentElement){
+    track.parentElement.addEventListener('pointerdown', stop);
+    track.parentElement.addEventListener('pointerup',   start);
+    track.parentElement.addEventListener('pointerleave',start);
+  }
+
+  // توفير بطارية
+  document.addEventListener('visibilitychange', ()=> document.hidden ? stop() : start());
+})();
+</script>
   
 </body>
 </html>
