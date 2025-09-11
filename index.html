@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title data-i18n="title">Dynex – تسجيل دخول</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
+  
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  
   <style>
     :root{
       --bg-img: url('https.png');
@@ -69,6 +72,17 @@
     .toast.show{opacity:1; transform:translateX(-50%) scale(1)}
     
     
+.ms{
+  font-family: 'Material Symbols Rounded';
+  font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+  line-height: 1;
+  display: inline-block;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  -webkit-font-smoothing: antialiased;
+} 
+    
 /* زر "المجموعة" و "انشاء حساب" باللون الأسود فقط */
 /* تخصيص زر "Group" و "Create account" */
 a.btn.btn-outline[href*="artikarTrading"],
@@ -116,8 +130,8 @@ a.btn.btn-outline[href*="artikarbot"] svg {
   <!-- Open Graph (لـ واتساب/فيسبوك/تليجرام) -->
 <meta property="og:type"        content="website">
 <meta property="og:url"         content="https://aywrysh.github.io/mm/">
-<meta property="og:title"       content="Dynex – الرئيسية">
-<meta property="og:description" content="لوحة التحكم – تداول، سحب وإيداع بسهولة.">
+<meta property="og:title"       content="Dynex">
+<meta property="og:description" content=" Trade, withdraw and deposit easily">
 <meta property="og:image"       content="https://aywrysh.github.io/mm/share.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height"content="630">
@@ -132,7 +146,9 @@ a.btn.btn-outline[href*="artikarbot"] svg {
   
 </head>
 <body>
-  <button class="lang-btn" id="langBtn" title="language">؏</button>
+<button class="lang-btn" id="langBtn" title="language">
+  <span class="ms">g_translate</span>
+</button>
   <div class="wrap">
     <div class="topbar">
       <div class="logo-mini" title="Dynex"><img src="https1.png" alt="Dynex"></div>
