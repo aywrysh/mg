@@ -129,7 +129,7 @@
 
     <form class="card" id="createForm" autocomplete="off">
       <h1 class="title">إنشاء حساب</h1>
-      <div class="sub">أدخل بيانات الحساب</div>
+      <div class="sub">أدخل بيانات الحساب،</div>
 
       <!-- الاسم -->
       <div class="field">
@@ -190,44 +190,41 @@
   </div>
 
   <!-- ✅ نافذة عرض بيانات الحساب المنشأ -->
- <!-- ✅ نافذة عرض بيانات الحساب المنشأ -->
-<div class="created-back" id="createdBack"></div>
-<div class="created-sheet" id="createdSheet" aria-modal="true" role="dialog">
-  <div class="grab"></div>
+  <div class="created-back" id="createdBack"></div>
+  <div class="created-sheet" id="createdSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
 
-  <div id="createdCard">
-    <div id="brandHead">
-      <div class="brand"><span class="dot"></span><span>Dynex</span></div>
-      <div class="app">Account Created</div>
+    <div id="createdCard">
+      <div id="brandHead">
+        <div class="brand"><span class="dot"></span><span>Dynex</span></div>
+        <div class="app">Account Created</div>
+      </div>
+
+      <h3 class="created-title"><span class="created-ok"></span>تم إنشاء الحساب بنجاح</h3>
+      <div class="kv">
+        <div class="k">الاسم</div><div id="c_name"></div>
+        <div class="k">اسم المستخدم</div><div id="c_username" class="mono"></div>
+        <div class="k">رقم الهاتف</div><div id="c_phone" class="mono"></div>
+        <div class="k">رقم الحساب</div><div id="c_accountId" class="mono"></div>
+        <div class="k">رمز الدعوة</div><div id="c_invite" class="mono"></div>
+        <div class="k">كلمة المرور</div><div id="c_password" class="mono"></div>
+      </div>
     </div>
 
-    <h3 class="created-title"><span class="created-ok"></span>تم إنشاء الحساب بنجاح</h3>
-    <div class="kv">
-      <div class="k">الاسم</div><div id="c_name"></div>
-      <div class="k">اسم المستخدم</div><div id="c_username" class="mono"></div>
-      <div class="k">رقم الهاتف</div><div id="c_phone" class="mono"></div>
-      <div class="k">رقم الحساب</div><div id="c_accountId" class="mono"></div>
-      <div class="k">رمز الدعوة</div><div id="c_invite" class="mono"></div>
-      <div class="k">كلمة المرور</div><div id="c_password" class="mono"></div>
+    <div class="actions-row">
+      <button class="btn-solid" id="copyCreated" type="button">نسخ</button>
+      <button class="btn-solid primary" id="saveImg" type="button">تحميل صورة</button>
+    </div>
+    <div class="actions-row" style="margin-top:8px">
+      <a class="btn-solid" id="waShare" target="_blank" rel="noopener">واتساب</a>
+      <a class="btn-solid" id="tgShare" target="_blank" rel="noopener">تيليجرام</a>
+    </div>
+    <div class="warn">⚠️ يُرجى نسخ أو تحميل هذه البيانات الآن — ستحتاجها لاحقًا.</div>
+
+    <div class="actions-row" style="margin-top:12px">
+      <button class="btn-solid" id="closeCreated" type="button">إغلاق</button>
     </div>
   </div>
-
-  <div class="actions-row">
-    <button class="btn-solid" id="copyCreated" type="button">نسخ</button>
-    <button class="btn-solid primary" id="saveImg" type="button">تحميل صورة</button>
-  </div>
-  <div class="actions-row" style="margin-top:8px">
-    <a class="btn-solid" id="waShare" target="_blank" rel="noopener">واتساب</a>
-    <a class="btn-solid" id="tgShare" target="_blank" rel="noopener">تيليجرام</a>
-  </div>
-  <div class="warn">⚠️ يُرجى نسخ أو تحميل هذه البيانات الآن — ستحتاجها لاحقًا.</div>
-
-  <div class="actions-row" style="margin-top:12px">
-    <button class="btn-solid" id="closeCreated" type="button">إغلاق</button>
-    <!-- ✅ زر جديد للرجوع إلى تسجيل الدخول -->
-    <button class="btn-solid primary" id="backToLogin" type="button">الرجوع لتسجيل الدخول</button>
-  </div>
-</div>
 
   <div id="toast" class="toast"></div>
 
@@ -463,7 +460,7 @@
     const fab   = document.getElementById('langBtn');
     const openSheet = ()=>{ sheet.classList.add('active'); back.classList.add('active'); };
     const closeSheet= ()=>{ sheet.classList.remove('active'); back.classList.remove('active'); };
-    fab?.addEventListener('click', () => fab?.addEventListener('click', openSheet);
+    fab?.addEventListener('click', openSheet);
     back.addEventListener('click', closeSheet);
     document.querySelectorAll('.langs button').forEach(b=>{
       b.addEventListener('click', ()=>{
@@ -480,15 +477,6 @@
         .then(()=>console.log("✔ Service Worker registered"))
         .catch(err=>console.error("❌ Service Worker failed:", err));
     }
-    
-    document.getElementById('backToLogin').onclick = ()=>{
-  window.location.href = "index.html"; // عدّل "index.html" لمسار صفحة تسجيل الدخول عندك
-};
-    
-    
-    
-   
-    
   </script>
 </body>
 </html>
