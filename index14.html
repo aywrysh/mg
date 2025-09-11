@@ -30,7 +30,12 @@
     .page{width:min(520px,92vw);margin:0 auto;padding-top:calc(var(--top) + 16px);padding-bottom:32px}
 
     /* Sheet */
-    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;pointer-events:none;transition:.25s;z-index:60}
+    .sheet-backdrop{
+      position:fixed;inset:0;
+      background:transparent;   /* ✅ خلفية شفافة */
+      opacity:0;visibility:hidden;pointer-events:none;
+      transition:.25s;z-index:60
+    }
     .sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 28px rgba(0,0,0,.2);
       transform:translateY(100%);transition:.3s;z-index:61;padding:14px;border:1px solid #ececec;max-width:520px;margin:0 auto}
     .sheet.active{transform:translateY(0)}
@@ -56,9 +61,9 @@
     <button class="btn orange" id="backBtn" title="رجوع"><span class="ms">arrow_back_ios_new</span></button>
     <div class="row" style="gap:8px">
       <button class="btn" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
-    <button class="btn orange" id="langBtn" title="تغيير اللغة">
-  <span class="ms">g_translate</span>
-</button>
+      <button class="btn orange" id="langBtn" title="تغيير اللغة">
+        <span class="ms">g_translate</span>
+      </button>
     </div>
   </header>
   <div class="accent-line"></div>
@@ -76,7 +81,7 @@
     </div>
   </div>
 
-  <!-- شيت اللغة (اختياري، حسب مشروعك) -->
+  <!-- شيت اللغة -->
   <div class="sheet-backdrop" id="sheetBackLang"></div>
   <div class="sheet" id="langSheet" aria-modal="true" role="dialog">
     <div class="grab"></div>
@@ -86,41 +91,43 @@
     </div>
   </div>
 
-  <!-- مود الترجمة الموحد -->
+  <!-- مود الترجمة -->
   <script src="i18n.js"></script>
   <script>
   (function(){
     const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
-    function ripple(ev){const t=ev.currentTarget||ev.target.closest('.btn,.btn-solid'); if(!t) return; const r=document.createElement('span'); const d=Math.max(t.clientWidth,t.clientHeight); const rect=t.getBoundingClientRect(); r.className='ripple'; r.style.width=r.style.height=d+'px'; r.style.left=(ev.clientX-rect.left-d/2)+'px'; r.style.top=(ev.clientY-rect.top-d/2)+'px'; const old=t.querySelector('.ripple'); if(old) old.remove(); t.appendChild(r); setTimeout(()=>r.remove(),600);}
+    function ripple(ev){
+      const t=ev.currentTarget||ev.target.closest('.btn,.btn-solid'); if(!t) return;
+      const r=document.createElement('span');
+      const d=Math.max(t.clientWidth,t.clientHeight);
+      const rect=t.getBoundingClientRect();
+      r.className='ripple';
+      r.style.width=r.style.height=d+'px';
+      r.style.left=(ev.clientX-rect.left-d/2)+'px';
+      r.style.top=(ev.clientY-rect.top-d/2)+'px';
+      const old=t.querySelector('.ripple'); if(old) old.remove();
+      t.appendChild(r); setTimeout(()=>r.remove(),600);
+    }
     document.addEventListener('click',e=>{ if(e.target.closest('.btn, .btn-solid')) ripple(e); });
 
     const back=$("#sheetBack"), sheet=$("#exitSheet");
 
-    /* ✅ احذف الجلسة مباشرة عند فتح صفحة الخروج */
-    try{
-      localStorage.removeItem('dynex_session');
-      // لو حاب تمسح أي حالة مؤقتة ثانية:
-      // sessionStorage.clear();
-    }catch(_){}
-
-    // إظهار نافذة الخروج مباشرة عند فتح الصفحة
+    // فتح نافذة الخروج مباشرة عند فتح الصفحة
     function openExit(){ sheet.classList.add('active'); back.classList.add('active'); }
     function closeExit(){ sheet.classList.remove('active'); back.classList.remove('active'); }
     openExit();
 
-    // أزرار النافذة
+    // ✅ عند الضغط على خروج فقط نحذف الجلسة
     $("#okBtn").addEventListener('click', ()=> {
-      /* ✅ تأكيد حذف الجلسة قبل التوجيه */
       try{ localStorage.removeItem('dynex_session'); }catch(_){}
-      // الانتقال للصفحة الرئيسية (تسجيل الدخول)
       window.location.replace('index.html');
     });
-    $("#cancelBtn").addEventListener('click', ()=> {
-      // رجوع للصفحة السابقة أو إلى حسابي
-      if (history.length > 1) history.back();
-      else window.location.replace('index1.html#account');
-    });
-    $("#backBtn").addEventListener('click', ()=> {
+
+    // ✅ زر إلغاء يغلق المود فقط
+    $("#cancelBtn").addEventListener('click', closeExit);
+
+    // زر الرجوع
+    $("#backBtn").addEventListener('click', ()=>{
       if (history.length > 1) history.back();
       else window.location.replace('index1.html#account');
     });
@@ -128,17 +135,18 @@
     // خدمة العملاء
     $("#supportBtn").addEventListener('click', ()=> window.open('https://t.me/artikarbot','_blank'));
 
-    // شيت اللغة (اختياري)
+    // شيت اللغة
     const langSheet=$("#langSheet"), backLang=$("#sheetBackLang");
     $("#langBtn").addEventListener('click', ()=>{ langSheet.classList.add('active'); backLang.classList.add('active'); });
     backLang.addEventListener('click', ()=>{ langSheet.classList.remove('active'); backLang.classList.remove('active'); });
     $$('#langSheet [data-setlang]').forEach(b=>b.addEventListener('click', ()=>{
       const l=b.dataset.setlang; localStorage.setItem('lang', l);
-      if(typeof window.applyLang==='function') window.applyLang(l); else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
+      if(typeof window.applyLang==='function') window.applyLang(l);
+      else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
       backLang.click();
     }));
 
-    // ترجمة نصوص هذه الصفحة لضمان التوافق مع i18n.js
+    // ترجمات
     if (window.DynexI18N && typeof DynexI18N.addPairs==='function'){
       DynexI18N.addPairs([
         ['هل تريد الخروج؟','Do you want to log out?'],

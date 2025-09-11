@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dynex – إنشاء حساب</title>
+
+  <!-- خطوط وأيقونات -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+
+  <style>
+    :root{
+      --bg-img: url('https.png');
+      --ink:#1f2937;
+      --muted:#94a3b8;
+      --stroke:#e5e7eb;
+      --panel:#ffffffcc;
+      --input:#ffffffb3;
+      --accent:#f97316;    /* برتقالي مثل صفحة الدخول */
+      --radius:20px;
+      --shadow:0 10px 25px rgba(0,0,0,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink);
+      background: var(--bg-img) center/cover no-repeat fixed;
+      min-height:100vh; display:grid; place-items:center;
+      position: relative;
+    }
+    .wrap{width:min(560px, 92vw);}
+
+    /* زر اللغة (نفس ستايل صفحة الدخول) */
+    .lang-btn{
+      position:fixed; top:14px; inset-inline-end:14px;
+      background:#ffffff99; border:1px solid var(--stroke); backdrop-filter:blur(6px);
+      width:44px; height:44px; border-radius:12px; display:grid; place-items:center;
+      cursor:pointer; z-index:20;
+    }
+    .ms{font-family:'Material Symbols Rounded'}
+
+    .topbar{display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:8px}
+    .logo-mini{width:76px; height:76px; border-radius:14px; display:grid; place-items:center; overflow:hidden}
+    .logo-mini img{width:100%; height:100%; object-fit:cover}
+
+    .card{background:var(--panel); border:1px solid var(--stroke); border-radius:28px; padding:24px 18px; box-shadow:var(--shadow)}
+    h1.title{margin:0 0 14px; text-align:center; font-size:26px}
+    .sub{margin:-8px 0 10px; text-align:center; color:#475569; font-weight:700}
+
+    /* حقول + أيقونات داخلية */
+    .field{position:relative; display:grid; gap:8px; margin:10px 0}
+    .label{font-weight:900; font-size:13px}
+    .input{
+      width:100%; padding:14px 46px; background:var(--input); border:1px solid var(--stroke);
+      border-radius:14px; outline:none; font-weight:700; font-size:16px; color:var(--ink)
+    }
+    .input::placeholder{color:#94a3b8}
+    .input[dir="ltr"]{direction:ltr}
+    .input.error{border-color:#ef4444; background:#fff1f1}
+    .icon{
+      position:absolute; inset-inline-start:12px; top:50%; transform:translateY(calc(-50% + 12px));
+      width:22px; height:22px; color:#334155; opacity:.9; pointer-events:none;
+    }
+    .toggle{
+      position:absolute; inset-inline-end:10px; top:50%; transform:translateY(calc(-50% + 12px));
+      width:34px; height:34px; border:none; background:transparent; cursor:pointer; color:#475569;
+    }
+
+    .row{display:grid; grid-template-columns:1fr auto; gap:8px; align-items:center}
+    .btn{display:inline-grid; place-items:center; min-width:42px; height:42px; border:1px solid var(--stroke); background:#fff; border-radius:12px; cursor:pointer}
+    .btn:disabled{opacity:.6; pointer-events:none}
+
+    .actions{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:14px}
+    .btn-solid{padding:14px 16px; border-radius:14px; border:1px solid var(--stroke); background:#fff; font-weight:900; cursor:pointer; text-align:center}
+    .btn-solid.primary{background:var(--accent); color:#fff; border-color:var(--accent); box-shadow:0 10px 20px rgba(249,115,22,.25)}
+
+    .toast{
+      position:fixed; bottom:22px; left:50%; transform:translateX(-50%) scale(.96);
+      background:rgba(17,17,17,.92); color:#fff; padding:8px 12px; border-radius:10px; font-weight:800; font-size:12px;
+      opacity:0; pointer-events:none; transition:opacity .25s, transform .25s; z-index:120;
+    }
+    .toast.show{opacity:1; transform:translateX(-50%) scale(1)}
+
+    /* شيت اللغة (نفس صفحة الدخول) */
+    .sheet-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; visibility:hidden; transition:.25s; z-index:19}
+    .sheet{position:fixed; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.2);
+      transform:translateY(100%); transition:.3s; z-index:20; padding:14px 16px; max-width:560px; margin:0 auto}
+    .sheet.active{transform:translateY(0)}
+    .sheet-backdrop.active{opacity:1; visibility:visible}
+    .sheet .grab{width:42px; height:5px; border-radius:3px; background:#e5e7eb; margin:6px auto 12px}
+    .sheet .langs{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .sheet .langs button{padding:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff; cursor:pointer; font-weight:700}
+
+    /* === نافذة بيانات الحساب المنشأ (شيت) === */
+    .created-back{position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; visibility:hidden; transition:.25s; z-index:98}
+    .created-sheet{position:fixed; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.2);
+      transform:translateY(100%); transition:.3s; z-index:99; padding:14px 16px; max-width:560px; margin:0 auto}
+    .created-sheet.active{transform:translateY(0)}
+    .created-back.active{opacity:1; visibility:visible}
+    .created-sheet .grab{width:42px; height:5px; border-radius:3px; background:#e5e7eb; margin:6px auto 12px}
+
+    /* كرت المعلومات (للتصدير كصورة) */
+    #createdCard{
+      background:#fff; border:1px solid var(--stroke); border-radius:16px; padding:14px;
+      box-shadow:0 10px 24px rgba(0,0,0,.06);
+    }
+    #brandHead{display:flex; align-items:center; justify-content:space-between; margin-bottom:6px}
+    #brandHead .brand{display:flex; align-items:center; gap:8px; font-weight:900}
+    #brandHead .dot{width:12px;height:12px;border-radius:50%;background:var(--accent)}
+    #brandHead .app{font-weight:900;color:#0f172a}
+    .created-title{display:flex;align-items:center;gap:8px;font-weight:900;margin:6px 0 10px}
+    .created-ok{width:10px;height:10px;border-radius:50%;background:#22c55e}
+    .kv{display:grid; grid-template-columns:150px 1fr; gap:8px 12px; margin:10px 0}
+    .kv .k{color:#475569; font-weight:800; font-size:13px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+    .actions-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
+    .warn{margin-top:10px; font-size:13px; color:#b91c1c; background:#fef2f2; border:1px solid #fee2e2; padding:8px 10px; border-radius:12px; font-weight:800}
+  </style>
+</head>
+<body>
+
+  <!-- زر اللغة -->
+  <button class="lang-btn" id="langBtn" title="language"><span class="ms">g_translate</span></button>
+
+  <div class="wrap">
+    <div class="topbar">
+      <div class="logo-mini" title="Dynex"><img src="https1.png" alt="Dynex"></div>
+    </div>
+
+    <form class="card" id="createForm" autocomplete="off">
+      <h1 class="title">إنشاء حساب</h1>
+      <div class="sub">أدخل بيانات الحساب</div>
+
+      <!-- الاسم -->
+      <div class="field">
+        <label class="label" for="name">الاسم الكامل</label>
+        <input id="name" class="input" type="text" placeholder="اسم المستخدم">
+        <span class="icon ms">person</span>
+      </div>
+
+      <!-- الهاتف -->
+      <div class="field">
+        <label class="label" for="phone">رقم الهاتف</label>
+        <input id="phone" class="input" type="tel" inputmode="tel" dir="ltr" placeholder="+967 7XXXXXXXX">
+        <span class="icon ms">call</span>
+      </div>
+
+      <!-- اسم المستخدم (تلقائي) + زر تحديث -->
+      <div class="field">
+        <label class="label" for="uname">اسم المستخدم (تلقائي)</label>
+        <div class="row" style="position:relative">
+          <input id="uname" class="input" type="text" placeholder="سيُولَّد تلقائيًا" readonly>
+          <button class="btn" id="regenU" type="button" title="تجديد"><span class="ms">refresh</span></button>
+          <span class="icon ms">badge</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted)">7 أحرف إنجليزية (كبيرة وصغيرة).</div>
+      </div>
+
+      <!-- كلمة المرور -->
+      <div class="field">
+        <label class="label" for="pwd">كلمة المرور</label>
+        <input id="pwd" class="input" type="password" placeholder="••••••••">
+        <span class="icon ms">lock</span>
+        <button class="toggle" id="togglePwd" type="button" aria-label="إظهار/إخفاء"><span class="ms">visibility</span></button>
+      </div>
+
+      <!-- تأكيد كلمة المرور -->
+      <div class="field">
+        <label class="label" for="cpwd">تأكيد كلمة المرور</label>
+        <input id="cpwd" class="input" type="password" placeholder="••••••••">
+        <span class="icon ms">lock_reset</span>
+        <button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"><span class="ms">visibility</span></button>
+      </div>
+
+      <div class="actions">
+        <button class="btn-solid" id="cancelBtn" type="button" onclick="window.location.href='index.html'">إلغاء</button>
+        <button class="btn-solid primary" id="createBtn" type="submit">إنشاء الحساب</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- شيت اللغة -->
+  <div class="sheet-backdrop" id="sheetBack"></div>
+  <div class="sheet" id="langSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
+    <div class="langs">
+      <button data-setlang="ar" id="btnAr">العربية</button>
+      <button data-setlang="en" id="btnEn">English</button>
+    </div>
+  </div>
+
+  <!-- ✅ نافذة عرض بيانات الحساب المنشأ -->
+ <!-- ✅ نافذة عرض بيانات الحساب المنشأ -->
+<div class="created-back" id="createdBack"></div>
+<div class="created-sheet" id="createdSheet" aria-modal="true" role="dialog">
+  <div class="grab"></div>
+
+  <div id="createdCard">
+    <div id="brandHead">
+      <div class="brand"><span class="dot"></span><span>Dynex</span></div>
+      <div class="app">Account Created</div>
+    </div>
+
+    <h3 class="created-title"><span class="created-ok"></span>تم إنشاء الحساب بنجاح</h3>
+    <div class="kv">
+      <div class="k">الاسم</div><div id="c_name"></div>
+      <div class="k">اسم المستخدم</div><div id="c_username" class="mono"></div>
+      <div class="k">رقم الهاتف</div><div id="c_phone" class="mono"></div>
+      <div class="k">رقم الحساب</div><div id="c_accountId" class="mono"></div>
+      <div class="k">رمز الدعوة</div><div id="c_invite" class="mono"></div>
+      <div class="k">كلمة المرور</div><div id="c_password" class="mono"></div>
+    </div>
+  </div>
+
+  <div class="actions-row">
+    <button class="btn-solid" id="copyCreated" type="button">نسخ</button>
+    <button class="btn-solid primary" id="saveImg" type="button">تحميل صورة</button>
+  </div>
+  <div class="actions-row" style="margin-top:8px">
+    <a class="btn-solid" id="waShare" target="_blank" rel="noopener">واتساب</a>
+    <a class="btn-solid" id="tgShare" target="_blank" rel="noopener">تيليجرام</a>
+  </div>
+  <div class="warn">⚠️ يُرجى نسخ أو تحميل هذه البيانات الآن — ستحتاجها لاحقًا.</div>
+
+  <div class="actions-row" style="margin-top:12px">
+    <button class="btn-solid" id="closeCreated" type="button">إغلاق</button>
+    <!-- ✅ زر جديد للرجوع إلى تسجيل الدخول -->
+    <button class="btn-solid primary" id="backToLogin" type="button">الرجوع لتسجيل الدخول</button>
+  </div>
+</div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- html2canvas لالتقاط الكرت كصورة -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- ملف الترجمة إن وجد -->
+  <script src="i18n.js"></script>
+
+  <!-- ===== Firebase (Modules) + منطق الصفحة ===== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, push, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      authDomain: "dynex-f4486.firebaseapp.com",
+      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+      projectId: "dynex-f4486",
+      storageBucket: "dynex-f4486.firebasestorage.app"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getDatabase(app);
+
+    // === توست
+    const $ = s => document.querySelector(s);
+    (function(){
+      const box = $("#toast"); let t=null;
+      window.toast = (msg='تم')=>{
+        box.textContent = msg; box.classList.add('show');
+        clearTimeout(t); t=setTimeout(()=>box.classList.remove('show'),1600);
+      };
+    })();
+
+    // === إظهار/إخفاء كلمات السر
+    function attachToggle(btnId, inputId){
+      const btn = document.getElementById(btnId);
+      const inp = document.getElementById(inputId);
+      if(!btn || !inp) return;
+      btn.addEventListener('click', ()=>{
+        const hidden = inp.type === 'password';
+        inp.type = hidden ? 'text' : 'password';
+        btn.querySelector('.ms').textContent = hidden ? 'visibility_off' : 'visibility';
+      });
+    }
+    attachToggle('togglePwd','pwd');
+    attachToggle('toggleCPwd','cpwd');
+
+    // === توليد بيانات
+    const genAccountId = ()=> '99' + Math.floor(Math.random()*1e7).toString().padStart(7,'0'); // 9 خانات يبدأ بـ99
+    const genInviteCode = (len=6)=>{
+      const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let out=''; for(let i=0;i<len;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+      return out;
+    };
+    const genUsernameLocal = (len=7)=>{
+      const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+      let out=''; for(let i=0;i<len;i++) out+=chars[Math.floor(Math.random()*chars.length)];
+      return out;
+    };
+    async function freshUsernameSafe(){
+      let cand = genUsernameLocal();
+      try{
+        for(let t=0;t<5;t++){
+          const u = (t===0)? cand : genUsernameLocal();
+          const snap = await get(ref(db, 'usernames/'+u));
+          if(!snap.exists()) return u;
+        }
+      }catch(_){}
+      return cand;
+    }
+
+    // عناصر النموذج
+    const nameI  = $("#name");
+    const phoneI = $("#phone");
+    const unameI = $("#uname");
+    const pwdI   = $("#pwd");
+    const cpwdI  = $("#cpwd");
+    const regen  = $("#regenU");
+    const cancel = $("#cancelBtn");
+    const create = $("#createBtn");
+
+    // الشيت + عناصره
+    const createdSheet = $("#createdSheet");
+    const createdBack  = $("#createdBack");
+    const c_name      = $("#c_name");
+    const c_username  = $("#c_username");
+    const c_phone     = $("#c_phone");
+    const c_accountId = $("#c_accountId");
+    const c_invite    = $("#c_invite");
+    const c_password  = $("#c_password");
+    const copyCreated = $("#copyCreated");
+    const saveImg     = $("#saveImg");
+    const waShare     = $("#waShare");
+    const tgShare     = $("#tgShare");
+    const closeCreated= $("#closeCreated");
+
+    // توليد اسم مبدئي ثم فحص
+    let usernameVar = genUsernameLocal();
+    unameI.value = usernameVar;
+    (async ()=>{ try{ usernameVar = await freshUsernameSafe(); unameI.value = usernameVar; }catch(_){}})();
+
+    regen.addEventListener('click', async ()=>{
+      regen.disabled = true;
+      try{
+        usernameVar = await freshUsernameSafe();
+        unameI.value = usernameVar;
+        toast('تم توليد اسم جديد');
+      }finally{ regen.disabled = false; }
+    });
+
+    cancel.addEventListener('click', ()=>{
+      nameI.value=''; phoneI.value=''; pwdI.value=''; cpwdI.value='';
+      toast('تم إلغاء الإدخال');
+    });
+
+    function validPhoneLoose(v){ return (String(v||'').replace(/\D/g,'').length >= 7); }
+
+    // === فتح نافذة "تم الإنشاء" + نسخ/حفظ/إرسال
+    function openCreatedSheet(user){
+      // تعبئة
+      c_name.textContent      = user.name || '—';
+      c_username.textContent  = user.username || '—';
+      c_phone.textContent     = user.phone || '—';
+      c_accountId.textContent = user.accountId || '—';
+      c_invite.textContent    = user.inviteCode || '—';
+      c_password.textContent  = user.password || '—';
+
+      const shareText =
+`تم إنشاء حسابك في Dynex ✅
+
+الاسم: ${user.name || '—'}
+اسم المستخدم: ${user.username || '—'}
+رقم الحساب: ${user.accountId || '—'}
+رقم الهاتف: ${user.phone || '—'}
+رمز الدعوة: ${user.inviteCode || '—'}
+كلمة المرور: ${user.password || '—'}`;
+
+      copyCreated.onclick = async ()=>{
+        try{ await navigator.clipboard.writeText(shareText); toast('تم النسخ'); }catch{ toast('تعذّر النسخ'); }
+      };
+      waShare.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
+      tgShare.href = 'https://t.me/share/url?url=' + encodeURIComponent(location.origin) + '&text=' + encodeURIComponent(shareText);
+
+      saveImg.onclick = async ()=>{
+        try{
+          const node = document.getElementById('createdCard');
+          const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+          const url = canvas.toDataURL('image/png');
+          const a = document.createElement('a');
+          a.href = url; a.download = `Dynex-Account-${user.accountId||'new'}.png`;
+          document.body.appendChild(a); a.click(); a.remove();
+        }catch(e){ console.warn(e); toast('تعذّر حفظ الصورة'); }
+      };
+
+      const closeFn = ()=>{ createdSheet.classList.remove('active'); createdBack.classList.remove('active'); };
+      createdBack.onclick  = closeFn;
+      closeCreated.onclick = closeFn;
+
+      createdSheet.classList.add('active');
+      createdBack.classList.add('active');
+    }
+
+    // === إنشاء الحساب (بدون تحويل تلقائي)
+    $("#createForm").addEventListener('submit', async (e)=>{
+      e.preventDefault();
+
+      [nameI, phoneI, pwdI, cpwdI].forEach(i=>i.classList.remove('error'));
+
+      if(!nameI.value.trim()){ nameI.classList.add('error'); nameI.focus(); return toast('أدخل الاسم'); }
+      if(!validPhoneLoose(phoneI.value)){ phoneI.classList.add('error'); phoneI.focus(); return toast('رقم هاتف غير صالح'); }
+      if((pwdI.value||'').length < 6){ pwdI.classList.add('error'); pwdI.focus(); return toast('كلمة المرور قصيرة (6+)'); }
+      if(pwdI.value !== cpwdI.value){ cpwdI.classList.add('error'); cpwdI.focus(); return toast('كلمتا المرور غير متطابقتين'); }
+
+      // اسم المستخدم النهائي
+      let finalUsername = (usernameVar||'').trim();
+      if(!finalUsername || finalUsername.length < 3){
+        try{ finalUsername = await freshUsernameSafe(); }catch(_){ finalUsername = genUsernameLocal(); }
+        unameI.value = finalUsername;
+        usernameVar = finalUsername;
+      }
+
+      const prev = create.textContent; create.disabled = true; create.textContent = 'جارٍ الحفظ...';
+
+      try{
+        const usersRef = ref(db, 'users');
+        const newRef   = push(usersRef);
+        const uid      = newRef.key;
+
+        const accountId  = genAccountId();
+        const inviteCode = genInviteCode();
+
+        const userData = {
+          uid,
+          accountId,
+          username: finalUsername,
+          name: nameI.value.trim(),
+          phone: phoneI.value.trim(),
+          password: pwdI.value,         // نص واضح (كما طلبت)
+          balance: 0,
+          lockedAmount: 0,
+          inviteCode,
+          createdAt: serverTimestamp()
+        };
+
+        await set(newRef, userData);
+        await set(ref(db, 'usernames/'+finalUsername), uid);
+        await set(ref(db, 'invites/'+inviteCode), { uid, createdAt: serverTimestamp() });
+
+        toast('تم إنشاء الحساب');
+
+        // ✅ افتح نافذة البيانات مباشرة (بدون تحويل)
+        openCreatedSheet({
+          ...userData,
+          createdAt: Date.now()
+        });
+
+      }catch(err){
+        console.error(err);
+        toast('تعذّر الحفظ، حاول لاحقًا');
+      }finally{
+        create.disabled = false; create.textContent = prev;
+      }
+    });
+
+    // ===== زر اللغة + الشيت (نفس صفحة الدخول) =====
+    if (typeof window.applyLang === 'function') {
+      applyLang(localStorage.getItem('lang') || 'ar');
+    }
+    const sheet = document.getElementById('langSheet');
+    const back  = document.getElementById('sheetBack');
+    const fab   = document.getElementById('langBtn');
+    const openSheet = ()=>{ sheet.classList.add('active'); back.classList.add('active'); };
+    const closeSheet= ()=>{ sheet.classList.remove('active'); back.classList.remove('active'); };
+    fab?.addEventListener('click', () => fab?.addEventListener('click', openSheet);
+    back.addEventListener('click', closeSheet);
+    document.querySelectorAll('.langs button').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        if (typeof window.applyLang==='function'){ applyLang(b.dataset.setlang); }
+        localStorage.setItem('lang', b.dataset.setlang||'ar');
+        closeSheet();
+      });
+    });
+  </script>
+
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(()=>console.log("✔ Service Worker registered"))
+        .catch(err=>console.error("❌ Service Worker failed:", err));
+    }
+    
+    document.getElementById('backToLogin').onclick = ()=>{
+  window.location.href = "index.html"; // عدّل "index.html" لمسار صفحة تسجيل الدخول عندك
+};
+    
+    
+    
+   
+    
+  </script>
+</body>
+</html>
