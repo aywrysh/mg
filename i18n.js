@@ -491,6 +491,56 @@
 
   
   
+  
+  // ——— الصفحة الرئيسية ———
+  ['إنشاء حساب','Create Account'],
+  ['أدخل بيانات الحساب','Enter account details'],
+  ['الاسم الكامل','Full name'],
+  ['اسم المستخدم','Username'],
+  ['رقم الهاتف','Phone number'],
+  ['اسم المستخدم (تلقائي)','Auto username'],
+  ['سيُولَّد تلقائيًا','Will be generated automatically'],
+  ['7 أحرف إنجليزية (كبيرة وصغيرة).','7 English letters (upper and lower case).'],
+  ['تجديد','Regenerate'],
+  ['كلمة المرور','Password'],
+  ['تأكيد كلمة المرور','Confirm password'],
+  ['إلغاء','Cancel'],
+  ['إنشاء الحساب','Create account'],
+
+  // ——— نافذة الحساب المنشأ ———
+  ['تم إنشاء الحساب بنجاح','Account created successfully'],
+  ['الاسم','Name'],
+  ['اسم المستخدم','Username'],
+  ['رقم الهاتف','Phone number'],
+  ['رقم الحساب','Account ID'],
+  ['رمز الدعوة','Invite code'],
+  ['كلمة المرور','Password'],
+  ['نسخ','Copy'],
+  ['تحميل صورة','Download Image'],
+  ['واتساب','WhatsApp'],
+  ['تيليجرام','Telegram'],
+  ['⚠️ يُرجى نسخ أو تحميل هذه البيانات الآن — ستحتاجها لاحقًا.','⚠️ Please copy or save this information now — you will need it later.'],
+  ['إغلاق','Close'],
+  ['الرجوع لتسجيل الدخول','Back to login'],
+
+  // ——— تنبيهات / توست ———
+  ['تم','Done'],
+  ['تم توليد اسم جديد','New username generated'],
+  ['تم إلغاء الإدخال','Entry cancelled'],
+  ['أدخل الاسم','Enter name'],
+  ['رقم هاتف غير صالح','Invalid phone number'],
+  ['كلمة المرور قصيرة (6+)','Password too short (6+)'],
+  ['كلمتا المرور غير متطابقتين','Passwords do not match'],
+  ['جارٍ الحفظ...','Saving...'],
+  ['تم إنشاء الحساب','Account created'],
+  ['تعذّر الحفظ، حاول لاحقًا','Failed to save, try later'],
+  ['تم النسخ','Copied'],
+  ['تعذّر النسخ','Failed to copy'],
+  ['تعذّر حفظ الصورة','Failed to save image'],
+
+  
+  
+  
   ];
 
   /* ===== Normalization ===== */
