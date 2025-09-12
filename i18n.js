@@ -489,7 +489,14 @@
   ['ساعتين','2 hours'],
   ['ساعات','hours'],
 
+  ['عدم الضهور مجدد','Not showing up again '],
   
+   ['فتح','to open'],
+  
+    ['عرض خاص','Special offer'],
+  
+     ['إغلاق','closing'],
+   ['إعلان','advertisement'],
   
   
   // ——— الصفحة الرئيسية ———
