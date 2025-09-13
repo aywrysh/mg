@@ -169,23 +169,28 @@
   <div id="rcBack" class="receipt-backdrop"></div>
   <div id="rcSheet" class="receipt" role="dialog" aria-modal="true">
     <button id="rcClose" class="rc-close">✕</button>
-    <div class="rc-head">
-      <div class="rc-logo"><img id="rcLogo" src="logo.png" alt="logo"></div>
-      <div class="rc-title">إيصال العملية</div>
+
+    <!-- ⬇⬇⬇ المحتوى الذي سنلتقطه كصورة -->
+    <div id="rcCapture">
+      <div class="rc-head">
+        <div class="rc-logo"><img id="rcLogo" src="logo.png" alt="logo"></div>
+        <div class="rc-title">إيصال العملية</div>
+      </div>
+
+      <div class="rc-amount">
+        <div class="lbl">المبلغ</div>
+        <div class="val"><span id="rcAmount">0</span> <span id="rcCurr">ريال يمني</span></div>
+      </div>
+
+      <div class="rc-row"><span class="k">رقم مرجع العملية</span><span class="v" id="rcRef">—</span></div>
+      <div class="rc-row"><span class="k">العملية</span><span class="v" id="rcOp">تحويل مشترك</span></div>
+      <div class="rc-row"><span class="k">تاريخ العملية</span><span class="v" id="rcDate">—</span></div>
+      <div class="rc-row"><span class="k">المستفيد</span><span class="v" id="rcBenef">—</span></div>
+      <div class="rc-row"><span class="k">المودِع</span><span class="v" id="rcPayer">—</span></div>
     </div>
+    <!-- ⬆⬆⬆ نهاية الجزء القابل للإلتقاط -->
 
-    <div class="rc-amount">
-      <div class="lbl">المبلغ</div>
-      <div class="val"><span id="rcAmount">0</span> <span id="rcCurr">ريال يمني</span></div>
-    </div>
-
-    <div class="rc-row"><span class="k">رقم مرجع العملية</span><span class="v" id="rcRef">—</span></div>
-    <div class="rc-row"><span class="k">العملية</span><span class="v" id="rcOp">تحويل مشترك</span></div>
-    <div class="rc-row"><span class="k">تاريخ العملية</span><span class="v" id="rcDate">—</span></div>
-    <div class="rc-row"><span class="k">المستفيد</span><span class="v" id="rcBenef">—</span></div>
-    <div class="rc-row"><span class="k">المودِع</span><span class="v" id="rcPayer">—</span></div>
-
-    <div class="rc-actions">
+    <div class="rc-actions no-shot">
       <button id="rcCopy" class="rc-btn">نسخ المرجع</button>
       <button id="rcOk" class="rc-btn primary">حسناً</button>
       <button id="rcSave" class="rc-btn">تحميل كصورة</button>
@@ -374,7 +379,7 @@ if (TARGET && (TARGET.id === normalizeAccountId(SELF.accountId || '') || TARGET.
 
         await db.ref().update(updates);
 
-        // ====== 👇 الإصلاح هنا: خزّن بيانات الإيصال قبل resetResult()
+        // ====== 👇 خزّن بيانات الإيصال قبل resetResult()
         const memoBenef = `${TARGET.name || '-' } • ${TARGET.id}`;
         const memoPayer = `${SELF.name  || '-' } • ${SELF.accountId || ''}`;
         const refId     = txId.replace('tx_','');
@@ -385,10 +390,8 @@ if (TARGET && (TARGET.id === normalizeAccountId(SELF.accountId || '') || TARGET.
         $('#amount').value = '';
         $('#userId').value  = '';
 
-        // لا تلمس TARGET بعد الآن (تم حفظ القيم)
         resetResult();
 
-        // نافذة الإيصال (لو صار خطأ فيها لا يؤثر على نجاح التحويل)
         try{
           if (typeof window.showReceipt === 'function') {
             showReceipt({
@@ -480,8 +483,12 @@ if (TARGET && (TARGET.id === normalizeAccountId(SELF.accountId || '') || TARGET.
   const shareBtn= document.getElementById('rcShare');
 
   async function captureReceipt(){
-    const node = sheet;
-    const canvas = await html2canvas(node, {backgroundColor:'#ffffff', scale:2});
+    const node = document.getElementById('rcCapture'); /* ⬅ التقط المحتوى فقط */
+    const canvas = await html2canvas(node, {
+      backgroundColor:'#ffffff',
+      scale:2,
+      ignoreElements: el => el.classList && el.classList.contains('no-shot') /* ⬅ تجاهل الأزرار */
+    });
     return canvas;
   }
   saveBtn?.addEventListener('click', async ()=>{
