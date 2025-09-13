@@ -72,11 +72,37 @@
     .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(0,0,0,.18);animation:ripple .6s linear;pointer-events:none}
     @keyframes ripple{to{transform:scale(3);opacity:0}}
     .ripple-container{position:relative;overflow:hidden}
+
+    /* ===== إضافات الطباعة / PDF ===== */
+    .export-actions{display:flex;gap:8px;padding:0 10px 10px}
+    .xbtn{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;cursor:pointer}
+    .xbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+    /* لوحة التقرير المخصصة للطباعة */
+    #printArea{display:none}
+    #printArea.active{display:block}
+    .pr-wrap{font-family:"Cairo",Arial,sans-serif; color:#0f172a; padding:16px}
+    .pr-head{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:10px}
+    .pr-brand{display:flex;align-items:center;gap:10px}
+    .pr-logo{width:48px;height:48px;border-radius:12px;border:1px solid #e5e7eb;display:grid;place-items:center;overflow:hidden;background:#fff}
+    .pr-title{font-weight:900;font-size:20px}
+    .pr-sub{color:#64748b;font-weight:800;font-size:12px}
+    .pr-table{width:100%;border-collapse:separate;border-spacing:0 8px}
+    .pr-table th, .pr-table td{padding:10px 12px;background:#fff;border:1px solid #e5e7eb}
+    .pr-table th{background:#f8fafc;color:#475569;text-align:right;font-weight:900}
+    .pr-table td{font-weight:800}
+    .pill{padding:4px 8px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-weight:900;font-size:12px}
+    .pill.done{color:#16a34a;border-color:#16a34a1a;background:#16a34a0d}
+    .pill.pending{color:#f59e0b;border-color:#f59e0b1a;background:#f59e0b0d}
+    .pill.rejected{color:#ef4444;border-color:#ef44441a;background:#ef44440d}
+    @media print{
+      .appbar,.accent-line,.filters,.cards,.list,.export-actions{display:none !important}
+      #printArea{display:block}
+      body{background:#fff}
+    }
   </style>
   
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#e5e7eb">
-  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e5e7eb">
 </head>
 <body>
 
@@ -85,9 +111,9 @@
     <button class="btn ripple-container orange" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="btn ripple-container" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
-     <button class="btn orange" id="langBtn" title="تغيير اللغة">
-  <span class="ms">g_translate</span>
-</button>
+      <button class="btn orange" id="langBtn" title="تغيير اللغة">
+        <span class="ms">g_translate</span>
+      </button>
     </div>
   </header>
   <div class="accent-line"></div>
@@ -143,9 +169,20 @@
       <div class="card"><div class="title">عدد العمليات</div><div class="amount" id="sumCount">0</div></div>
     </div>
 
+    <!-- أزرار الطباعة / PDF -->
+    <div class="export-actions">
+      <button id="btnPrint" class="xbtn">طباعة</button>
+      <button id="btnPDF" class="xbtn primary">تصدير PDF</button>
+    </div>
+
     <!-- القائمة -->
     <div class="list" id="txList"></div>
   </main>
+
+  <!-- لوحة التقرير للطباعة / PDF (تُبنى ديناميكيًا) -->
+  <div id="printArea">
+    <div class="pr-wrap" id="prContent"></div>
+  </div>
 
   <!-- Sheet: اللغة -->
   <div class="sheet-backdrop" id="sheetBack"></div>
@@ -176,6 +213,9 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
+  <!-- html2pdf.js للتصدير إلى PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/html2pdf.js@0.10.1/dist/html2pdf.bundle.min.js"></script>
 
   <script>
   (function(){
@@ -461,6 +501,7 @@
 
     /* ===== Fetch all ===== */
     let ALL_ROWS=[];
+    let LAST_FILTERED=[]; // <-- نخزّن آخر قائمة معروضة للتصدير/الطباعة
 
     async function fetchAll(){
       ALL_ROWS=[];
@@ -497,6 +538,7 @@
         const okType = (state.type==='all') || (r.type===state.type);
         return okType && inRange(r.at);
       });
+      LAST_FILTERED = filtered.slice(); // حفظ آخر نتيجة
 
       const sum = {deposit:0, withdraw:0, transfer:0, deposit_to:0, p2p:0, count:filtered.length};
       filtered.forEach(r=>{ sum[r.type]=(sum[r.type]||0)+(+r.amount||0); });
@@ -543,18 +585,113 @@
       });
     }
 
+    /* ===== بناء لوحة الطباعة / PDF ===== */
+    function buildPrintArea(){
+      const brandName = localStorage.getItem('company_name') || 'Dynex';
+      const lang = (localStorage.getItem('lang')||'ar').toLowerCase();
+      const now = new Date();
+      const nowStr = (lang==='en')
+        ? now.toLocaleString('en-GB',{hour12:false})
+        : now.toLocaleString('ar-EG',{hour12:false});
+
+      // نطاق التاريخ الظاهر
+      const df = $('#dateFrom').value, dt = $('#dateTo').value;
+      let rangeTxt = 'الكل';
+      if(df || dt){
+        rangeTxt = (df?df:'…') + ' → ' + (dt?dt:'…');
+      }else if(state.range==='today'){ rangeTxt='اليوم'; }
+      else if(state.range==='week'){ rangeTxt='هذا الأسبوع'; }
+      else if(state.range==='month'){ rangeTxt='هذا الشهر'; }
+
+      const rows = LAST_FILTERED.map((r,i)=>{
+        const d = r.at;
+        const pad=n=>n<10?('0'+n):n;
+        const dstr = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+
+        // تسمية الطرف الآخر حسب النوع
+        let otherLabel = 'الطرف';
+        if(r.type==='deposit' || r.type==='deposit_to') otherLabel = 'المودِع';
+        else if(r.type==='transfer') otherLabel = 'المستلم';
+        else if(r.type==='withdraw') otherLabel = 'المركز';
+
+        const otherVal =
+          (r.type==='withdraw' ? (r.method||'المركز') : (r.counter||'—'));
+
+        const statusClass = 'pill ' + (r.status||'').toLowerCase();
+        return `
+          <tr>
+            <td>${i+1}</td>
+            <td>${LABELS[r.type]||r.type}</td>
+            <td>${(+r.amount||0).toFixed(2)} ${r.currency||''}</td>
+            <td><span class="${statusClass}">${r.status||'—'}</span></td>
+            <td>${dstr}</td>
+            <td>${otherLabel}</td>
+            <td dir="ltr">${otherVal}</td>
+          </tr>
+        `;
+      }).join('');
+
+      $('#prContent').innerHTML = `
+        <div class="pr-head">
+          <div class="pr-brand">
+            <div class="pr-logo"><img src="logo.png" alt="logo" style="max-width:80%;max-height:80%"></div>
+            <div>
+              <div class="pr-title">${brandName}</div>
+              <div class="pr-sub">تقرير العمليات • ${rangeTxt}</div>
+            </div>
+          </div>
+          <div class="pr-sub">تاريخ الطباعة: ${nowStr}</div>
+        </div>
+
+        <table class="pr-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>العملية</th>
+              <th>المبلغ</th>
+              <th>الحالة</th>
+              <th>التاريخ</th>
+              <th>التصنيف</th>
+              <th>الطرف الآخر</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows || `<tr><td colspan="7" style="text-align:center">لا توجد بيانات</td></tr>`}
+          </tbody>
+        </table>
+      `;
+    }
+
+    /* ===== طباعة و PDF ===== */
+    $('#btnPrint').onclick = ()=>{
+      if(!LAST_FILTERED.length){ toast('لا توجد بيانات لطباعتها'); return; }
+      buildPrintArea();
+      window.print();
+    };
+
+    $('#btnPDF').onclick = ()=>{
+      if(!LAST_FILTERED.length){ toast('لا توجد بيانات للتصدير'); return; }
+      buildPrintArea();
+      const opt = {
+        margin:       [0.4,0.4,0.4,0.4],
+        filename:     `report_${Date.now()}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, backgroundColor:'#ffffff' },
+        jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }
+      };
+      html2pdf().from(document.getElementById('prContent')).set(opt).save();
+    };
+
     fetchAll().catch(()=>toast('تعذّر جلب البيانات'));
   })();
   </script>
   
-    <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("✔ Service Worker registered"))
-      .catch(err => console.error("❌ Service Worker failed:", err));
-  }
-</script>
-  
-  
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(reg => console.log("✔ Service Worker registered"))
+        .catch(err => console.error("❌ Service Worker failed:", err));
+    }
+  </script>
 </body>
 </html>
