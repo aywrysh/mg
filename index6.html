@@ -87,6 +87,7 @@
     .pr-a4{width:794px; min-height:1123px; margin:0 auto; background:#fff}
 
     .pr-head{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:10px}
+    .pr-head.center{justify-content:center;text-align:center;flex-direction:column;gap:6px}
     .pr-brand{display:flex;align-items:center;gap:10px}
     .pr-logo{width:48px;height:48px;border-radius:12px;border:1px solid #e5e7eb;display:grid;place-items:center;overflow:hidden;background:#fff}
     .pr-title{font-weight:900;font-size:20px}
@@ -100,8 +101,13 @@
     .pill.pending{color:#f59e0b;border-color:#f59e0b1a;background:#f59e0b0d}
     .pill.rejected{color:#ef4444;border-color:#ef44441a;background:#ef44440d}
 
+    /* نحدد حجم الصفحة للطباعة (يؤثر على Save as PDF بالأندرويد) */
+    @page { size: A4 portrait; margin: 10mm; }
+
     @media print{
       .appbar,.accent-line,.filters,.cards,.list,.export-actions{display:none !important}
+      /* إخفاء أي شيت/مودال نهائياً وقت الطباعة */
+      .sheet,.sheet-backdrop{display:none !important}
       #printArea{display:block}
       body{background:#fff}
     }
@@ -274,7 +280,7 @@
 
     /* ===== Firebase init ===== */
     const firebaseConfig = {
-      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5سWNHIHY8RU8g",
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
       authDomain: "dynex-f4486.firebaseapp.com",
       databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
       projectId: "dynex-f4486",
@@ -354,7 +360,7 @@
           const v=v0||{};
           if(p.startsWith('adminOps/') && String(v.op||'').toLowerCase().indexOf('withdraw')===-1) continue;
 
-          const uidOf = String(first(v.uid, v.user_id, v.userId, v.ownerUid, uid));
+        const uidOf = String(first(v.uid, v.user_id, v.userId, v.ownerUid, uid));
           const accId = String(first(v.accountId, v.account_id, v.accId||''));
           if(uidOf!==UID && (ACCOUNT_ID && accId!==ACCOUNT_ID)) continue;
 
@@ -631,16 +637,13 @@
         `;
       }).join('');
 
+      // رأس مركزي: عنوان التقارير بالوسط وتحته اسم الشركة، وعلى اليمين/تحت التاريخ
       document.getElementById('prContent').innerHTML = `
-        <div class="pr-head">
-          <div class="pr-brand">
-            <div class="pr-logo"><img src="logo.png" alt="logo" style="max-width:80%;max-height:80%"></div>
-            <div>
-              <div class="pr-title">${brandName}</div>
-              <div class="pr-sub">تقرير العمليات • ${rangeTxt}</div>
-            </div>
-          </div>
-          <div class="pr-sub">Printed at: ${nowStr}</div>
+        <div class="pr-head center">
+          <div class="pr-title" style="font-size:22px">التقارير</div>
+          <div class="pr-sub" style="margin-top:2px">${brandName}</div>
+          <div class="pr-sub" style="margin-top:4px">Printed at: ${nowStr}</div>
+          <div class="pr-sub" style="margin-top:4px">النطاق: ${rangeTxt}</div>
         </div>
 
         <table class="pr-table">
@@ -677,7 +680,7 @@
         filename:     `report_${Date.now()}.pdf`,
         image:        { type: 'jpeg', quality: 0.98 },
         html2canvas:  { scale: 2, useCORS: true, backgroundColor:'#ffffff' },
-        jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' }, // مقاس A4 بالبكسل
+        jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' }, // A4 بالبكسل
         pagebreak:    { mode: ['css', 'legacy'] }
       };
       html2pdf().from(document.getElementById('prContent')).set(opt).save();
