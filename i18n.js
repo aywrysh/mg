@@ -499,6 +499,49 @@
    ['إعلان','advertisement'],
   
   
+  
+  // === Receipt / إيصال العملية ===
+['إيصال العملية','Transaction Receipt'],
+['المبلغ','Amount'],
+['دولار',' USDT'],
+['دولار ','USD'],
+['رقم مرجع العملية','Reference Number'],
+['العملية','Operation'],
+['تاريخ العملية','Transaction Date'],
+['المستفيد','Beneficiary'],
+['المودِع','Payer'],
+['مشترك','subscriber '],
+// === Receipt actions / أزرار الإيصال ===
+['نسخ المرجع','Copy Reference'],
+['حسناً','OK'],
+['تحميل كصورة','Save as Image'],
+['مشاركة','Share'],
+['تفاصيل الإيصال','Receipt Details'],
+['✔ تم النسخ','Copied ✔'],
+
+// === Deposit screen / شاشة الإيداع (جديد فقط) ===
+['لا يمكنك الإيداع إلى حسابك نفسه','You cannot deposit to your own account'],
+['الحد الأدنى للإيداع هو 50','Minimum deposit is 50'],
+['تاكد من ادخال البيانت بشكل صحيح او قد تخسر كل اموالك','Make sure data is correct or you may lose your funds'],
+
+// === Status & errors / حالات وأخطاء (جديد فقط) ===
+['الرجاء تسجيل الدخول','Please sign in'],
+['تعذّر الاتصال','Connection failed'],
+['فشل الإرسال','Send failed'],
+['صلاحيات القراءة غير كافية لمسار users','Insufficient read permissions for users path'],
+
+// === Common toasts / توستات سريعة (لو استخدمتها) ===
+['تم الإرسال بنجاح','Sent successfully'],
+['المستخدم غير موجود','User not found'],
+['أدخل معرف الحساب','Enter account ID'],
+['أدخل المبلغ','Enter amount'],
+['الرصيد غير كافٍ','Insufficient balance'],
+
+// === Header buttons / أزرار الهيدر (لو احتجتها مع الإيصال) ===
+['خدمة العملاء','Support'],
+['تغيير اللغة','Change language'],
+  
+  
   // ——— الصفحة الرئيسية ———
   ['إنشاء حساب','Create Account'],
   ['أدخل بيانات الحساب','Enter account details'],

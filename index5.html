@@ -57,11 +57,59 @@
     .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
     .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(0,0,0,.18);animation:ripple .6s linear;pointer-events:none}
     @keyframes ripple{to{transform:scale(3);opacity:0}}
+    
+/* ===== إيصال النجاح (Modal) ===== */
+.receipt-backdrop{
+  position:fixed; inset:0; background:rgba(0,0,0,.45);
+  opacity:0; visibility:hidden; transition:.25s; z-index:1000;
+}
+.receipt{
+  position:fixed; left:50%; top:50%;
+  transform:translate(-50%,-50%) scale(.94);
+  opacity:0; visibility:hidden; transition:opacity .25s, transform .25s, visibility 0s .25s;
+  width:min(92vw,520px); max-height:min(88vh,720px); overflow:auto;
+  background:#fff; border-radius:22px; border:1px solid #eee;
+  box-shadow:0 40px 90px rgba(0,0,0,.28); z-index:1001; padding:16px 14px;
+}
+.receipt.show{ opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1); transition-delay:0s; }
+.receipt-backdrop.show{ opacity:1; visibility:visible; }
+
+.rc-head{ display:flex; align-items:center; gap:10px; justify-content:center; margin-bottom:10px; }
+.rc-logo{
+  width:54px; height:54px; border-radius:16px;
+  background:conic-gradient(from 240deg, #ffedd5, #fde68a, #ffe4e6, #ffedd5);
+  display:grid; place-items:center; overflow:hidden; border:1px solid #f3f4f6;
+  box-shadow:0 8px 22px rgba(0,0,0,.08) inset;
+}
+.rc-logo img{ max-width:70%; max-height:70%; border-radius:12px; }
+.rc-title{ font-weight:900; font-size:18px; color:#111827 }
+
+.rc-amount{ margin:8px 0 12px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:16px; padding:12px; text-align:center; }
+.rc-amount .lbl{ color:#6b7280; font-weight:700; font-size:13px }
+.rc-amount .val{ font-weight:900; font-size:26px; color:#dc2626 }
+
+.rc-row{
+  display:flex; justify-content:space-between; align-items:center;
+  gap:8px; padding:10px 12px; border-radius:12px; border:1px dashed #e5e7eb; background:#fff; margin-top:8px;
+  font-weight:700;
+}
+.rc-row .k{ color:#6b7280; }
+.rc-row .v{ color:#0f172a; direction:ltr }
+
+.rc-actions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:14px; }
+.rc-btn{
+  min-width:140px; padding:12px; border-radius:12px; border:1px solid #e5e7eb;
+  background:#fff; cursor:pointer; font-weight:900;
+}
+.rc-btn.primary{ background:#F36523; border-color:#F36523; color:#fff }
+.rc-close{
+  position:absolute; inset-inline-end:10px; top:10px; width:38px; height:38px; border-radius:50%;
+  border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-weight:900;
+}
   </style>
   
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#e5e7eb">
-  
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#e5e7eb">
 </head>
 <body>
 
@@ -69,9 +117,7 @@
     <button class="exit ripple-container" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
     <div style="display:flex;gap:8px;align-items:center">
       <button class="icon-btn ripple-container" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
-      <button class="btn orange" id="langBtn" title="تغيير اللغة">
-  <span class="ms">g_translate</span>
-</button>
+      <button class="btn orange" id="langBtn" title="تغيير اللغة"><span class="ms">g_translate</span></button>
     </div>
   </header>
   <div class="accent-line"></div>
@@ -110,10 +156,42 @@
         <div class="kv" style="margin-top:8px"><span>رقم الهاتف</span><b id="lastName" dir="ltr">—</b></div>
       </div>
 
-      <div class="note" style="margin-top:8px">تاكد من ادخال البيانت بشكل صحيح او قد تخسر كل اموالك 
-      </div>
+      <div class="note" style="margin-top:8px">تاكد من ادخال البيانت بشكل صحيح او قد تخسر كل اموالك</div>
     </div>
   </main>
+
+  <!-- صوت النجاح -->
+  <audio id="rcSound" preload="auto">
+    <source src="success.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- نافذة الإيصال -->
+  <div id="rcBack" class="receipt-backdrop"></div>
+  <div id="rcSheet" class="receipt" role="dialog" aria-modal="true">
+    <button id="rcClose" class="rc-close">✕</button>
+    <div class="rc-head">
+      <div class="rc-logo"><img id="rcLogo" src="logo.png" alt="logo"></div>
+      <div class="rc-title">إيصال العملية</div>
+    </div>
+
+    <div class="rc-amount">
+      <div class="lbl">المبلغ</div>
+      <div class="val"><span id="rcAmount">0</span> <span id="rcCurr">ريال يمني</span></div>
+    </div>
+
+    <div class="rc-row"><span class="k">رقم مرجع العملية</span><span class="v" id="rcRef">—</span></div>
+    <div class="rc-row"><span class="k">العملية</span><span class="v" id="rcOp">تحويل مشترك</span></div>
+    <div class="rc-row"><span class="k">تاريخ العملية</span><span class="v" id="rcDate">—</span></div>
+    <div class="rc-row"><span class="k">المستفيد</span><span class="v" id="rcBenef">—</span></div>
+    <div class="rc-row"><span class="k">المودِع</span><span class="v" id="rcPayer">—</span></div>
+
+    <div class="rc-actions">
+      <button id="rcCopy" class="rc-btn">نسخ المرجع</button>
+      <button id="rcOk" class="rc-btn primary">حسناً</button>
+      <button id="rcSave" class="rc-btn">تحميل كصورة</button>
+      <button id="rcShare" class="rc-btn">مشاركة</button>
+    </div>
+  </div>
 
   <div class="sheet-backdrop" id="sheetBack"></div>
   <div class="sheet" id="langSheet">
@@ -132,6 +210,12 @@
 
   <!-- i18n -->
   <script src="i18n.js"></script>
+
+  <!-- html2canvas لأخذ لقطة كصورة -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+
+  <!-- Stub لضمان وجود showReceipt دائمًا قبل التبديل بالإصدار الكامل -->
+  <script>window.showReceipt = window.showReceipt || function(){};</script>
 
   <script>
     const $=s=>document.querySelector(s);
@@ -175,7 +259,6 @@
 
     const MIN_DEPOSIT = 50;
 
-    // ===== تطبيع الـID: يحوّل الأرقام العربي/الفارسي إلى 0-9 ويمسح أي رموز غير أرقام
     function normalizeAccountId(v){
       if(!v) return '';
       const map = {'٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9',
@@ -184,18 +267,15 @@
       return v;
     }
 
-    // ===== بحث مرن عن accountId (كنص، كرقم، ثم مسح كامل كحل أخير)
     async function findUserByAccountId(raw){
       const norm = normalizeAccountId(raw);
       if(!norm) return null;
 
-      // 1) نص
       try{
         const s1 = await db.ref('users').orderByChild('accountId').equalTo(norm).limitToFirst(1).get();
         if(s1.exists()){ const o=s1.val(); const k=Object.keys(o)[0]; if(k) return { key:k, ...o[k] }; }
       }catch(e){ if(e && e.code==='PERMISSION_DENIED') throw e; }
 
-      // 2) رقم
       const n = Number(norm);
       if(!Number.isNaN(n)){
         try{
@@ -204,7 +284,6 @@
         }catch(e){ if(e && e.code==='PERMISSION_DENIED') throw e; }
       }
 
-      // 3) مسح كامل كملاذ أخير (يتحاشى فروقات المسافات أو التخزين الغريب)
       try{
         const all = await db.ref('users').get();
         if(all.exists()){
@@ -235,7 +314,12 @@
       const idRaw = ($('#userId').value||'').trim();
       const id = normalizeAccountId(idRaw);
       const amt = parseFloat($('#amount').value||'0');
-
+// منع الإيداع إلى نفس حسابك
+if (id === normalizeAccountId(SELF.accountId || '')) {
+  toast('لا يمكنك الإيداع إلى حسابك نفسه');
+  resetResult();
+  return;
+}
       if(!id){ toast('أدخل معرف الحساب'); resetResult(); return; }
       if(!amt || amt<=0){ toast('أدخل المبلغ'); resetResult(); return; }
       if(amt < MIN_DEPOSIT){ toast('الحد الأدنى للإيداع هو 50'); resetResult(); return; }
@@ -262,9 +346,16 @@
       }
     };
 
-    // إرسال (يخصم من رصيدك ويضيف لرصيد الهدف)
+    // إرسال
     $('#sendBtn').onclick = async ()=>{
       if(!SELF.uid || !TARGET){ toast('اعرض البيانات أولًا'); return; }
+      
+      // حارس أمان إضافي: لا تسمح بالإيداع إلى نفسك
+if (TARGET && (TARGET.id === normalizeAccountId(SELF.accountId || '') || TARGET.key === SELF.uid)) {
+  toast('لا يمكنك الإيداع إلى حسابك نفسه');
+  return;
+}
+      
       if(AMT > SELF.balance){ toast('الرصيد غير كافٍ'); return; }
 
       try{
@@ -283,10 +374,34 @@
 
         await db.ref().update(updates);
 
-        SELF.balance -= AMT;
+        // ====== 👇 الإصلاح هنا: خزّن بيانات الإيصال قبل resetResult()
+        const memoBenef = `${TARGET.name || '-' } • ${TARGET.id}`;
+        const memoPayer = `${SELF.name  || '-' } • ${SELF.accountId || ''}`;
+        const refId     = txId.replace('tx_','');
+
+        // تحديث الواجهة
+        SELF.balance = +(SELF.balance - AMT).toFixed(2);
         $('#myBal').textContent = SELF.balance.toFixed(2);
-        $('#amount').value=''; $('#userId').value='';
+        $('#amount').value = '';
+        $('#userId').value  = '';
+
+        // لا تلمس TARGET بعد الآن (تم حفظ القيم)
         resetResult();
+
+        // نافذة الإيصال (لو صار خطأ فيها لا يؤثر على نجاح التحويل)
+        try{
+          if (typeof window.showReceipt === 'function') {
+            showReceipt({
+              amount: AMT,
+              currency: 'دولار ',
+              operation: 'تحويل مشترك',
+              beneficiary: memoBenef,
+              payer: memoPayer,
+              ref: refId
+            });
+          }
+        }catch(errRc){ console.error('receipt error:', errRc); }
+
         toast('تم الإرسال بنجاح');
       }catch(e){ console.error(e); toast('فشل الإرسال'); }
     };
@@ -313,14 +428,120 @@
     })();
   </script>
   
-    <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("✔ Service Worker registered"))
-      .catch(err => console.error("❌ Service Worker failed:", err));
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js")
+        .then(reg => console.log("✔ Service Worker registered"))
+        .catch(err => console.error("❌ Service Worker failed:", err));
+    }
+  </script>
+  
+  <script>
+// ===== إيصال: أدوات مساعدة =====
+(function(){
+  const back  = document.getElementById('rcBack');
+  const sheet = document.getElementById('rcSheet');
+  const close = document.getElementById('rcClose');
+  const okBtn = document.getElementById('rcOk');
+  const copy  = document.getElementById('rcCopy');
+  const snd   = document.getElementById('rcSound');
+
+  const elAmount = document.getElementById('rcAmount');
+  const elCurr   = document.getElementById('rcCurr');
+  const elRef    = document.getElementById('rcRef');
+  const elDate   = document.getElementById('rcDate');
+  const elBenef  = document.getElementById('rcBenef');
+  const elPayer  = document.getElementById('rcPayer');
+  const elOp     = document.getElementById('rcOp');
+
+  if (typeof window.showReceipt !== 'function') { window.showReceipt = function(){}; }
+
+  let currentRef = '';
+
+  function openRc(){
+    back.classList.add('show');
+    sheet.classList.add('show');
+    try { snd.currentTime=0; snd.play().catch(()=>{}); } catch(_) {}
   }
-</script>
-  
-  
+  function closeRc(){
+    back.classList.remove('show');
+    sheet.classList.remove('show');
+  }
+  back && back.addEventListener('click', closeRc);
+  close && close.addEventListener('click', closeRc);
+  okBtn && okBtn.addEventListener('click', closeRc);
+
+  copy && copy.addEventListener('click', async ()=>{
+    try{ await navigator.clipboard.writeText(currentRef); copy.textContent='✔ تم النسخ'; setTimeout(()=>copy.textContent='نسخ المرجع',900); }
+    catch(_){ }
+  });
+
+  const saveBtn = document.getElementById('rcSave');
+  const shareBtn= document.getElementById('rcShare');
+
+  async function captureReceipt(){
+    const node = sheet;
+    const canvas = await html2canvas(node, {backgroundColor:'#ffffff', scale:2});
+    return canvas;
+  }
+  saveBtn?.addEventListener('click', async ()=>{
+    try{
+      const canvas = await captureReceipt();
+      const link = document.createElement('a');
+      link.download = `receipt_${currentRef||Date.now()}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }catch(_){}
+  });
+
+  shareBtn?.addEventListener('click', async ()=>{
+    try{
+      const canvas = await captureReceipt();
+      if (navigator.canShare && navigator.canShare()) {
+        canvas.toBlob(async (blob)=>{
+          const file = new File([blob], `receipt_${currentRef||Date.now()}.png`, {type:'image/png'});
+          try{ await navigator.share({ files:[file], title:'إيصال العملية', text:'تفاصيل الإيصال' }); }catch(_){}
+        }, 'image/png');
+      } else {
+        const link = document.createElement('a');
+        link.download = `receipt_${currentRef||Date.now()}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
+    }catch(_){}
+  });
+
+  function makeRef(){
+    const base = Date.now().toString();
+    return base + Math.floor(Math.random()*9+1).toString();
+  }
+  const fmt = (n)=> Number(n||0).toLocaleString('ar-EG');
+
+  window.showReceipt = function({
+    amount=0, currency='ريال يمني', operation='تحويل مشترك',
+    beneficiary='—', payer='—', ref=null, date=null
+  }={}){
+    currentRef = ref || makeRef();
+    elAmount.textContent = fmt(amount);
+    elCurr.textContent   = currency;
+    elRef.textContent    = currentRef;
+    elOp.textContent     = operation;
+    elDate.textContent   = date || new Date().toLocaleString('en-GB',{hour12:false});
+    elBenef.textContent  = beneficiary;
+    elPayer.textContent  = payer;
+    openRc();
+  };
+
+  let unlocked=false;
+  function unlockOnce(){
+    if(unlocked) return; unlocked=true;
+    try{ snd.muted = true; snd.play().then(()=>{ snd.pause(); snd.currentTime=0; snd.muted=false; }).catch(()=>{}); }catch(_){}
+    document.removeEventListener('click', unlockOnce, true);
+    document.removeEventListener('touchstart', unlockOnce, true);
+  }
+  document.addEventListener('click', unlockOnce, true);
+  document.addEventListener('touchstart', unlockOnce, true);
+})();
+  </script>
 </body>
 </html>
