@@ -2,7 +2,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dynex – الرئيسية</title>
+  <title>Dynex</title>
   <!-- خط جوجل -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
   <!-- أيقونات جوجل -->
@@ -243,6 +243,26 @@
   
    <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e5e7eb">
+
+
+<link rel="icon" type="image/png" sizes="32x32" href="32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+
+<!-- iOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+
+<!-- Android / PWA -->
+<link rel="manifest" href="/site.webmanifest">
+
+<!-- Safari pinned tab (اختياري) -->
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
+
+<!-- ألوان النظام (اختياري) -->
+
+<meta name="msapplication-TileColor" content="#e5e7eb">
+  
+
 
 </head>
 <body>
@@ -532,7 +552,7 @@
           <div class="acct-name">
             <span class="mi">person</span>
             <input id="acctName" type="text" placeholder="اسم المستخدم" value="اسم المستخدم">
-          </div>
+        </div>
 
           <div class="acct-tags">
             <div class="tag phone"><span> الموبايل  </span><strong id="acctPhone" dir="ltr"></strong></div>
@@ -1228,7 +1248,7 @@ if(MREF){
 </script>
   
   
-  <script>
+<script>
 (function(){
   if(!window.firebase || !firebase.database) return;
   const db = firebase.database();
@@ -1244,77 +1264,87 @@ if(MREF){
   const btnAct  = document.getElementById('annAction');
   const btnX    = document.getElementById('annClose');
 
-  function openAnn(){
-    back.style.opacity = '1';
-    back.style.visibility = 'visible';
-    sheet.style.visibility = 'visible';
-    sheet.style.opacity = '1';
+  function addActive(){
+    // يدعم أسلوب الكلاسات لو كنت مركّب الستايل الجديد
+    back?.classList?.add('active');
+    sheet?.classList?.add('active');
+    // ويدعم الأسلوب القديم بالستايل الإنلاين:
+    back.style.opacity = '1'; back.style.visibility = 'visible';
+    sheet.style.visibility = 'visible'; sheet.style.opacity = '1';
     sheet.style.transform = 'translate(-50%,-50%) scale(1)';
     sheet.style.transitionDelay = '0s';
   }
-  function closeAnn(){
-    back.style.opacity = '0';
-    back.style.visibility = 'hidden';
+  function removeActive(){
+    back?.classList?.remove('active');
+    sheet?.classList?.remove('active');
+    back.style.opacity = '0'; back.style.visibility = 'hidden';
     sheet.style.opacity = '0';
     sheet.style.transform = 'translate(-50%,-50%) scale(.96)';
     sheet.style.transitionDelay = '0s';
     setTimeout(()=>{ sheet.style.visibility = 'hidden'; }, 250);
   }
+  function openAnn(){ addActive(); }
+  function closeAnn(){ removeActive(); }
   back.addEventListener('click', closeAnn);
-  btnX .addEventListener('click', closeAnn);
+  btnX && btnX.addEventListener('click', closeAnn);
 
   // لغة الواجهة
   const uiLang = (localStorage.getItem('lang') || 'ar').toLowerCase();
   const pick = (obj) => {
     if(!obj) return '';
-    const primary  = obj[uiLang] || '';
-    const fallback = uiLang==='ar' ? (obj.en || '') : (obj.ar || '');
-    return (primary && primary.trim()) ? primary : fallback;
+    const primary  = asStr(obj[uiLang]);
+    const fallback = uiLang==='ar' ? asStr(obj.en) : asStr(obj.ar);
+    return primary || fallback || '';
   };
+  const asStr = (v)=> String(v==null?'':v).trim();
 
-  // dynex_session: { uid, accountId } (لو موجودة)
+  // dynex_session: { uid, accountId }
   let UID=null, ACC=null;
   try{
     const s = JSON.parse(localStorage.getItem('dynex_session')||'null');
-    UID = s && s.uid;
-    ACC = s && s.accountId;
+    UID = s && asStr(s.uid);
+    ACC = s && asStr(s.accountId);
   }catch(_){}
 
   // تحديد الإعلان: UID → AccountID → عام
   async function resolveAnnouncement(){
+    // UID
     if(UID){
       const s = await db.ref('announcements/targetByUid/'+UID+'/latest').get().catch(()=>null);
       if(s && s.exists()) return {val:s.val(), scope:'uid', key:UID};
     }
+    // AccountID
     if(ACC){
       const s = await db.ref('announcements/targetByAccountId/'+ACC+'/latest').get().catch(()=>null);
       if(s && s.exists()) return {val:s.val(), scope:'acc', key:ACC};
     }
+    // Global
     const g = await db.ref('announcements/global').get().catch(()=>null);
     if(g && g.exists()) return {val:g.val(), scope:'global', key:'global'};
     return null;
   }
 
   function renderAndShow(ann){
-    if(ann.enabled !== true) return;
+    // إن لم توجد خاصية enabled اعتبره مفعّل
+    if(ann.enabled === false) return;
 
     const seenKey = 'ann_seen_' + (ann.id || 'global');
     if(!ann.everyOpen && localStorage.getItem(seenKey)==='1') return;
 
-    const title = (typeof ann.title==='object') ? pick(ann.title) : (ann.title||'إعلان');
-    const body  = (typeof ann.body ==='object') ? pick(ann.body ) : (ann.body || '');
+    const title = (typeof ann.title==='object') ? pick(ann.title) : asStr(ann.title||'إعلان');
+    const body  = (typeof ann.body ==='object') ? pick(ann.body ) : asStr(ann.body||'');
 
     titleEl.textContent = title || 'إعلان';
-    bodyEl.innerHTML = (String(body||'').trim() || '—').replace(/\n/g,'<br>');
+    bodyEl.innerHTML = (body || '—').replace(/\n/g,'<br>');
 
-    if(ann.image && String(ann.image).trim()){
+    if(asStr(ann.image)){
       hero.style.display='block'; img.src = ann.image;
     }else{
       hero.style.display='none'; img.removeAttribute('src');
     }
 
-    const btnText = (typeof ann.btnText==='object') ? pick(ann.btnText) : (ann.btnText||'');
-    const btnUrl  = ann.btnUrl && String(ann.btnUrl).trim() ? ann.btnUrl.trim() : '';
+    const btnText = (typeof ann.btnText==='object') ? pick(ann.btnText) : asStr(ann.btnText);
+    const btnUrl  = asStr(ann.btnUrl);
     if(btnText || btnUrl){
       btnAct.style.display='inline-block';
       btnAct.textContent = btnText || (uiLang==='ar'?'فتح':'Open');
@@ -1333,7 +1363,12 @@ if(MREF){
   (async function init(){
     try{
       const res = await resolveAnnouncement();
-      if(res && res.val) renderAndShow(res.val);
+      if(res && res.val){
+        renderAndShow(res.val);
+      } else {
+        // لا يوجد إعلان
+        // console.log('لا توجد إعلانات متاحة');
+      }
     }catch(err){ console.warn('announce error:', err); }
   })();
 })();

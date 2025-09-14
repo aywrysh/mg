@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dynex – دعوة صديق</title>
+  <title>Dynex</title>
 
   <!-- خطوط وأيقونات جوجل (Material Symbols) -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
@@ -74,6 +74,25 @@
   
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e5e7eb">
+  
+  <link rel="icon" type="image/png" sizes="32x32" href="32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
+<link rel="shortcut icon" href="/favicon.ico">
+
+<!-- iOS -->
+<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+
+<!-- Android / PWA -->
+<link rel="manifest" href="/site.webmanifest">
+
+<!-- Safari pinned tab (اختياري) -->
+<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
+
+<!-- ألوان النظام (اختياري) -->
+
+<meta name="msapplication-TileColor" content="#e5e7eb">
+  
+  
 </head>
 <body>
 
@@ -82,9 +101,9 @@
     <button class="btn orange" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
     <div class="row" style="gap:8px;align-items:center">
       <button class="btn" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
-     <button class="btn orange" id="langBtn" title="تغيير اللغة">
-  <span class="ms">g_translate</span>
-</button>
+      <button class="btn orange" id="langBtn" title="تغيير اللغة">
+        <span class="ms">g_translate</span>
+      </button>
     </div>
   </header>
   <div class="accent-line"></div>
@@ -221,9 +240,18 @@
     const langSheet=$("#langSheet"), back=$("#sheetBack");
     $("#langBtn").addEventListener('click', ()=>{ langSheet.classList.add('active'); back.classList.add('active'); });
     back.addEventListener('click', ()=>{ langSheet.classList.remove('active'); back.classList.remove('active'); });
+
+    // === دالة تحدد اللغة الحالية بشكل موثوق ===
+    function getLang(){
+      const l = (localStorage.getItem('lang') || document.documentElement.lang || navigator.language || 'ar').toLowerCase();
+      return l.startsWith('en') ? 'en' : 'ar';
+    }
+
     $$('#langSheet [data-setlang]').forEach(b=>b.addEventListener('click', ()=>{
       const l=b.dataset.setlang; localStorage.setItem('lang', l);
-      if(typeof window.applyLang==='function') window.applyLang(l); else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
+      if(typeof window.applyLang==='function') window.applyLang(l);
+      else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
+      updateShareLinks();               // ← تحديث نصوص وروابط المشاركة فور تغيير اللغة
       back.click();
     }));
 
@@ -255,18 +283,22 @@
     function buildLink(code){
       return `${REF_BASE}/?ref=${encodeURIComponent(code||'')}`;
     }
+
+    // === إنشاء الروابط ورسائل المشاركة حسب اللغة الحالية ===
     function updateShareLinks(){
       const url = encodeURIComponent(linkInp.value.trim());
-      const L = (localStorage.getItem('lang')||'ar');
+      const L = getLang();
       const msg = (L==='en')
         ? `Join me on Dynex! Use my invite code: ${codeInp.value.trim()}`
         : `انضم إليَّ في Dynex! استخدم رمز دعوتي: ${codeInp.value.trim()}`;
+      const subj = (L==='en') ? 'Join Dynex' : 'انضم إلى Dynex';
       const txt = encodeURIComponent(msg);
+
       $("#shareWa").href   = `https://wa.me/?text=${txt}%0A${url}`;
       $("#shareTg").href   = `https://t.me/share/url?url=${url}&text=${txt}`;
       $("#shareFb").href   = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
       $("#shareX").href    = `https://twitter.com/intent/tweet?text=${txt}&url=${url}`;
-      $("#shareMail").href = `mailto:?subject=${(L==='en')?'Join Dynex':'انضم إلى Dynex'}&body=${txt}%0A${url}`;
+      $("#shareMail").href = `mailto:?subject=${encodeURIComponent(subj)}&body=${txt}%0A${url}`;
     }
 
     db.ref('users/'+UID).on('value', s=>{
@@ -276,7 +308,7 @@
       codeInp.readOnly = true;
       linkInp.value = code ? buildLink(code) : '—';
       linkInp.dir = 'ltr';
-      updateShareLinks();
+      updateShareLinks(); // ← بعد تحميل/تحديث الرمز
     }, _=> toast('تعذّر جلب رمز الدعوة'));
 
     // ✅ تحديث فوري للإحصاءات
@@ -287,7 +319,6 @@
         const x = snap.val()||{};
         setStats(x.count ?? x.invited ?? 0, x.earnings ?? x.total ?? 0);
       }else{
-        // Fallback لمرة واحدة من users
         try{
           const u = (await db.ref('users/'+UID).get()).val()||{};
           setStats(u.refCount ?? 0, u.refEarnings ?? 0);
@@ -306,10 +337,11 @@
       try{ await navigator.clipboard.writeText(l); toast('تم نسخ الرابط'); }catch{ toast(l); }
     });
 
+    // مشاركة النظام بنفس لغة المستخدم
     $("#shareNative").addEventListener('click', async (e)=>{
       e.preventDefault();
       const url = linkInp.value.trim();
-      const L = (localStorage.getItem('lang')||'ar');
+      const L = getLang();
       const msg = (L==='en')
         ? `Join me on Dynex! Use my invite code: ${codeInp.value.trim()}`
         : `انضم إليَّ في Dynex! استخدم رمز دعوتي: ${codeInp.value.trim()}`;
