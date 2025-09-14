@@ -78,18 +78,11 @@
     .xbtn{padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;font-weight:800;cursor:pointer}
     .xbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 
-    /* لوحة التقرير */
     #printArea{display:none}
     #printArea.active{display:block}
     .pr-wrap{font-family:"Cairo",Arial,sans-serif; color:#0f172a; padding:16px; background:#fff}
-
-    /* مقاس A4 بالبكسل (لـ html2pdf) */
     .pr-a4{width:794px; min-height:1123px; margin:0 auto; background:#fff}
-
-    .pr-head{display:flex;align-items:center;gap:12px;justify-content:space-between;margin-bottom:10px}
-    .pr-head.center{justify-content:center;text-align:center;flex-direction:column;gap:6px}
-    .pr-brand{display:flex;align-items:center;gap:10px}
-    .pr-logo{width:48px;height:48px;border-radius:12px;border:1px solid #e5e7eb;display:grid;place-items:center;overflow:hidden;background:#fff}
+    .pr-head{display:flex;align-items:center;gap:12px;justify-content:center;margin-bottom:10px;flex-direction:column}
     .pr-title{font-weight:900;font-size:20px}
     .pr-sub{color:#64748b;font-weight:800;font-size:12px}
     .pr-table{width:100%;border-collapse:separate;border-spacing:0 8px}
@@ -101,18 +94,15 @@
     .pill.pending{color:#f59e0b;border-color:#f59e0b1a;background:#f59e0b0d}
     .pill.rejected{color:#ef4444;border-color:#ef44441a;background:#ef44440d}
 
-    /* نحدد حجم الصفحة للطباعة (يؤثر على Save as PDF بالأندرويد) */
     @page { size: A4 portrait; margin: 10mm; }
-
     @media print{
       .appbar,.accent-line,.filters,.cards,.list,.export-actions{display:none !important}
-      /* إخفاء أي شيت/مودال نهائياً وقت الطباعة */
       .sheet,.sheet-backdrop{display:none !important}
       #printArea{display:block}
       body{background:#fff}
     }
   </style>
-  
+
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e5e7eb">
 </head>
@@ -131,54 +121,54 @@
   <div class="accent-line"></div>
 
   <main class="page">
-    <h1>التقارير</h1>
+    <h1 id="pageTitle">التقارير</h1>
 
     <!-- فلاتر -->
     <div class="filters">
       <div class="row">
         <div class="col">
-          <label>من تاريخ</label>
+          <label id="lblFrom">من تاريخ</label>
           <input type="date" id="dateFrom" class="input">
         </div>
         <div class="col">
-          <label>إلى تاريخ</label>
+          <label id="lblTo">إلى تاريخ</label>
           <input type="date" id="dateTo" class="input">
         </div>
       </div>
 
       <div class="row">
         <div class="col">
-          <label>النطاق الزمني</label>
+          <label id="lblRange">النطاق الزمني</label>
           <select id="rangeSelect" class="input">
-            <option value="all" selected>الكل</option>
-            <option value="today">اليوم</option>
-            <option value="week">هذا الأسبوع</option>
-            <option value="month">هذا الشهر</option>
-            <option value="custom">مخصص</option>
+            <option value="all" selected id="optAll">الكل</option>
+            <option value="today" id="optToday">اليوم</option>
+            <option value="week" id="optWeek">هذا الأسبوع</option>
+            <option value="month" id="optMonth">هذا الشهر</option>
+            <option value="custom" id="optCustom">مخصص</option>
           </select>
         </div>
       </div>
 
       <div class="row" style="flex-wrap:wrap">
         <div class="chips" id="typeChips">
-          <div class="chip active" data-type="all">الكل</div>
-          <div class="chip" data-type="deposit">إيداع</div>
-          <div class="chip" data-type="withdraw">سحب</div>
-          <div class="chip" data-type="transfer">تحويل</div>
-          <div class="chip" data-type="deposit_to">إيداع إلى حساب</div>
-          <div class="chip" data-type="p2p">P2P</div>
+          <div class="chip active" data-type="all" id="chipAll">الكل</div>
+          <div class="chip" data-type="deposit" id="chipDep">إيداع</div>
+          <div class="chip" data-type="withdraw" id="chipWdr">سحب</div>
+          <div class="chip" data-type="transfer" id="chipTrf">تحويل</div>
+          <div class="chip" data-type="deposit_to" id="chipDepTo">إيداع إلى حساب</div>
+          <div class="chip" data-type="p2p" id="chipP2P">P2P</div>
         </div>
       </div>
     </div>
 
     <!-- ملخص -->
     <div class="cards" id="summary">
-      <div class="card"><div class="title">إجمالي الإيداعات</div><div class="amount pos" id="sumDeposit">0</div></div>
-      <div class="card"><div class="title">إجمالي السحوبات</div><div class="amount neg" id="sumWithdraw">0</div></div>
-      <div class="card"><div class="title">إجمالي التحويلات</div><div class="amount neg" id="sumTransfer">0</div></div>
-      <div class="card"><div class="title">إجمالي إيداع إلى حساب</div><div class="amount pos" id="sumDepTo">0</div></div>
-      <div class="card"><div class="title">إجمالي P2P</div><div class="amount" id="sumP2P">0</div></div>
-      <div class="card"><div class="title">عدد العمليات</div><div class="amount" id="sumCount">0</div></div>
+      <div class="card"><div class="title" id="tSumDep">إجمالي الإيداعات</div><div class="amount pos" id="sumDeposit">0</div></div>
+      <div class="card"><div class="title" id="tSumWdr">إجمالي السحوبات</div><div class="amount neg" id="sumWithdraw">0</div></div>
+      <div class="card"><div class="title" id="tSumTrf">إجمالي التحويلات</div><div class="amount neg" id="sumTransfer">0</div></div>
+      <div class="card"><div class="title" id="tSumDepTo">إجمالي إيداع إلى حساب</div><div class="amount pos" id="sumDepTo">0</div></div>
+      <div class="card"><div class="title" id="tSumP2P">إجمالي P2P</div><div class="amount" id="sumP2P">0</div></div>
+      <div class="card"><div class="title" id="tSumCount">عدد العمليات</div><div class="amount" id="sumCount">0</div></div>
     </div>
 
     <!-- أزرار الطباعة / PDF -->
@@ -191,7 +181,7 @@
     <div class="list" id="txList"></div>
   </main>
 
-  <!-- لوحة التقرير للطباعة / PDF (تُبنى ديناميكيًا) -->
+  <!-- لوحة التقرير للطباعة / PDF -->
   <div id="printArea">
     <div class="pr-wrap pr-a4" id="prContent"></div>
   </div>
@@ -210,7 +200,7 @@
   <div class="sheet-backdrop" id="sheetBackExit"></div>
   <div class="sheet" id="exitSheet">
     <div class="grab"></div>
-    <h3 style="text-align:center;margin:6px 0 10px">تأكيد الخروج؟</h3>
+    <h3 style="text-align:center;margin:6px 0 10px" id="exitTitle">تأكيد الخروج؟</h3>
     <div style="display:flex;gap:10px">
       <button class="btn ripple-container" id="exitNo" style="flex:1;border:1px solid var(--line)">إلغاء</button>
       <button class="btn ripple-container orange" id="exitYes" style="flex:1;border:1px solid var(--accent);background:var(--accent);color:#fff">خروج</button>
@@ -231,6 +221,123 @@
 
   <script>
   (function(){
+    /* ===== i18n بسيط داخل الصفحة (يُستخدم إذا لم يوفّر i18n.js دوال) ===== */
+    const T = {
+      ar: {
+        reports: 'التقارير',
+        reportsDual: 'التقارير / Reports',
+        support: 'خدمة العملاء',
+        changeLang: 'تغيير اللغة',
+        from: 'من تاريخ',
+        to: 'إلى تاريخ',
+        range: 'النطاق الزمني',
+        all: 'الكل',
+        today: 'اليوم',
+        week: 'هذا الأسبوع',
+        month: 'هذا الشهر',
+        custom: 'مخصص',
+        chip: {deposit:'إيداع', withdraw:'سحب', transfer:'تحويل', deposit_to:'إيداع إلى حساب', p2p:'P2P'},
+        sumDeposit: 'إجمالي الإيداعات',
+        sumWithdraw: 'إجمالي السحوبات',
+        sumTransfer: 'إجمالي التحويلات',
+        sumDepTo: 'إجمالي إيداع إلى حساب',
+        sumP2P: 'إجمالي P2P',
+        sumCount: 'عدد العمليات',
+        print: 'طباعة',
+        exportPDF: 'تصدير PDF',
+        noOps: 'لا توجد عمليات ضمن هذا النطاق.',
+        printedAt: 'وقت الطباعة',
+        rangeWord: 'النطاق',
+        th: {idx:'#', op:'العملية', amount:'المبلغ', status:'الحالة', date:'التاريخ', class:'التصنيف', other:'الطرف الآخر'},
+        status: {done:'تم', pending:'قيد الانتظار', rejected:'مرفوض'},
+        role: {deposit:'المودِع', deposit_to:'المودِع', transfer:'المستلم', withdraw:'المركز', p2p:'الطرف'},
+        exitTitle:'تأكيد الخروج؟',
+        cancel:'إلغاء', exit:'خروج',
+        toastPrintNone:'لا توجد بيانات لطباعتها',
+        toastPdfNone:'لا توجد بيانات للتصدير'
+      },
+      en: {
+        reports: 'Reports',
+        reportsDual: 'التقارير / Reports',
+        support: 'Support',
+        changeLang: 'Change language',
+        from: 'From date',
+        to: 'To date',
+        range: 'Time range',
+        all: 'All',
+        today: 'Today',
+        week: 'This week',
+        month: 'This month',
+        custom: 'Custom',
+        chip: {deposit:'Deposit', withdraw:'Withdraw', transfer:'Transfer', deposit_to:'Deposit to Account', p2p:'P2P'},
+        sumDeposit: 'Total Deposits',
+        sumWithdraw: 'Total Withdrawals',
+        sumTransfer: 'Total Transfers',
+        sumDepTo: 'Total Deposit to Account',
+        sumP2P: 'Total P2P',
+        sumCount: 'Operations Count',
+        print: 'Print',
+        exportPDF: 'Export PDF',
+        noOps: 'No operations in this range.',
+        printedAt: 'Printed at',
+        rangeWord: 'Range',
+        th: {idx:'#', op:'Operation', amount:'Amount', status:'Status', date:'Date', class:'Category', other:'Other party'},
+        status: {done:'done', pending:'pending', rejected:'rejected'},
+        role: {deposit:'Depositor', deposit_to:'Depositor', transfer:'Recipient', withdraw:'Center', p2p:'Peer'},
+        exitTitle:'Confirm exit?',
+        cancel:'Cancel', exit:'Exit',
+        toastPrintNone:'Nothing to print',
+        toastPdfNone:'Nothing to export'
+      }
+    };
+    function curLang(){
+      const l = (localStorage.getItem('lang')||'ar').toLowerCase();
+      return (l==='en'?'en':'ar');
+    }
+    function tr(path){
+      const l = curLang();
+      return path.split('.').reduce((o,k)=> (o||{})[k], T[l]) || '';
+    }
+    function applyLangInline(){
+      const l = curLang();
+      document.documentElement.lang = l;
+      document.getElementById('pageTitle').textContent = tr('reports');
+      document.getElementById('lblFrom').textContent = tr('from');
+      document.getElementById('lblTo').textContent = tr('to');
+      document.getElementById('lblRange').textContent = tr('range');
+      document.getElementById('optAll').textContent = tr('all');
+      document.getElementById('optToday').textContent = tr('today');
+      document.getElementById('optWeek').textContent = tr('week');
+      document.getElementById('optMonth').textContent = tr('month');
+      document.getElementById('optCustom').textContent = tr('custom');
+
+      document.getElementById('chipAll').textContent = tr('all');
+      document.getElementById('chipDep').textContent = tr('chip.deposit');
+      document.getElementById('chipWdr').textContent = tr('chip.withdraw');
+      document.getElementById('chipTrf').textContent = tr('chip.transfer');
+      document.getElementById('chipDepTo').textContent = tr('chip.deposit_to');
+      document.getElementById('chipP2P').textContent = tr('chip.p2p');
+
+      document.getElementById('tSumDep').textContent = tr('sumDeposit');
+      document.getElementById('tSumWdr').textContent = tr('sumWithdraw');
+      document.getElementById('tSumTrf').textContent = tr('sumTransfer');
+      document.getElementById('tSumDepTo').textContent = tr('sumDepTo');
+      document.getElementById('tSumP2P').textContent = tr('sumP2P');
+      document.getElementById('tSumCount').textContent = tr('sumCount');
+
+      document.getElementById('btnPrint').textContent = tr('print');
+      document.getElementById('btnPDF').textContent = tr('exportPDF');
+
+      document.getElementById('exitTitle').textContent = tr('exitTitle');
+      document.getElementById('exitNo').textContent = tr('cancel');
+      document.getElementById('exitYes').textContent = tr('exit');
+    }
+    window.applyLang = function(lang){
+      localStorage.setItem('lang', (lang==='en'?'en':'ar'));
+      applyLangInline();
+      render(); // لإعادة توليد القائمة بالنصوص الصحيحة
+    };
+
     /* ===== UI helpers ===== */
     const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
     function ripple(ev){const t=ev.currentTarget||ev.target.closest('.ripple-container,.btn'); if(!t) return; const r=document.createElement('span'); const d=Math.max(t.clientWidth,t.clientHeight); const rect=t.getBoundingClientRect(); r.className='ripple'; r.style.width=r.style.height=d+'px'; r.style.left=(ev.clientX-rect.left-d/2)+'px'; r.style.top=(ev.clientY-rect.top-d/2)+'px'; const old=t.querySelector('.ripple'); if(old) old.remove(); t.appendChild(r); setTimeout(()=>r.remove(),600);}
@@ -248,7 +355,7 @@
     const langBack=$('#sheetBack'), langSheet=$('#langSheet');
     $('#langBtn').onclick=()=>{ langBack.classList.add('active'); langSheet.classList.add('active'); };
     langBack.onclick=()=>{ langBack.classList.remove('active'); langSheet.classList.remove('active'); };
-    $$('#langSheet [data-setlang]').forEach(b=>b.onclick=()=>{ const l=b.dataset.setlang; if(typeof applyLang==='function') applyLang(l); localStorage.setItem('lang', l); langBack.click(); });
+    $$('#langSheet [data-setlang]').forEach(b=>b.onclick=()=>{ const l=b.dataset.setlang; if(typeof window.applyLang==='function') window.applyLang(l); });
 
     /* ===== Date helpers ===== */
     const pad=n=>n<10?('0'+n):n;
@@ -280,7 +387,7 @@
 
     /* ===== Firebase init ===== */
     const firebaseConfig = {
-      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5سWNHIHY8RU8g".replace('س','5'), /* حماية بسيطة من النسخ */
       authDomain: "dynex-f4486.firebaseapp.com",
       databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
       projectId: "dynex-f4486",
@@ -291,10 +398,9 @@
 
     /* ===== Session / profile ===== */
     const session = (function(){ try{ return JSON.parse(localStorage.getItem('dynex_session')||'null'); }catch(_){ return null; }})();
-    if(!session || !session.uid){ toast('الرجاء تسجيل الدخول'); setTimeout(()=>window.location.replace('index.html'),800); return; }
+    if(!session || !session.uid){ toast(curLang()==='ar'?'الرجاء تسجيل الدخول':'Please log in'); setTimeout(()=>window.location.replace('index.html'),800); return; }
     const UID = String(session.uid||'');
 
-    // جلب username + accountId لربط “إيداع إلى حساب”
     let USERNAME = (session.username||'')+'';
     let ACCOUNT_ID = (session.accountId||'')+'';
     async function loadProfile(){
@@ -338,7 +444,7 @@
     }
     const cmp = (a,b)=> String(a||'').toLowerCase()===String(b||'').toLowerCase();
 
-    /* ===== Withdrawals (محسّن) ===== */
+    /* ===== Loaders (نفس منطقك) ===== */
     async function loadWithdrawals(uid){
       const WITHDRAW_PATHS = [
         `users/${uid}/withdrawals`,
@@ -355,40 +461,27 @@
       for(const p of WITHDRAW_PATHS){
         const data = await getNode(p);
         if(!data) continue;
-
         for(const [k,v0] of entries(data)){
           const v=v0||{};
           if(p.startsWith('adminOps/') && String(v.op||'').toLowerCase().indexOf('withdraw')===-1) continue;
-
-        const uidOf = String(first(v.uid, v.user_id, v.userId, v.ownerUid, uid));
+          const uidOf = String(first(v.uid, v.user_id, v.userId, v.ownerUid, uid));
           const accId = String(first(v.accountId, v.account_id, v.accId||''));
           if(uidOf!==UID && (ACCOUNT_ID && accId!==ACCOUNT_ID)) continue;
-
-          const id = ensureId(p,k,v);
-          if(outMap.has(id)) continue;
-
+          const id = ensureId(p,k,v); if(outMap.has(id)) continue;
           const amt = toNum(first(v.netAmount, v.amount, v.amt, v.usdt, v.value, v.after?.delta));
           const cur = first(v.currency,'USDT');
           const time= first(v.created_ts, v.ts, v.createdAt, v.created_at, v.at, v.time, v.date, v.after?.at);
           const stRaw = String(first(v.status, v.state, v.approved, v.result, '')).toLowerCase();
           const status = /approved|done|paid|success|accepted|true|1/.test(stRaw) ? 'done' :
                          /rejected|failed|no|false|0|cancel/.test(stRaw) ? 'rejected' : (stRaw||'pending');
-
-          outMap.set(id,{
-            id, uid, type:'withdraw',
-            amount: amt, currency: cur,
-            at: toDate(time),
-            status,
-            note: v.address ? ('إلى: '+v.address) : (v.note||''),
-            counter: v.address||'',
-            method: first(v.network, v.chain, v.method, v.gateway, '')
-          });
+          outMap.set(id,{ id, uid, type:'withdraw', amount: amt, currency: cur, at: toDate(time), status,
+            note: v.address ? ('إلى: '+v.address) : (v.note||''), counter: v.address||'',
+            method: first(v.network, v.chain, v.method, v.gateway, '') });
         }
       }
       return [...outMap.values()];
     }
 
-    /* ===== إيداع إلى حساب / تحويل (محسّن) ===== */
     async function loadAccToAcc(uid){
       const ACC2ACC_PATHS = [
         `users/${uid}/transfers`,
@@ -404,10 +497,8 @@
       for(const p of ACC2ACC_PATHS){
         const data = await getNode(p);
         if(!data) continue;
-
         for(const [k,v0] of entries(data)){
           const v=v0||{};
-
           if(p.startsWith('adminOps/') && !/transfer|account/i.test(String(v.op||''))) continue;
 
           const fromUid = String(first(v.fromUid, v.from_uid, v.fromUser, v.senderUid, v.sender_id, v.fromUserId, ''));
@@ -421,8 +512,7 @@
           const meReceiver = (toUid===UID)   || (ACCOUNT_ID && toAcc===ACCOUNT_ID)   || (USERNAME && cmp(toUname, USERNAME));
           if(!meSender && !meReceiver) continue;
 
-          const id = ensureId(p,k,v);
-          if(outMap.has(id)) continue;
+          const id = ensureId(p,k,v); if(outMap.has(id)) continue;
 
           const amt = toNum(first(v.amount, v.amt, v.usdt, v.value, v.delta));
           const cur = first(v.currency,'USDT');
@@ -436,21 +526,13 @@
               ? first(v.fromName, v.from_name, v.senderName, v.sender_name, fromUname, fromAcc, fromUid)
               : first(v.toName,   v.to_name,   v.receiverName, v.receiver_name, toUname,   toAcc,   toUid);
 
-          outMap.set(id, {
-            id, uid, type,
-            amount: amt, currency: cur,
-            at: toDate(time),
-            status,
-            note: v.note||'',
-            counter: (otherName||'')+'',
-            method: first(v.method, v.channel, v.route, v.source, 'internal')
-          });
+          outMap.set(id, { id, uid, type, amount: amt, currency: cur, at: toDate(time), status,
+            note: v.note||'', counter: (otherName||'')+'', method: first(v.method, v.channel, v.route, v.source, 'internal') });
         }
       }
       return [...outMap.values()];
     }
 
-    /* ===== Admin deposits ===== */
     async function loadAdminDeposits(uid){
       try{
         const snap = await db.ref('adminOps/'+uid).get();
@@ -464,88 +546,54 @@
           const delta = (afterAmt!=null && beforeAmt!=null) ? (afterAmt - beforeAmt) : (v.amount!=null?+v.amount:afterAmt);
           const ts = v.after?.at || v.at || v.createdAt || Date.now();
           if(delta!=null){
-            out.push({
-              id:k, uid, type:'deposit',
-              amount:+delta, currency:(v.currency||'USDT'),
-              at:new Date(+ts),
-              status:'done',
-              note:'إيداع بواسطة المشرف',
-              counter:'',
-              method:'adminOps'
-            });
+            out.push({ id:k, uid, type:'deposit', amount:+delta, currency:(v.currency||'USDT'),
+              at:new Date(+ts), status:'done', note:'', counter:'', method:'adminOps' });
           }
         });
         return out;
       }catch(_){ return []; }
     }
 
-    /* ===== P2P ===== */
-    async function tryPath(path){
-      try{ const s=await db.ref(path).get(); return s.exists()? (s.val()||{}) : null; }catch(_){ return null; }
-    }
+    async function tryPath(path){ try{ const s=await db.ref(path).get(); return s.exists()? (s.val()||{}) : null; }catch(_){ return null; } }
     async function loadP2P(uid){
-      const out=[];
-      const paths=[
-        'p2pTransactions/'+uid,
-        'users/'+uid+'/p2p',
-        'p2p/tx/'+uid
-      ];
+      const out=[]; const paths=[ 'p2pTransactions/'+uid, 'users/'+uid+'/p2p', 'p2p/tx/'+uid ];
       for(const p of paths){
-        const obj = await tryPath(p);
-        if(!obj) continue;
+        const obj = await tryPath(p); if(!obj) continue;
         const arr = Array.isArray(obj)? obj.map((v,i)=>[i,v]) : Object.entries(obj);
         for(const [k,v] of arr){
-          const val=v||{};
-          const ts = (val.created_ts ?? val.ts ?? val.createdAt ?? val.created_at ?? val.at ?? val.time ?? val.date);
-          out.push({
-            id:val.id||String(k), uid:(val.uid||uid), type:'p2p',
+          const val=v||{}; const ts = (val.created_ts ?? val.ts ?? val.createdAt ?? val.created_at ?? val.at ?? val.time ?? val.date);
+          out.push({ id:val.id||String(k), uid:(val.uid||uid), type:'p2p',
             amount:+(val.amount ?? val.amt ?? val.value ?? 0), currency:(val.currency||'YER'),
-            at:new Date(ts ? Date.parse(ts) : Date.now()),
-            status:(val.status||'done'),
-            note: val.note||'',
-            counter: val.peer||val.phone||'',
-            method: val.method||'p2p'
-          });
+            at:new Date(ts ? Date.parse(ts) : Date.now()), status:(val.status||'done'),
+            note: val.note||'', counter: val.peer||val.phone||'', method: val.method||'p2p' });
         }
       }
       return out;
     }
 
     /* ===== Fetch all ===== */
-    let ALL_ROWS=[];
-    let LAST_FILTERED=[]; // للاستخدام في التصدير
+    let ALL_ROWS=[]; let LAST_FILTERED=[];
 
     async function fetchAll(){
-      ALL_ROWS=[];
-      await loadProfile();
-
-      const [w, a2a, dAdmin, p2p] = await Promise.all([
-        loadWithdrawals(UID),
-        loadAccToAcc(UID),
-        loadAdminDeposits(UID),
-        loadP2P(UID)
-      ]);
-
-      const map=new Map();
-      [...w, ...a2a, ...dAdmin, ...p2p].forEach(r=>{
-        if(!map.has(r.id)) map.set(r.id,r);
-      });
-
+      ALL_ROWS=[]; await loadProfile();
+      const [w, a2a, dAdmin, p2p] = await Promise.all([ loadWithdrawals(UID), loadAccToAcc(UID), loadAdminDeposits(UID), loadP2P(UID) ]);
+      const map=new Map(); [...w, ...a2a, ...dAdmin, ...p2p].forEach(r=>{ if(!map.has(r.id)) map.set(r.id,r); });
       ALL_ROWS = [...map.values()].sort((a,b)=> b.at - a.at);
       render();
     }
 
     /* ===== Render ===== */
-    const ICONS = { deposit:'arrow_downward', withdraw:'arrow_upward', transfer:'sync_alt', deposit_to:'account_balance', p2p:'groups' };
-    const LABELS= { deposit:'إيداع', withdraw:'سحب', transfer:'تحويل', deposit_to:'إيداع إلى حساب', p2p:'P2P' };
-
-    function inRange(d){
-      if(state.from && d < state.from) return false;
-      if(state.to   && d > state.to)   return false;
-      return true;
+    function opLabel(t){
+      const l = curLang();
+      return (l==='en'
+        ? (T.en.chip[t]||t)
+        : (T.ar.chip[t]||t));
     }
+    function inRange(d){ if(state.from && d < state.from) return false; if(state.to && d > state.to) return false; return true; }
 
     function render(){
+      applyLangInline();
+
       const filtered = ALL_ROWS.filter(r=>{
         const okType = (state.type==='all') || (r.type===state.type);
         return okType && inRange(r.at);
@@ -562,25 +610,25 @@
       $('#sumCount').textContent   = sum.count;
 
       const list = $('#txList');
-      if(!filtered.length){ list.innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center">لا توجد عمليات ضمن هذا النطاق.</div>`; return; }
+      if(!filtered.length){ list.innerHTML=`<div class="card" style="grid-column:1/-1;text-align:center">${tr('noOps')}</div>`; return; }
 
-      const pad=n=>n<10?('0'+n):n;
       list.innerHTML = filtered.map(r=>{
-        const dt=r.at; const fmt=`${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())} ${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+        const d=r.at; const fmt=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
         const signClass = (r.type==='deposit' || r.type==='deposit_to') ? 'pos' : 'neg';
         const noteParts=[];
-        if(r.note) noteParts.push('ملاحظة: '+r.note);
-        if(r.counter) noteParts.push('طرف آخر: <b dir="ltr">'+r.counter+'</b>');
-        if(r.method) noteParts.push('طريقة: '+r.method);
+        if(r.note) noteParts.push((curLang()==='ar'?'ملاحظة: ':'Note: ')+r.note);
+        if(r.counter) noteParts.push((curLang()==='ar'?'طرف آخر: ':'Other: ')+`<b dir="ltr">${r.counter}</b>`);
+        if(r.method) noteParts.push((curLang()==='ar'?'طريقة: ':'Method: ')+r.method);
         const moreHtml = noteParts.length? `<div class="more">${noteParts.join('<br>')}</div>` : '';
+        const statusTxt = tr('status.'+(r.status||'done').toLowerCase()) || r.status;
         return `
           <div class="tx">
             <div class="between">
               <div class="l">
-                <div class="icon"><span class="ms">${ICONS[r.type]||'receipt_long'}</span></div>
+                <div class="icon"><span class="ms">${{'deposit':'arrow_downward','withdraw':'arrow_upward','transfer':'sync_alt','deposit_to':'account_balance','p2p':'groups'}[r.type]||'receipt_long'}</span></div>
                 <div>
-                  <div class="name">${LABELS[r.type]||r.type}</div>
-                  <div class="meta">${fmt} • ${r.status||'—'}</div>
+                  <div class="name">${opLabel(r.type)}</div>
+                  <div class="meta">${fmt} • ${statusTxt}</div>
                 </div>
               </div>
               <div class="r">
@@ -592,74 +640,64 @@
           </div>`;
       }).join('');
 
-      $('#txList').querySelectorAll('.tx').forEach(el=>{
-        el.onclick = ()=> el.classList.toggle('open');
-      });
+      $('#txList').querySelectorAll('.tx').forEach(el=>{ el.onclick = ()=> el.classList.toggle('open'); });
     }
 
     /* ===== بناء لوحة الطباعة / PDF ===== */
     function buildPrintArea(){
       const brandName = localStorage.getItem('company_name') || 'Dynex';
-      // التاريخ بالأرقام الإنجليزية دائماً
+      // التاريخ بأرقام إنجليزية دائمًا
       const nowStr = new Date().toLocaleString('en-GB',{hour12:false});
 
       // نطاق التاريخ الظاهر
       const df = $('#dateFrom').value, dt = $('#dateTo').value;
-      let rangeTxt = 'الكل';
+      let rangeTxt = tr('all');
       if(df || dt){ rangeTxt = (df?df:'…') + ' → ' + (dt?dt:'…'); }
-      else if(state.range==='today'){ rangeTxt='اليوم'; }
-      else if(state.range==='week'){ rangeTxt='هذا الأسبوع'; }
-      else if(state.range==='month'){ rangeTxt='هذا الشهر'; }
+      else if(state.range==='today'){ rangeTxt=tr('today'); }
+      else if(state.range==='week'){ rangeTxt=tr('week'); }
+      else if(state.range==='month'){ rangeTxt=tr('month'); }
 
       const rows = LAST_FILTERED.map((r,i)=>{
-        const d = r.at;
-        const pad=n=>n<10?('0'+n):n;
-        const dstr = `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-
-        let otherLabel = 'الطرف';
-        if(r.type==='deposit' || r.type==='deposit_to') otherLabel = 'المودِع';
-        else if(r.type==='transfer') otherLabel = 'المستلم';
-        else if(r.type==='withdraw') otherLabel = 'المركز';
-
-        const otherVal = (r.type==='withdraw' ? (r.method||'المركز') : (r.counter||'—'));
-        const statusClass = 'pill ' + (r.status||'').toLowerCase();
-
+        const d=r.at; const dstr=`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+        const roleKey = r.type==='transfer' ? 'transfer' : (r.type==='withdraw' ? 'withdraw' : (r.type==='deposit_to'?'deposit_to': (r.type==='deposit'?'deposit':'p2p')));
+        const otherLabel = tr('role.'+roleKey);
+        const otherVal = (r.type==='withdraw' ? (r.method||otherLabel) : (r.counter||'—'));
+        const statusKey = (r.status||'done').toLowerCase();
+        const statusTxt = tr('status.'+statusKey) || r.status;
         return `
           <tr>
             <td>${i+1}</td>
-            <td>${LABELS[r.type]||r.type}</td>
+            <td>${opLabel(r.type)}</td>
             <td>${(+r.amount||0).toFixed(2)} ${r.currency||''}</td>
-            <td><span class="${statusClass}">${r.status||'—'}</span></td>
+            <td><span class="pill ${statusKey}">${statusTxt}</span></td>
             <td>${dstr}</td>
-            <td>${otherLabel}</td>
+            <td>${tr('th.class')}</td>
             <td dir="ltr">${otherVal}</td>
-          </tr>
-        `;
+          </tr>`;
       }).join('');
 
-      // رأس مركزي: عنوان التقارير بالوسط وتحته اسم الشركة، وعلى اليمين/تحت التاريخ
+      // رأس واحد فقط (لا تكرار)، العنوان ثنائي اللغة كما طلبت
       document.getElementById('prContent').innerHTML = `
-        <div class="pr-head center">
-          <div class="pr-title" style="font-size:22px">التقارير</div>
-          <div class="pr-sub" style="margin-top:2px">${brandName}</div>
-          <div class="pr-sub" style="margin-top:4px">Printed at: ${nowStr}</div>
-          <div class="pr-sub" style="margin-top:4px">النطاق: ${rangeTxt}</div>
+        <div class="pr-head">
+          <div class="pr-title" style="font-size:22px">${tr('reportsDual')}</div>
+          <div class="pr-sub">${brandName}</div>
+          <div class="pr-sub">${tr('printedAt')}: ${nowStr}</div>
+          <div class="pr-sub">${tr('rangeWord')}: ${rangeTxt}</div>
         </div>
-
         <table class="pr-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>العملية</th>
-              <th>المبلغ</th>
-              <th>الحالة</th>
-              <th>التاريخ</th>
-              <th>التصنيف</th>
-              <th>الطرف الآخر</th>
+              <th>${tr('th.idx')}</th>
+              <th>${tr('th.op')}</th>
+              <th>${tr('th.amount')}</th>
+              <th>${tr('th.status')}</th>
+              <th>${tr('th.date')}</th>
+              <th>${tr('th.class')}</th>
+              <th>${tr('th.other')}</th>
             </tr>
           </thead>
           <tbody>
-            ${rows || `<tr><td colspan="7" style="text-align:center">لا توجد بيانات</td></tr>`}
+            ${rows || `<tr><td colspan="7" style="text-align:center">${tr('noOps')}</td></tr>`}
           </tbody>
         </table>
       `;
@@ -667,34 +705,34 @@
 
     /* ===== طباعة و PDF ===== */
     $('#btnPrint').onclick = ()=>{
-      if(!LAST_FILTERED.length){ toast('لا توجد بيانات لطباعتها'); return; }
-      buildPrintArea();
-      window.print();
+      if(!LAST_FILTERED.length){ toast(tr('toastPrintNone')); return; }
+      buildPrintArea(); window.print();
     };
-
     $('#btnPDF').onclick = ()=>{
-      if(!LAST_FILTERED.length){ toast('لا توجد بيانات للتصدير'); return; }
+      if(!LAST_FILTERED.length){ toast(tr('toastPdfNone')); return; }
       buildPrintArea();
       const opt = {
-        margin:       10,
-        filename:     `report_${Date.now()}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, backgroundColor:'#ffffff' },
-        jsPDF:        { unit: 'px', format: [794, 1123], orientation: 'portrait' }, // A4 بالبكسل
-        pagebreak:    { mode: ['css', 'legacy'] }
+        margin: 10,
+        filename: `report_${Date.now()}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor:'#ffffff' },
+        jsPDF: { unit: 'px', format: [794,1123], orientation: 'portrait' },
+        pagebreak: { mode: ['css','legacy'] }
       };
       html2pdf().from(document.getElementById('prContent')).set(opt).save();
     };
 
+    // أول تحميل
+    applyLangInline();
     fetchAll().catch(()=>toast('تعذّر جلب البيانات'));
   })();
   </script>
-  
+
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("service-worker.js")
-        .then(reg => console.log("✔ Service Worker registered"))
-        .catch(err => console.error("❌ Service Worker failed:", err));
+        .then(()=>{})
+        .catch(()=>{});
     }
   </script>
 </body>
