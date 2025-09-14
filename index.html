@@ -165,7 +165,29 @@ a.btn.btn-outline[href*="artikarbot"] svg {
 <meta name="twitter:title"       content="Dynex – الرئيسية">
 <meta name="twitter:description" content=" – Dynex Trade, Deposit and Withdraw Easily.">
 <meta name="twitter:image"       content="https://aywrysh.github.io/mm/share.jpg">
-  
+
+<!-- 🔥 منع وميض الأيقونات + إخفاء الصفحة مؤقتًا -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"
+      onload="this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
+</noscript>
+<style>
+  html.icons-wait .ms{visibility:hidden}
+  html.app-wait body{visibility:hidden}
+</style>
+<script>
+  // نمنع وميض أسماء الأيقونات ونخفي الواجهة حتى الجاهزية
+  document.documentElement.classList.add('icons-wait','app-wait');
+  window.__fontsReady = Promise.race([
+    (document.fonts ? document.fonts.ready : Promise.resolve()),
+    new Promise(r => setTimeout(r, 1500))
+  ]).then(()=>{ document.documentElement.classList.remove('icons-wait'); });
+</script>
   
   
 </head>
@@ -582,6 +604,16 @@ a.btn.btn-outline[href*="artikarbot"] svg {
         btn.disabled = false; btn.textContent = prev;
       }
     });
+
+    // 🔓 إظهار الصفحة بعد الجاهزية (الخطوط + تهيئة أولية)
+    let __dataReadyResolve;
+    const __dataReady = new Promise(r=>(__dataReadyResolve=r));
+    function appReady(){ __dataReadyResolve(); }
+    Promise.all([window.__fontsReady, __dataReady]).then(()=>{
+      document.documentElement.classList.remove('app-wait');
+    });
+    // الصفحة هذه ما تعتمد على بيانات خارجية قبل التفاعل، فنعتبرها جاهزة الآن:
+    appReady();
   </script>
   
   <script>
@@ -593,7 +625,16 @@ a.btn.btn-outline[href*="artikarbot"] svg {
   </script>
   
   
-
+<script>
+  // عند نهاية تهيئة الصفحة/الخطوط: أظهر الصفحة
+  if (window.__fontsReady) {
+    window.__fontsReady.finally(function(){
+      document.documentElement.classList.remove('app-wait');
+    });
+  } else {
+    document.documentElement.classList.remove('app-wait');
+  }
+</script>
   
 </body>
-</html> 
+</html>

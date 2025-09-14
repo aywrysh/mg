@@ -78,6 +78,26 @@
 
 <meta name="msapplication-TileColor" content="#e5e7eb">
   
+  
+  <!-- تحسين تحميل خط الأيقونات + منع وميضه وإخفاء الصفحة مؤقتًا -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style"
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0"
+      onload="this.rel='stylesheet'">
+<noscript>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0">
+</noscript>
+
+<style>
+  /* إخفاء الأيقونات مؤقتًا + إخفاء الصفحة لحين الجاهزية */
+  html.icons-wait .ms,
+  html.icons-wait .mi { visibility: hidden; }
+  html.app-wait body { visibility: hidden; }
+</style>
+  
+  
 </head>
 <body>
 
@@ -308,6 +328,19 @@
       .catch(err => console.error("❌ Service Worker failed:", err));
   }
 </script>
+  
+  
+  <script>
+  // عند نهاية تهيئة الصفحة/الخطوط: أظهر الصفحة
+  if (window.__fontsReady) {
+    window.__fontsReady.finally(function(){
+      document.documentElement.classList.remove('app-wait');
+    });
+  } else {
+    document.documentElement.classList.remove('app-wait');
+  }
+</script>
+  
   
 </body>
 </html>
