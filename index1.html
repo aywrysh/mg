@@ -558,6 +558,23 @@
 </div>
 
 
+          
+          <!-- نافذة الرسائل -->
+<div class="sheet-backdrop" id="msgBack"></div>
+<div class="sheet" id="msgSheet" aria-modal="true" role="dialog" style="max-width:520px;margin:0 auto">
+  <div class="grab"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+    <h3 style="margin:0">رسائل الشركة</h3>
+    <button class="btn" id="msgClose" title="إغلاق"><span class="ms">close</span></button>
+  </div>
+  <div id="msgList" style="display:grid;gap:10px;max-height:60vh;overflow:auto"></div>
+</div>
+
+<!-- صوت تنبيه (اختياري) -->
+<audio id="msgSnd" preload="auto">
+  <source src="data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAA..." type="audio/mpeg">
+</audio>
+
 
 <div class="tx-ticker">
   <div class="tx-viewport">
@@ -595,6 +612,11 @@
               <button class="copy ripple-container" id="copyIdAcc" title="نسخ"><span class="ms">content_copy</span></button>
             </div>
           </div>
+          
+          
+
+          
+          
 
          <div class="acct-list">
   <a class="acct-item ripple-container" href="index10.html" data-go="edit">
@@ -1420,7 +1442,7 @@ if(MREF){
   }
 </script>
   
-  
+
   
 </body>
 </html>
