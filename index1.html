@@ -558,8 +558,7 @@
 </div>
 
 
-          
-          <!-- نافذة الرسائل -->
+<!-- نافذة الرسائل -->
 <div class="sheet-backdrop" id="msgBack"></div>
 <div class="sheet" id="msgSheet" aria-modal="true" role="dialog" style="max-width:520px;margin:0 auto">
   <div class="grab"></div>
@@ -570,11 +569,12 @@
   <div id="msgList" style="display:grid;gap:10px;max-height:60vh;overflow:auto"></div>
 </div>
 
-<!-- صوت تنبيه (اختياري) -->
+<!-- صوت تنبيه -->
 <!-- صوت تنبيه -->
 <audio id="msgSnd" preload="auto">
   <source src="159.mp3" type="audio/mpeg">
 </audio>
+
 
 
 <div class="tx-ticker">
@@ -614,7 +614,7 @@
             </div>
           </div>
           
-          
+
 
           
           
@@ -980,7 +980,7 @@
     const title = (m.title||'بدون عنوان').trim();
     const body  = (m.body||m.text||'').trim().replace(/\n/g,'<br>');
     const ts    = Number(m.createdAt||0);
-    const date  = ts ? new Date(ts).toLocaleString('ar-EG-u-nu-latn', { hour12:false }) : '';
+    const date  = ts ? new Date(ts).toLocaleString('ar-EG',{hour12:false}) : '';
     return (
       '<article class="msg-card">' +
         '<div class="msg-head">' +
