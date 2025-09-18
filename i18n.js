@@ -328,6 +328,10 @@
   ['اكتب التفاصيل هنا…','Write details here…'],
   ['* إذا اخترت “غير ذلك” يجب كتابة التفاصيل.','* If you choose “Other”, you must write the details.'],
 
+
+
+
+
   // الأزرار
   ['إلغاء','Cancel'],
   ['دولار','USDT'],

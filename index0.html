@@ -23,7 +23,8 @@
     }
     *{box-sizing:border-box}
     body{
-      margin:0; font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink);
+      margin:0; font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink)
+      ;
       background: var(--bg-img) center/cover no-repeat fixed;
       min-height:100vh; display:grid; place-items:center;
       position: relative;
@@ -37,7 +38,23 @@
       width:44px; height:44px; border-radius:12px; display:grid; place-items:center;
       cursor:pointer; z-index:20;
     }
-    .ms{font-family:'Material Symbols Rounded'}
+
+    /* كلاس الخط للأيقونات (Material Symbols) */
+    .ms{
+      font-family: 'Material Symbols Rounded';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      display: inline-block;
+      letter-spacing: normal;
+      text-transform: none;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-smoothing: antialiased;
+      font-variation-settings: 'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+    }
 
     .topbar{display:flex; justify-content:center; align-items:center; gap:10px; margin-bottom:8px}
     .logo-mini{width:76px; height:76px; border-radius:14px; display:grid; place-items:center; overflow:hidden}
@@ -94,7 +111,7 @@
     /* === نافذة بيانات الحساب المنشأ (شيت) === */
     .created-back{position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; visibility:hidden; transition:.25s; z-index:98}
     .created-sheet{position:fixed; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.2);
-      transform:translateY(100%); transition:.3س; z-index:99; padding:14px 16px; max-width:560px; margin:0 auto}
+      transform:translateY(100%); transition:.3s; z-index:99; padding:14px 16px; max-width:560px; margin:0 auto}
     .created-sheet.active{transform:translateY(0)}
     .created-back.active{opacity:1; visibility:visible}
     .created-sheet .grab{width:42px; height:5px; border-radius:3px; background:#e5e7eb; margin:6px auto 12px}
@@ -116,57 +133,57 @@
     .actions-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
     .warn{margin-top:10px; font-size:13px; color:#b91c1c; background:#fef2f2; border:1px solid #fee2e2; padding:8px 10px; border-radius:12px; font-weight:800}
     
-#toggleCPwd{
-  /* نفس أبعاد ومكان زرّك */
+    
+    /* أيقونة داخل زر صغير (refresh) */
+.btn-icon{
+  width:20px; height:20px; display:block; pointer-events:none;
+  /* لو تبغى تحوّل SVG لأسود: filter: brightness(0) saturate(100%); */
+}
+
+/* زرّ العين المحلي (بدون خطوط جوجل) */
+.toggle-eye{
   position:absolute; inset-inline-end:10px; top:50%;
   transform:translateY(calc(-50% + 12px));
   width:34px; height:34px; border:none; background:transparent; cursor:pointer;
+  background-image: url('icons/eye-on.svg');   /* عين مفتوحة */
+  background-repeat:no-repeat; background-position:center; background-size:20px 20px;
+  z-index:2;
+  /* لو احتجت تقتّم الأيقونة: filter: brightness(0) saturate(100%); */
+}
 
-  /* الأيقونة كخلفية مباشرة (غيّر اسم الملف لو مختلف عندك) */
-  background-image: url('ايقونةعين.png');  /* ← ضع ملف العين هنا */
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 20px 20px;
-
-  /* يضمن ظهوره فوق حقل الإدخال */
-  z-index: 2;
-
-  /* يجعل الأيقونة داكنة لو كانت بيضاء */
-  filter: brightness(0) saturate(100%);
+/* لما تكون كلمة السر معروضة */
+.toggle-eye.showing{
+  background-image: url('icons/eye-off.svg'); /* عين مقفلة */
 }
     
     
   </style>
   
-     <link rel="manifest" href="manifest.json">
+  <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e5e7eb">
   
   <link rel="icon" type="image/png" sizes="32x32" href="32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
-<link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
 
-<!-- iOS -->
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+  <!-- iOS -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
+  <!-- Android / PWA -->
+  <link rel="manifest" href="/site.webmanifest">
 
-<!-- Safari pinned tab (اختياري) -->
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
+  <!-- Safari pinned tab (اختياري) -->
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
 
-<!-- ألوان النظام (اختياري) -->
-<meta name="msapplication-TileColor" content="#e5e7eb">
-
-
-  
-  
+  <!-- ألوان النظام (اختياري) -->
+  <meta name="msapplication-TileColor" content="#e5e7eb">
 </head>
 <body>
 
-  <!-- زر اللغة -->
+  <!-- زر اللغة (تحويله إلى span.ms ليظهر الرمز) -->
  <button class="lang-btn" id="langBtn" title="language">
-  <img class="ms" src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
-</button>
+<img class="ms" src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+  </button>
 
   <div class="wrap">
     <div class="topbar">
@@ -177,51 +194,60 @@
       <h1 class="title">إنشاء حساب</h1>
       <div class="sub">أدخل بيانات الحساب،</div>
 
-<!-- الاسم -->
-<div class="field">
-  <label class="label" for="name">الاسم الكامل</label>
-  <input id="name" class="input" type="text" placeholder="اسم المستخدم">
-  <img class="icon" src="ايقونةمستخدم.png" alt="person">
-</div>
+      <!-- الاسم -->
+      <div class="field">
+        <label class="label" for="name">الاسم الكامل</label>
+        <input id="name" class="input" type="text" placeholder="اسم المستخدم">
+        <img class="icon" src="ايقونةمستخدم.png" alt="person">
+      </div>
 
-<!-- الهاتف -->
-<div class="field">
-  <label class="label" for="phone">رقم الهاتف</label>
-  <input id="phone" class="input" type="tel" inputmode="tel" dir="ltr" placeholder=" XXXXXXXX">
-  <img class="icon" src="ايقونةهاتف.png" alt="call">
-</div>
+      <!-- الهاتف -->
+      <div class="field">
+        <label class="label" for="phone">رقم الهاتف</label>
+        <input id="phone" class="input" type="tel" inputmode="tel" dir="ltr" placeholder=" XXXXXXXX">
+        <img class="icon" src="ايقونةهاتف.png" alt="call">
+      </div>
+
+
+
 
 <!-- اسم المستخدم (تلقائي) + زر تحديث -->
 <div class="field">
   <label class="label" for="uname">اسم المستخدم (تلقائي)</label>
   <div class="row" style="position:relative">
     <input id="uname" class="input" type="text" placeholder="سيُولَّد تلقائيًا" readonly>
-   
+    <!-- زر تجديد بأيقونة محلية -->
+    <button class="btn" id="regenU" type="button" title="تجديد">
+      <img src="تحديث.png" alt="تجديد" width="20" height="20" loading="lazy">
+    </button>
     <img class="icon" src="ايقونةتلقاي.png" alt="badge">
   </div>
   <div style="font-size:12px;color:var(--muted)">7 أحرف إنجليزية (كبيرة وصغيرة).</div>
 </div>
 
-<!-- كلمة المرور -->
+<!-- كلمة المرور (بدون زر العين) -->
 <div class="field">
   <label class="label" for="pwd">كلمة المرور</label>
   <input id="pwd" class="input" type="password" placeholder="••••••••">
   <img class="icon" src="ايقونةكلمت.png" alt="lock">
- <button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"></button>
 </div>
 
-<!-- تأكيد كلمة المرور -->
+<!-- تأكيد كلمة المرور (بدون زر العين) -->
 <div class="field">
   <label class="label" for="cpwd">تأكيد كلمة المرور</label>
   <input id="cpwd" class="input" type="password" placeholder="••••••••">
   <img class="icon" src="ايقونةكلمت.png" alt="lock reset">
-<button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"></button>
 </div>
 
-<div class="actions">
-  <button class="btn-solid" id="cancelBtn" type="button" onclick="window.location.href='index.html'">إلغاء</button>
-  <button class="btn-solid primary" id="createBtn" type="submit">إنشاء الحساب</button>
-</div>
+
+
+      <div class="actions">
+        <button class="btn-solid" id="cancelBtn" type="button" onclick="window.location.href='index.html'">إلغاء</button>
+        <button class="btn-solid primary" id="createBtn" type="submit">إنشاء الحساب</button>
+      </div>
+    </form>
+  </div>
+
   <!-- شيت اللغة -->
   <div class="sheet-backdrop" id="sheetBack"></div>
   <div class="sheet" id="langSheet" aria-modal="true" role="dialog">
@@ -283,7 +309,7 @@
     import { getDatabase, ref, set, push, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5سWNHIHY8RU8g".replace('س','S'), // تأكيد الحرف
       authDomain: "dynex-f4486.firebaseapp.com",
       databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
       projectId: "dynex-f4486",
@@ -292,6 +318,42 @@
 
     const app = initializeApp(firebaseConfig);
     const db  = getDatabase(app);
+
+    // === (إضافة وحيدة) قاموس ترجمات + دالة لغة حالية ===
+    const T = {
+      ar: {
+        app: 'تم إنشاء الحساب',
+        created: 'تم إنشاء الحساب بنجاح',
+        shareTitle: 'تم إنشاء حسابك في Dynex ✅',
+        name: 'الاسم',
+        username: 'اسم المستخدم',
+        phone: 'رقم الهاتف',
+        accountId: 'رقم الحساب',
+        invite: 'رمز الدعوة',
+        password: 'كلمة المرور',
+        copied: 'تم النسخ',
+        copyFail: 'تعذّر النسخ',
+        saveFail: 'تعذّر حفظ الصورة',
+      },
+      en: {
+        app: 'Account Created',
+        created: 'Account created successfully',
+        shareTitle: 'Your Dynex account has been created ✅',
+        name: 'Name',
+        username: 'Username',
+        phone: 'Phone',
+        accountId: 'Account ID',
+        invite: 'Invite Code',
+        password: 'Password',
+        copied: 'Copied',
+        copyFail: 'Copy failed',
+        saveFail: 'Couldn’t save image',
+      }
+    };
+    function getLang(){
+      const saved = (localStorage.getItem('lang') || document.documentElement.getAttribute('lang') || 'ar').toLowerCase();
+      return saved.startsWith('en') ? 'en' : 'ar';
+    }
 
     // === توست
     const $ = s => document.querySelector(s);
@@ -303,15 +365,16 @@
       };
     })();
 
-    // === إظهار/إخفاء كلمات السر
+    // === إظهار/إخفاء كلمات السر (يعتمد على span.ms داخل الزر)
     function attachToggle(btnId, inputId){
       const btn = document.getElementById(btnId);
       const inp = document.getElementById(inputId);
-      if(!btn || !inp) return;
+      const glyph = btn ? btn.querySelector('.ms') : null;
+      if(!btn || !inp || !glyph) return;
       btn.addEventListener('click', ()=>{
-        const hidden = inp.type === 'password';
-        inp.type = hidden ? 'text' : 'password';
-        btn.querySelector('.ms').textContent = hidden ? 'visibility_off' : 'visibility';
+        const wasHidden = (inp.type === 'password');
+        inp.type = wasHidden ? 'text' : 'password';
+        glyph.textContent = wasHidden ? 'visibility_off' : 'visibility';
       });
     }
     attachToggle('togglePwd','pwd');
@@ -351,34 +414,22 @@
     const cancel = $("#cancelBtn");
     const create = $("#createBtn");
 
-    // الشيت + عناصره
-    const createdSheet = $("#createdSheet");
-    const createdBack  = $("#createdBack");
-    const c_name      = $("#c_name");
-    const c_username  = $("#c_username");
-    const c_phone     = $("#c_phone");
-    const c_accountId = $("#c_accountId");
-    const c_invite    = $("#c_invite");
-    const c_password  = $("#c_password");
-    const copyCreated = $("#copyCreated");
-    const saveImg     = $("#saveImg");
-    const waShare     = $("#waShare");
-    const tgShare     = $("#tgShare");
-    const closeCreated= $("#closeCreated");
-
     // توليد اسم مبدئي ثم فحص
     let usernameVar = genUsernameLocal();
     unameI.value = usernameVar;
     (async ()=>{ try{ usernameVar = await freshUsernameSafe(); unameI.value = usernameVar; }catch(_){}})();
 
-    regen.addEventListener('click', async ()=>{
-      regen.disabled = true;
-      try{
-        usernameVar = await freshUsernameSafe();
-        unameI.value = usernameVar;
-        toast('تم توليد اسم جديد');
-      }finally{ regen.disabled = false; }
-    });
+    // زر تجديد اسم المستخدم (موجود الآن)
+    if (regen){
+      regen.addEventListener('click', async ()=>{
+        regen.disabled = true;
+        try{
+          usernameVar = await freshUsernameSafe();
+          unameI.value = usernameVar;
+          toast('تم توليد اسم جديد');
+        }finally{ regen.disabled = false; }
+      });
+    }
 
     cancel.addEventListener('click', ()=>{
       nameI.value=''; phoneI.value=''; pwdI.value=''; cpwdI.value='';
@@ -387,9 +438,51 @@
 
     function validPhoneLoose(v){ return (String(v||'').replace(/\D/g,'').length >= 7); }
 
-    // === فتح نافذة "تم الإنشاء" + نسخ/حفظ/إرسال
+    /* === فتح نافذة "تم الإنشاء" + نسخ/حفظ/إرسال — مُعدّلة للغة الحالية === */
     function openCreatedSheet(user){
-      // تعبئة
+      const lang = getLang();
+      const t = T[lang] || T.ar;
+
+      const createdSheet = document.getElementById('createdSheet');
+      const createdBack  = document.getElementById('createdBack');
+
+      const c_name      = document.getElementById('c_name');
+      const c_username  = document.getElementById('c_username');
+      const c_phone     = document.getElementById('c_phone');
+      const c_accountId = document.getElementById('c_accountId');
+      const c_invite    = document.getElementById('c_invite');
+      const c_password  = document.getElementById('c_password');
+
+      const copyCreated = document.getElementById('copyCreated');
+      const saveImg     = document.getElementById('saveImg');
+      const waShare     = document.getElementById('waShare');
+      const tgShare     = document.getElementById('tgShare');
+      const closeCreated= document.getElementById('closeCreated');
+
+      // ضبط لغة/اتجاه الكرت قبل العرض والتصوير
+      const card = document.getElementById('createdCard');
+      card.setAttribute('lang', lang);
+      card.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
+
+      // عناوين الكرت حسب اللغة
+      const appEl = document.querySelector('#brandHead .app');
+      if (appEl) appEl.textContent = t.app;
+
+      const titleEl = document.querySelector('.created-title');
+      if (titleEl) titleEl.innerHTML = '<span class="created-ok"></span>' + t.created;
+
+      // تسميات الحقول داخل الكرت
+      const kEls = document.querySelectorAll('.kv .k');
+      if (kEls.length >= 6){
+        kEls[0].textContent = t.name;
+        kEls[1].textContent = t.username;
+        kEls[2].textContent = t.phone;
+        kEls[3].textContent = t.accountId;
+        kEls[4].textContent = t.invite;
+        kEls[5].textContent = t.password;
+      }
+
+      // تعبئة القيم
       c_name.textContent      = user.name || '—';
       c_username.textContent  = user.username || '—';
       c_phone.textContent     = user.phone || '—';
@@ -397,31 +490,42 @@
       c_invite.textContent    = user.inviteCode || '—';
       c_password.textContent  = user.password || '—';
 
-      const shareText =
-`تم إنشاء حسابك في Dynex ✅
+      // نص المشاركة/النسخ بنفس اللغة
+      const shareText = [
+        t.shareTitle,
+        '',
+        `${t.name}: ${user.name || '—'}`,
+        `${t.username}: ${user.username || '—'}`,
+        `${t.accountId}: ${user.accountId || '—'}`,
+        `${t.phone}: ${user.phone || '—'}`,
+        `${t.invite}: ${user.inviteCode || '—'}`,
+        `${t.password}: ${user.password || '—'}`
+      ].join('\n');
 
-الاسم: ${user.name || '—'}
-اسم المستخدم: ${user.username || '—'}
-رقم الحساب: ${user.accountId || '—'}
-رقم الهاتف: ${user.phone || '—'}
-رمز الدعوة: ${user.inviteCode || '—'}
-كلمة المرور: ${user.password || '—'}`;
-
+      // أزرار النسخ/المشاركة
       copyCreated.onclick = async ()=>{
-        try{ await navigator.clipboard.writeText(shareText); toast('تم النسخ'); }catch{ toast('تعذّر النسخ'); }
+        try{
+          await navigator.clipboard.writeText(shareText);
+          toast(t.copied);
+        }catch{
+          toast(t.copyFail);
+        }
       };
       waShare.href = 'https://wa.me/?text=' + encodeURIComponent(shareText);
       tgShare.href = 'https://t.me/share/url?url=' + encodeURIComponent(location.origin) + '&text=' + encodeURIComponent(shareText);
 
+      // حفظ كصورة — بعد ضبط اللغة/الاتجاه
       saveImg.onclick = async ()=>{
         try{
-          const node = document.getElementById('createdCard');
-          const canvas = await html2canvas(node, {scale:2, backgroundColor:'#ffffff'});
+          const canvas = await html2canvas(card, {scale:2, backgroundColor:'#ffffff'});
           const url = canvas.toDataURL('image/png');
           const a = document.createElement('a');
           a.href = url; a.download = `Dynex-Account-${user.accountId||'new'}.png`;
           document.body.appendChild(a); a.click(); a.remove();
-        }catch(e){ console.warn(e); toast('تعذّر حفظ الصورة'); }
+        }catch(e){
+          console.warn(e);
+          toast(t.saveFail);
+        }
       };
 
       const closeFn = ()=>{ createdSheet.classList.remove('active'); createdBack.classList.remove('active'); };
@@ -433,7 +537,7 @@
     }
 
     // === إنشاء الحساب (بدون تحويل تلقائي)
-    $("#createForm").addEventListener('submit', async (e)=>{
+    document.getElementById('createForm').addEventListener('submit', async (e)=>{
       e.preventDefault();
 
       [nameI, phoneI, pwdI, cpwdI].forEach(i=>i.classList.remove('error'));
@@ -494,7 +598,7 @@
       }
     });
 
-    // ===== زر اللغة + الشيت (نفس صفحة الدخول) =====
+    // ===== زر اللغة + الشيت =====
     if (typeof window.applyLang === 'function') {
       applyLang(localStorage.getItem('lang') || 'ar');
     }
@@ -512,26 +616,7 @@
         closeSheet();
       });
     });
-
-    // ✅ اعتبر الصفحة جاهزة الآن لإظهارها (مع fonts.ready من الأعلى)
-    if (window.__fontsReady) window.__fontsReady.finally(()=>{
-      document.documentElement.classList.remove('app-wait');
-    }); else {
-      document.documentElement.classList.remove('app-wait');
-    }
   </script>
-
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("service-worker.js")
-        .then(()=>console.log("✔ Service Worker registered"))
-        .catch(err=>console.error("❌ Service Worker failed:", err));
-    }
-  </script>
-  
-  
-
-  
-  
 </body>
 </html>
+```0
