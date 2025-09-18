@@ -5,9 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dynex</title>
 
-  <!-- خطوط وأيقونات جوجل (Material Symbols) -->
+  <!-- خط الواجهة (يبقى كما هو) -->
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0" rel="stylesheet">
 
   <style>
     :root{
@@ -25,7 +24,9 @@
     .accent-line{height:3px;background:var(--accent)}
     .btn{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #d3d3d3;display:grid;place-items:center;cursor:pointer;color:var(--top-icon);position:relative;overflow:hidden}
     .btn.orange{color:var(--accent)}
-    .ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 600,'GRAD' 0,'opsz' 24;line-height:1}
+
+    /* نستخدم .ms لضبط حجم أيقونات الصور كي لا تهتز */
+    .ms{display:inline-block;width:24px;height:24px;vertical-align:middle}
 
     /* Page */
     .page{width:min(520px,92vw);margin:0 auto;padding:14px 10px 84px; padding-top:calc(var(--top) + 16px);}
@@ -76,56 +77,33 @@
   <meta name="theme-color" content="#e5e7eb">
   
   <link rel="icon" type="image/png" sizes="32x32" href="32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
-<link rel="shortcut icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
+  <link rel="shortcut icon" href="/favicon.ico">
 
-<!-- iOS -->
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+  <!-- iOS -->
+  <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
+  <!-- Android / PWA -->
+  <link rel="manifest" href="/site.webmanifest">
 
-<!-- Safari pinned tab (اختياري) -->
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
+  <!-- Safari pinned tab (اختياري) -->
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
 
-<!-- ألوان النظام (اختياري) -->
-
-<meta name="msapplication-TileColor" content="#e5e7eb">
-
-
-
-<!-- تحسين تحميل خط الأيقونات + منع وميضه وإخفاء الصفحة مؤقتًا -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0"
-      onload="this.rel='stylesheet'">
-<noscript>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0">
-</noscript>
-
-<style>
-  /* إخفاء الأيقونات مؤقتًا + إخفاء الصفحة لحين الجاهزية */
-  html.icons-wait .ms,
-  html.icons-wait .mi { visibility: hidden; }
-  html.app-wait body { visibility: hidden; }
-</style>
-
-
-
-  
-  
+  <meta name="msapplication-TileColor" content="#e5e7eb">
 </head>
 <body>
 
   <!-- Appbar -->
   <header class="appbar">
-    <button class="btn orange" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
-    <div class="row" style="gap:8px;align-items:center">
-      <button class="btn" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
+    <button class="btn orange" id="backBtn" title="خروج">
+      <img class="ms" src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy">
+    </button>
+    <div class="row">
+      <button class="btn" id="supportBtn" title="خدمة العملاء">
+        <img class="ms" src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy">
+      </button>
       <button class="btn orange" id="langBtn" title="تغيير اللغة">
-        <span class="ms">g_translate</span>
+        <img class="ms" src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
       </button>
     </div>
   </header>
@@ -134,9 +112,9 @@
   <main class="page">
     <h1 data-i18n="invite_title">دعوة صديق</h1>
 
-    <!-- تحذير -->
+    <!-- تحذير (أيقونة محلية) -->
     <div class="warn card">
-      <span class="ms" aria-hidden="true" data-i18n-skip>campaign</span>
+      <img class="ms" src="اعتراض.png" alt="" width="24" height="24" loading="lazy" aria-hidden="true">
       <div class="muted" data-i18n="invite_note">شارك رمزك مع أصدقائك فقط. لا تشارك بيانات حسّاسة.</div>
     </div>
 
@@ -146,10 +124,14 @@
         <b data-i18n="invite_code_label">رمز الدعوة</b>
         <small class="muted" id="saveState" aria-live="polite"></small>
       </div>
+
       <div class="field" style="margin-top:8px">
         <input id="inviteCodeInput" type="text" inputmode="latin" readonly
                placeholder="DNX-XXXXXX" value="—" aria-label="رمز الدعوة">
-        <button class="btn" id="copyCode" title="نسخ"><span class="ms">content_copy</span></button>
+        <!-- زر النسخ (أيقونة محلية) — مهم: id=copyCode ليتطابق مع السكربت -->
+        <button class="btn" id="copyCode" title="نسخ">
+          <img class="ms" src="نسخ.png" alt="copy" width="24" height="24" loading="lazy">
+        </button>
       </div>
 
       <div class="row" style="margin-top:12px">
@@ -157,7 +139,9 @@
       </div>
       <div class="field" style="margin-top:8px">
         <input id="inviteLinkInput" type="text" readonly dir="ltr" value="—" aria-label="رابط الإحالة">
-        <button class="btn" id="copyLink" title="نسخ الرابط"><span class="ms">link</span></button>
+        <button class="btn" id="copyLink" title="نسخ الرابط">
+          <img class="ms" src="نسخ.png" alt="link" width="24" height="24" loading="lazy">
+        </button>
       </div>
     </div>
 
@@ -165,8 +149,12 @@
     <div class="card" style="margin-top:10px">
       <div class="row" style="justify-content:space-between">
         <b data-i18n="share_title">أرسل عبر</b>
-        <span class="row muted" style="gap:4px"><span class="ms">share</span><span data-i18n="share_any">مواقع التواصل</span></span>
+        <span class="row muted" style="gap:4px">
+          <img class="ms" src="اعتراض.png" alt="" width="24" height="24" loading="lazy" aria-hidden="true">
+          <span data-i18n="share_any">مواقع التواصل</span>
+        </span>
       </div>
+
       <div class="socials" style="margin-top:10px">
         <a class="soc wa ripple-container" id="shareWa" href="#" target="_blank" rel="noopener">
           <div class="badge" aria-hidden="true">
@@ -176,7 +164,7 @@
               <path d="M17.3 14.2c-.2-.1-1.3-.6-1.5-.7-.2-.1-.3-.1-.5.1s-.6.7-.7.8-.3.1-.5 0a7.9 7.9 0 0 1-2.3-1.4 8.4 8.4 0 0 1-1.6-2c-.1-.2 0-.3.1-.5l.3-.4c.1-.1.1-.2.2-.4a.5.5 0 0 0 0-.5c0-.1-.5-1.2-.7-1.6s-.4-.4-.6-.4h-.5c-.2 0-.4.2-.5.4a2 2 0 0 0-.3 1 3.6 3.6 0 0 0 .8 1.9 12.2 12.2 0 0 0 4.4 4c.5.2.9.4 1.1.5.5.2.9.2 1.2.1a2 2 0 0 0 1.3-.9c.1-.2.1-.7.1-.8 0-.2-.2-.3-.4-.4z" fill="#fff"/>
             </svg>
           </div>
-          <div><div style="font-weight:900">WhatsApp</div><div class="muted">wa.me</div></div>
+          <div><div style="font-weight:900"></div><div class="muted">wa.me</div></div>
         </a>
 
         <a class="soc tg ripple-container" id="shareTg" href="#" target="_blank" rel="noopener">
@@ -185,7 +173,7 @@
               <path d="M9.5 16.8l-.3 4.4c.4 0 .6-.2 .9-.4l2.1-1.9 4.3 3.1c.8.4 1.3.2 1.5-.7l2.8-13.2c.3-1.2-.4-1.7-1.2-1.4L3 11.1c-1.1.4-1.1 1-.2 1.3l4.3 1.3 10-6.3c.5-.3.9-.1.5.2L9.5 16.8z" fill="#fff"/>
             </svg>
           </div>
-          <div><div style="font-weight:900">Telegram</div><div class="muted">t.me</div></div>
+          <div><div style="font-weight:900"></div><div class="muted">t.me</div></div>
         </a>
 
         <a class="soc fb ripple-container" id="shareFb" href="#" target="_blank" rel="noopener">
@@ -194,7 +182,7 @@
               <path d="M13 22v-8h3l.5-4H13V7.5c0-1 .3-1.7 1.8-1.7H17V2.2C16.4 2.1 15.4 2 14.2 2 11.6 2 9.8 3.6 9.8 6.6V10H7v4h2.8v8H13z" fill="#fff"/>
             </svg>
           </div>
-          <div><div style="font-weight:900">Facebook</div><div class="muted">facebook.com</div></div>
+          <div><div style="font-weight:900"></div><div class="muted">facebook.com</div></div>
         </a>
 
         <a class="soc x ripple-container" id="shareX" href="#" target="_blank" rel="noopener">
@@ -203,17 +191,21 @@
               <path d="M17.6 2H20l-6 7.1L21.5 22H16l-4.4-5.8L6.4 22H4l6.4-7.6L2.5 2H8l3.9 5.2L17.6 2zM6.1 3.7l9.8 13h2L8.1 3.7h-2z" fill="#fff"/>
             </svg>
           </div>
-          <div><div style="font-weight:900">X</div><div class="muted">twitter.com</div></div>
+          <div><div style="font-weight:900"></div><div class="muted">twitter.com</div></div>
         </a>
 
         <a class="soc mail ripple-container" id="shareMail" href="#" target="_blank" rel="noopener">
-          <div class="badge" aria-hidden="true"><span class="ms" style="color:#fff">mail</span></div>
-          <div><div style="font-weight:900" data-i18n="email">البريد</div><div class="muted">mailto:</div></div>
+          <div class="badge" aria-hidden="true">
+            <img class="ms" src="بريد.png" alt="" width="24" height="24" loading="lazy">
+          </div>
+          <div><div style="font-weight:900" data-i18n="email">البريد</div><div class="muted"></div></div>
         </a>
 
         <a class="soc ripple-container" id="shareNative" href="#">
-          <div class="badge" style="background:#0ea5e9" aria-hidden="true"><span class="ms" style="color:#fff">ios_share</span></div>
-          <div><div style="font-weight:900" data-i18n="native_share">مشاركة النظام</div><div class="muted">navigator.share</div></div>
+          <div class="badge" style="background:#0ea5e9" aria-hidden="true">
+            <img class="ms" src="نضام.png" alt="" width="24" height="24" loading="lazy">
+          </div>
+          <div><div style="font-weight:900" data-i18n="native_share">مشاركة النظام</div><div class="muted"></div></div>
         </a>
       </div>
     </div>
@@ -264,7 +256,6 @@
     $("#langBtn").addEventListener('click', ()=>{ langSheet.classList.add('active'); back.classList.add('active'); });
     back.addEventListener('click', ()=>{ langSheet.classList.remove('active'); back.classList.remove('active'); });
 
-    // === دالة تحدد اللغة الحالية بشكل موثوق ===
     function getLang(){
       const l = (localStorage.getItem('lang') || document.documentElement.lang || navigator.language || 'ar').toLowerCase();
       return l.startsWith('en') ? 'en' : 'ar';
@@ -274,7 +265,7 @@
       const l=b.dataset.setlang; localStorage.setItem('lang', l);
       if(typeof window.applyLang==='function') window.applyLang(l);
       else { document.documentElement.lang=l; document.documentElement.dir=(l==='ar')?'rtl':'ltr'; }
-      updateShareLinks();               // ← تحديث نصوص وروابط المشاركة فور تغيير اللغة
+      updateShareLinks();
       back.click();
     }));
 
@@ -302,12 +293,8 @@
     const earningsEl = $("#earningsVal");
 
     const REF_BASE = "https://aywrysh.github.io/mg/";
+    function buildLink(code){ return `${REF_BASE}/?ref=${encodeURIComponent(code||'')}`; }
 
-    function buildLink(code){
-      return `${REF_BASE}/?ref=${encodeURIComponent(code||'')}`;
-    }
-
-    // === إنشاء الروابط ورسائل المشاركة حسب اللغة الحالية ===
     function updateShareLinks(){
       const url = encodeURIComponent(linkInp.value.trim());
       const L = getLang();
@@ -331,10 +318,9 @@
       codeInp.readOnly = true;
       linkInp.value = code ? buildLink(code) : '—';
       linkInp.dir = 'ltr';
-      updateShareLinks(); // ← بعد تحميل/تحديث الرمز
+      updateShareLinks();
     }, _=> toast('تعذّر جلب رمز الدعوة'));
 
-    // ✅ تحديث فوري للإحصاءات
     function setStats(c,e){ invitedCountEl.textContent = Number(c||0); earningsEl.textContent = Number(e||0).toFixed(2); }
     const refRef = db.ref('referrals/'+UID);
     refRef.on('value', async (snap)=>{
@@ -349,6 +335,7 @@
       }
     }, _=> setStats(0,0));
 
+    // ✅ نسخ الرمز والرابط (الأزرار محليّة)
     $("#copyCode").addEventListener('click', async ()=>{
       const c = codeInp.value.trim();
       if(!c || c==='—'){ toast('لا يوجد رمز'); return; }
@@ -360,7 +347,6 @@
       try{ await navigator.clipboard.writeText(l); toast('تم نسخ الرابط'); }catch{ toast(l); }
     });
 
-    // مشاركة النظام بنفس لغة المستخدم
     $("#shareNative").addEventListener('click', async (e)=>{
       e.preventDefault();
       const url = linkInp.value.trim();
@@ -402,19 +388,5 @@
       .catch(err => console.error("❌ Service Worker failed:", err));
   }
   </script>
-  
-  
-  <script>
-  // عند نهاية تهيئة الصفحة/الخطوط: أظهر الصفحة
-  if (window.__fontsReady) {
-    window.__fontsReady.finally(function(){
-      document.documentElement.classList.remove('app-wait');
-    });
-  } else {
-    document.documentElement.classList.remove('app-wait');
-  }
-</script>
-  
-  
 </body>
 </html>

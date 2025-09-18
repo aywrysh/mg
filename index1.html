@@ -237,6 +237,17 @@
 }
     
     
+    /* أيقونة محلية بدون ما يصغر الزر */
+#toggleAmounts{
+  background: url("ايقونةعين.png") no-repeat center;  /* ضع مسار ملفك */
+  background-size: 22px 22px;                          /* حجم الأيقونة داخل نفس الزر */
+}
+
+/* إخفاء كلمة visibility فقط، بدون تغيير الهيكل */
+#toggleAmounts .ms{ font-size:0; line-height:0; }
+    
+    
+    img.mi, img.ms { width: 1em; height: 1em; vertical-align: middle; }
     
   </style>
   
@@ -301,52 +312,53 @@
 <body>
   <!-- الشريط العلوي -->
   <header class="appbar">
-    <button class="exit ripple-container" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
-    <div style="display:flex;gap:8px;align-items:center">
-      <!-- خدمة العملاء (ألوان زُرق وبرتقالي) -->
-    <button class="icon-btn ripple-container" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
+  <button class="exit ripple-container" id="backBtn" title="خروج">
+    <img src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy">
+  </button>
+  <div style="display:flex;gap:8px;align-items:center">
+    <!-- خدمة العملاء (ألوان زُرق وبرتقالي) -->
+    <button class="icon-btn ripple-container" id="supportBtn" title="خدمة العملاء">
+      <img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy">
+    </button>
 
-<!-- جديد: زر الرسائل -->
-<!-- زر الرسائل -->
-<!-- زر الرسائل (ضعه بجانب supportBtn) -->
-<!-- زر الرسائل داخل الشريط العلوي بجانب زر الدعم -->
-<!-- زر الرسائل في التوب بار -->
-<button class="icon-btn ripple-container" id="messagesBtn" title="رسائل الشركة" style="position:relative">
-  <span class="ms">notifications</span>
-  <span id="msgDot"
-        style="position:absolute;top:2px;inset-inline-start:2px;width:10px;height:10px;border-radius:50%;
-               background:#ef4444;display:none;box-shadow:0 0 0 2px #fff"></span>
-</button>
+    <!-- زر الرسائل -->
+    <button class="icon-btn ripple-container" id="messagesBtn" title="رسائل الشركة" style="position:relative">
+      <img src="ايقونة رساله.png" alt="notifications" width="24" height="24" loading="lazy">
+      <span id="msgDot"
+            style="position:absolute;top:2px;inset-inline-start:2px;width:10px;height:10px;border-radius:50%;
+                   background:#ef4444;display:none;box-shadow:0 0 0 2px #fff"></span>
+    </button>
 
+    <button class="icon-btn ripple-container" id="installBtn" title="تثبيت كتطبيق" style="display:none">
+      <img src="ايقونةتحميل.png" alt="install" width="24" height="24" loading="lazy">
+    </button>
 
-<button class="icon-btn ripple-container" id="installBtn" title="تثبيت كتطبيق" style="display:none">
-  <span class="ms">download_for_offline</span>
-</button>
-
-<!-- (اختياري) توست عام إن كان عندك عنصر #toast في صفحتك -->
-
-<button class="icon-btn ripple-container" id="langBtn" title="تغيير اللغة" 
-        style="font-weight:800;color:var(--accent);font-size:24px;">
-  <span class="material-symbols-rounded">g_translate</span>
-</button>
-    </div>
-  </header>
-  <div class="accent-line"></div>
-
+    <button class="icon-btn ripple-container" id="langBtn" title="تغيير اللغة" 
+            style="font-weight:800;color:var(--accent);font-size:24px;">
+      <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+    </button>
+  </div>
+</header>
+<div class="accent-line"></div>
   <main class="page">
     <!-- ===== الرئيسية ===== -->
-    <section id="view-home" class="view active">
-      <div class="balance" id="balanceCard">
-        <div class="shine"></div>
-        <button class="eye ripple-container" id="toggleAmounts" title="إظهار"><span class="ms">visibility</span></button>
-        <div class="bal" id="balData">
-          <h4 data-i18n="balance_title">الرصيد</h4>
-          <div class="amt" data-val="-.--"></div>
-          <div class="sub" data-i18n="locked">مبلغ العقد المقفل</div>
-          <div class="sub amt2" data-val="-.--">0.00</div>
-          <div class="id"><span id="homeIdLabel">ID</span><button class="chip ripple-container" id="copyId" data-i18n="copy">نسخ</button></div>
-        </div>
-      </div>
+<section id="view-home" class="view active">
+  <div class="balance" id="balanceCard">
+    <div class="shine"></div>
+
+    <button class="eye ripple-container" id="toggleAmounts" title="إظهار">
+      <span class="ms">visibility</span>
+    </button>
+
+    <div class="bal" id="balData">
+      <h4 data-i18n="balance_title">الرصيد</h4>
+      <div class="amt" data-val="-.--"></div>
+      <div class="sub" data-i18n="locked">مبلغ العقد المقفل</div>
+      <div class="sub amt2" data-val="-.--">0.00</div>
+      <div class="id"><span id="homeIdLabel">ID</span><button class="chip ripple-container" id="copyId" data-i18n="copy">نسخ</button></div>
+    </div>
+  </div>
+
 
 
 
@@ -506,39 +518,38 @@
 
 
 
-      <!-- شبكة الأزرار 3 × 2 -->
-  <div class="grid6">
+<!-- شبكة الأزرار 3 × 2 -->
+<div class="grid6">
   <a class="tile ripple-container" href="index2.html">
-    <span class="mi">account_balance_wallet</span>
+    <img src="ايداع.png" alt="wallet" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="deposit">إيداع</span>
   </a>
 
   <a class="tile ripple-container" href="index8.html">
-    <span class="mi">payments</span>
+    <img src="سحب .png" alt="withdraw" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="withdraw">سحب</span>
   </a>
 
   <a class="tile ripple-container" href="index4.html">
-    <span class="mi">sync_alt</span>
+    <img src="تحويل.png" alt="transfer" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="transfer">تحويل</span>
   </a>
 
   <a class="tile ripple-container" href="index5.html">
-    <span class="mi">account_balance</span>
+    <img src="قيد.png" alt="deposit-to" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="deposit_to">إيداع الى(ح)</span>
   </a>
 
   <a class="tile ripple-container" href="index6.html">
-    <span class="mi">receipt_long</span>
+    <img src="تقارير.png" alt="details" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="details">التفاصيل</span>
   </a>
 
   <a class="tile ripple-container" href="index9.html">
-    <span class="mi">group_add</span>
+    <img src="دعوه.png" alt="invite" width="32" height="32" loading="lazy">
     <span class="label" data-i18n="invite">دعوة صديق</span>
   </a>
 </div>
-
 <!-- بطاقة العمليات الوهمية (إيداع/سحب) -->
 <!-- الشركات الداعمة -->
 <div class="partners">
@@ -599,77 +610,73 @@
           <input type="file" id="avatarFile" accept="image/*" hidden>
         </button>
 
-        <div class="acct-body">
-          <div class="acct-name">
-            <span class="mi">person</span>
-            <input id="acctName" type="text" placeholder="اسم المستخدم" value="اسم المستخدم">
-        </div>
+      <div class="acct-body">
+  <div class="acct-name">
+    <img class="mi" src="ايقونةمستخدم.png" alt="person">
+    <input id="acctName" type="text" placeholder="اسم المستخدم" value="اسم المستخدم">
+  </div>
 
-          <div class="acct-tags">
-            <div class="tag phone"><span> الموبايل  </span><strong id="acctPhone" dir="ltr"></strong></div>
-            <div class="divider"></div>
-            <div class="tag id">
-              <span>ID</span><strong id="acctId"></strong>
-              <button class="copy ripple-container" id="copyIdAcc" title="نسخ"><span class="ms">content_copy</span></button>
-            </div>
-          </div>
-          
+  <div class="acct-tags">
+    <div class="tag phone"><span> الموبايل  </span><strong id="acctPhone" dir="ltr"></strong></div>
+    <div class="divider"></div>
+    <div class="tag id">
+      <span>ID</span><strong id="acctId"></strong>
+      <button class="copy ripple-container" id="copyIdAcc" title="نسخ">
+        <img class="ms" src="نسخ.png" alt="copy">
+      </button>
+    </div>
+  </div>
 
+  <div class="acct-list">
+    <a class="acct-item ripple-container" href="index10.html" data-go="edit">
+      <img class="mi lead" src="تعديل.png" alt="edit">
+      <span class="txt">تغيير البيانات</span>
+    
+    </a>
 
-          
-          
+    <a class="acct-item ripple-container" href="index11.html" data-go="appeal">
+      <img class="mi lead" src="اعتراض.png" alt="report">
+      <span class="txt">اعتراض</span>
+     
+    </a>
 
-         <div class="acct-list">
-  <a class="acct-item ripple-container" href="index10.html" data-go="edit">
-    <span class="mi lead">edit</span>
-    <span class="txt">تغيير البيانات</span>
-    <span class="mi tail">chevron_left</span>
-  </a>
+    <a class="acct-item ripple-container" href="index12.html" data-go="lang">
+      <img class="mi lead" src="لغه.png" alt="language">
+      <span class="txt">لغة التطبيق</span>
+     
+    </a>
 
-  <a class="acct-item ripple-container" href="index11.html" data-go="appeal">
-    <span class="mi lead">report</span>
-    <span class="txt">اعتراض</span>
-    <span class="mi tail">chevron_left</span>
-  </a>
+    <a class="acct-item ripple-container" href="index13.html" data-go="delete">
+      <img class="mi lead" src="حذف.png" alt="delete_forever">
+      <span class="txt">حذف حسابي</span>
+      
+    </a>
 
-  <a class="acct-item ripple-container" href="index12.html" data-go="lang">
-    <span class="mi lead">language</span>
-    <span class="txt">لغة التطبيق</span>
-    <span class="mi tail">chevron_left</span>
-  </a>
-
-  <a class="acct-item ripple-container" href="index13.html" data-go="delete">
-    <span class="mi lead">delete_forever</span>
-    <span class="txt">حذف حسابي</span>
-    <span class="mi tail">chevron_left</span>
-  </a>
-
-  <a class="acct-item ripple-container" href="index14.html" data-go="logout">
-    <span class="mi lead">logout</span>
-    <span class="txt">تسجيل الخروج</span>
-    <span class="mi tail">chevron_left</span>
-  </a>
+    <a class="acct-item ripple-container" href="index14.html" data-go="logout">
+      <img class="mi lead" src="خروج.png" alt="logout">
+      <span class="txt">تسجيل الخروج</span>
+     
+    </a>
+  </div>
 </div>
-        </div>
-      </div>
-    </section>
-  </main>
+</section>
+</main>
 
- <nav class="tabbar">
+<nav class="tabbar">
   <a class="tab ripple-container" id="tab-account" href="#">
-    <span class="mi">account_circle</span>
+    <img class="mi" src="حسابي.png" alt="account_circle">
     <span>حسابي</span>
   </a>
-  
+
   <div class="fab-wrap">
     <a class="fab ripple-container" id="tab-trade" href="index7.html">
-      <span class="mi">trending_up</span>
+      <img class="mi" src="تداول.png" alt="trending_up">
     </a>
     <div class="fab-caption">تداول</div>
   </div>
-  
+
   <a class="tab ripple-container active" id="tab-home" href="#">
-    <span class="mi">home</span>
+    <img class="mi" src="رايس.png" alt="home">
     <span>الصفحه الرائسي</span>
   </a>
 </nav>
@@ -1441,9 +1448,19 @@ if(MREF){
   } else {
     document.documentElement.classList.remove('app-wait');
   }
+  
+  
+  
+  
+
+  
+  
 </script>
   
 
   
 </body>
+
+
+
 </html>

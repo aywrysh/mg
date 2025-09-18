@@ -115,6 +115,27 @@
     .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
     .actions-row{display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px}
     .warn{margin-top:10px; font-size:13px; color:#b91c1c; background:#fef2f2; border:1px solid #fee2e2; padding:8px 10px; border-radius:12px; font-weight:800}
+    
+#toggleCPwd{
+  /* نفس أبعاد ومكان زرّك */
+  position:absolute; inset-inline-end:10px; top:50%;
+  transform:translateY(calc(-50% + 12px));
+  width:34px; height:34px; border:none; background:transparent; cursor:pointer;
+
+  /* الأيقونة كخلفية مباشرة (غيّر اسم الملف لو مختلف عندك) */
+  background-image: url('ايقونةعين.png');  /* ← ضع ملف العين هنا */
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+
+  /* يضمن ظهوره فوق حقل الإدخال */
+  z-index: 2;
+
+  /* يجعل الأيقونة داكنة لو كانت بيضاء */
+  filter: brightness(0) saturate(100%);
+}
+    
+    
   </style>
   
      <link rel="manifest" href="manifest.json">
@@ -136,34 +157,16 @@
 <!-- ألوان النظام (اختياري) -->
 <meta name="msapplication-TileColor" content="#e5e7eb">
 
-<!-- 🔥 تحسين تحميل خط الأيقونات + منع وميضه وإخفاء الصفحة مؤقتًا -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0"
-      onload="this.rel='stylesheet'">
-<noscript>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0">
-</noscript>
-<style>
-  html.icons-wait .ms{visibility:hidden}
-  html.app-wait body{visibility:hidden}
-</style>
-<script>
-  document.documentElement.classList.add('icons-wait','app-wait');
-  window.__fontsReady = Promise.race([
-    (document.fonts ? document.fonts.ready : Promise.resolve()),
-    new Promise(r => setTimeout(r, 1500))
-  ]).then(()=>{ document.documentElement.classList.remove('icons-wait'); });
-</script>
+
   
   
 </head>
 <body>
 
   <!-- زر اللغة -->
-  <button class="lang-btn" id="langBtn" title="language"><span class="ms">g_translate</span></button>
+ <button class="lang-btn" id="langBtn" title="language">
+  <img class="ms" src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+</button>
 
   <div class="wrap">
     <div class="topbar">
@@ -174,54 +177,51 @@
       <h1 class="title">إنشاء حساب</h1>
       <div class="sub">أدخل بيانات الحساب،</div>
 
-      <!-- الاسم -->
-      <div class="field">
-        <label class="label" for="name">الاسم الكامل</label>
-        <input id="name" class="input" type="text" placeholder="اسم المستخدم">
-        <span class="icon ms">person</span>
-      </div>
+<!-- الاسم -->
+<div class="field">
+  <label class="label" for="name">الاسم الكامل</label>
+  <input id="name" class="input" type="text" placeholder="اسم المستخدم">
+  <img class="icon" src="ايقونةمستخدم.png" alt="person">
+</div>
 
-      <!-- الهاتف -->
-      <div class="field">
-        <label class="label" for="phone">رقم الهاتف</label>
-        <input id="phone" class="input" type="tel" inputmode="tel" dir="ltr" placeholder=" XXXXXXXX">
-        <span class="icon ms">call</span>
-      </div>
+<!-- الهاتف -->
+<div class="field">
+  <label class="label" for="phone">رقم الهاتف</label>
+  <input id="phone" class="input" type="tel" inputmode="tel" dir="ltr" placeholder=" XXXXXXXX">
+  <img class="icon" src="ايقونةهاتف.png" alt="call">
+</div>
 
-      <!-- اسم المستخدم (تلقائي) + زر تحديث -->
-      <div class="field">
-        <label class="label" for="uname">اسم المستخدم (تلقائي)</label>
-        <div class="row" style="position:relative">
-          <input id="uname" class="input" type="text" placeholder="سيُولَّد تلقائيًا" readonly>
-          <button class="btn" id="regenU" type="button" title="تجديد"><span class="ms">refresh</span></button>
-          <span class="icon ms">badge</span>
-        </div>
-        <div style="font-size:12px;color:var(--muted)">7 أحرف إنجليزية (كبيرة وصغيرة).</div>
-      </div>
-
-      <!-- كلمة المرور -->
-      <div class="field">
-        <label class="label" for="pwd">كلمة المرور</label>
-        <input id="pwd" class="input" type="password" placeholder="••••••••">
-        <span class="icon ms">lock</span>
-        <button class="toggle" id="togglePwd" type="button" aria-label="إظهار/إخفاء"><span class="ms">visibility</span></button>
-      </div>
-
-      <!-- تأكيد كلمة المرور -->
-      <div class="field">
-        <label class="label" for="cpwd">تأكيد كلمة المرور</label>
-        <input id="cpwd" class="input" type="password" placeholder="••••••••">
-        <span class="icon ms">lock_reset</span>
-        <button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"><span class="ms">visibility</span></button>
-      </div>
-
-      <div class="actions">
-        <button class="btn-solid" id="cancelBtn" type="button" onclick="window.location.href='index.html'">إلغاء</button>
-        <button class="btn-solid primary" id="createBtn" type="submit">إنشاء الحساب</button>
-      </div>
-    </form>
+<!-- اسم المستخدم (تلقائي) + زر تحديث -->
+<div class="field">
+  <label class="label" for="uname">اسم المستخدم (تلقائي)</label>
+  <div class="row" style="position:relative">
+    <input id="uname" class="input" type="text" placeholder="سيُولَّد تلقائيًا" readonly>
+   
+    <img class="icon" src="ايقونةتلقاي.png" alt="badge">
   </div>
+  <div style="font-size:12px;color:var(--muted)">7 أحرف إنجليزية (كبيرة وصغيرة).</div>
+</div>
 
+<!-- كلمة المرور -->
+<div class="field">
+  <label class="label" for="pwd">كلمة المرور</label>
+  <input id="pwd" class="input" type="password" placeholder="••••••••">
+  <img class="icon" src="ايقونةكلمت.png" alt="lock">
+ <button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"></button>
+</div>
+
+<!-- تأكيد كلمة المرور -->
+<div class="field">
+  <label class="label" for="cpwd">تأكيد كلمة المرور</label>
+  <input id="cpwd" class="input" type="password" placeholder="••••••••">
+  <img class="icon" src="ايقونةكلمت.png" alt="lock reset">
+<button class="toggle" id="toggleCPwd" type="button" aria-label="إظهار/إخفاء"></button>
+</div>
+
+<div class="actions">
+  <button class="btn-solid" id="cancelBtn" type="button" onclick="window.location.href='index.html'">إلغاء</button>
+  <button class="btn-solid primary" id="createBtn" type="submit">إنشاء الحساب</button>
+</div>
   <!-- شيت اللغة -->
   <div class="sheet-backdrop" id="sheetBack"></div>
   <div class="sheet" id="langSheet" aria-modal="true" role="dialog">
@@ -530,16 +530,7 @@
   </script>
   
   
-  <script>
-  // عند نهاية تهيئة الصفحة/الخطوط: أظهر الصفحة
-  if (window.__fontsReady) {
-    window.__fontsReady.finally(function(){
-      document.documentElement.classList.remove('app-wait');
-    });
-  } else {
-    document.documentElement.classList.remove('app-wait');
-  }
-</script>
+
   
   
 </body>

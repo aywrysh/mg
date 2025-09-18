@@ -91,54 +91,8 @@
 <meta name="msapplication-TileColor" content="#e5e7eb">
   
   
-  
-  <!-- تحسين تحميل خط الأيقونات + منع وميضه وإخفاء الصفحة مؤقتًا -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0"
-      onload="this.rel='stylesheet'">
-<noscript>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0">
-</noscript>
 
-<style>
-  /* إخفاء الأيقونات مؤقتًا + إخفاء الصفحة لحين الجاهزية */
-  html.icons-wait .ms,
-  html.icons-wait .mi { visibility: hidden; }
-  html.app-wait body { visibility: hidden; }
-</style>
-  
-  
-  <!-- تحسين تحميل خط الأيقونات + منع وميضه وإخفاء الصفحة مؤقتًا -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preload" as="style"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0"
-      onload="this.rel='stylesheet'">
-<noscript>
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0">
-</noscript>
 
-<style>
-  /* إخفاء الأيقونات مؤقتًا + إخفاء الصفحة لحين الجاهزية */
-  html.icons-wait .ms,
-  html.icons-wait .mi { visibility: hidden; }
-  html.app-wait body { visibility: hidden; }
-</style>
-
-<script>
-  /* فعّل الإخفاء الآن، وأزلّه لاحقًا عند جاهزية الخطوط */
-  document.documentElement.classList.add('icons-wait','app-wait');
-  window.__fontsReady = Promise.race([
-    (document.fonts ? document.fonts.ready : Promise.resolve()),
-    new Promise(r => setTimeout(r, 1500)) // حدّ أمان لو الخط تأخّر
-  ]).then(function(){
-    document.documentElement.classList.remove('icons-wait');
-  });
-</script>
   
   
 </head>
@@ -146,11 +100,11 @@
 
   <!-- Appbar -->
   <header class="appbar">
-    <button class="btn orange" id="backBtn" title="خروج"><span class="ms">arrow_back_ios_new</span></button>
+    <button class="btn orange" id="backBtn" title="خروج">  <img src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy"></button>
     <div class="row" style="gap:8px;align-items:center">
-      <button class="btn" id="supportBtn" title="خدمة العملاء"><span class="ms">headset_mic</span></button>
+      <button class="btn" id="supportBtn" title="خدمة العملاء"><img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy"></button>
       <button class="btn orange" id="langBtn" title="تغيير اللغة">
-  <span class="ms">g_translate</span>
+  <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
 </button>
     </div>
   </header>
@@ -166,15 +120,15 @@
           <div class="label" data-i18n="full_name">الاسم الكامل</div>
           <div class="field">
             <input id="nameInput" class="input readonly" type="text" maxlength="60" placeholder=" " aria-label="الاسم" readonly>
-            <button class="btn" id="clearName" title="مسح" disabled><span class="ms">backspace</span></button>
-          </div>
+           
         </div>
 
         <div>
           <div class="label" data-i18n="phone">رقم الهاتف</div>
           <div class="field">
             <input id="phoneInput" class="input readonly" type="tel" inputmode="tel" dir="ltr" placeholder=" " aria-label="رقم الهاتف" readonly>
-            <button class="btn" id="formatPhone" title="تنسيق" disabled><span class="ms">dialpad</span></button>
+           
+ 
           </div>
           <div class="hint" data-i18n="phone_hint">الاسم ورقم الهاتف للعرض فقط.</div>
         </div>
@@ -190,7 +144,7 @@
           <div class="label" data-i18n="current_pwd">كلمة المرور الحالية</div>
           <div class="field">
             <input id="oldPwd" class="input" type="password" placeholder="••••••••" aria-label="القديمة">
-            <button class="btn" data-toggle="oldPwd" title="إظهار"><span class="ms">visibility</span></button>
+            <button class="btn" data-toggle="oldPwd" title="إظهار"><img src="ايقونةكلمت.png" alt="translate" width="24" height="24" loading="lazy"></button>
           </div>
         </div>
 
@@ -198,7 +152,7 @@
           <div class="label" data-i18n="new_pwd">كلمة المرور الجديدة</div>
           <div class="field">
             <input id="newPwd" class="input" type="password" placeholder="••••••••" aria-label="الجديدة">
-            <button class="btn" data-toggle="newPwd" title="إظهار"><span class="ms">visibility</span></button>
+            <button class="btn" data-toggle="newPwd" title="إظهار"><img src="ايقونةكلمت.png" alt="translate" width="24" height="24" loading="lazy"></button>
           </div>
           <div class="strength" aria-hidden="true"><div id="strBar" class="bar"></div></div>
           <div class="hint" data-i18n="pwd_req">6 أحرف على الأقل. يُفضّل أرقام وحروف.</div>
@@ -208,7 +162,7 @@
           <div class="label" data-i18n="confirm_pwd">تأكيد كلمة المرور</div>
           <div class="field">
             <input id="confirmPwd" class="input" type="password" placeholder="••••••••" aria-label="تأكيد">
-            <button class="btn" data-toggle="confirmPwd" title="إظهار"><span class="ms">visibility</span></button>
+            <button class="btn" data-toggle="confirmPwd" title="إظهار"><img src="ايقونةكلمت.png" alt="translate" width="24" height="24" loading="lazy"></button>
           </div>
         </div>
       </div>
@@ -425,17 +379,7 @@
   }
 </script>
   
-  
-  <script>
-  // عند نهاية تهيئة الصفحة/الخطوط: أظهر الصفحة
-  if (window.__fontsReady) {
-    window.__fontsReady.finally(function(){
-      document.documentElement.classList.remove('app-wait');
-    });
-  } else {
-    document.documentElement.classList.remove('app-wait');
-  }
-</script>
+
   
   
 </body>
