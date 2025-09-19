@@ -4,9 +4,46 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title data-i18n="title">Dynex</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;800&display=swap" rel="stylesheet">
   
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
+  
+  <!-- ✅ فحص مبكّر للجلسة + منع الوميض -->
+<style>html.precheck{visibility:hidden}</style>
+<script>
+(function(){
+  // أخفِ الصفحة مؤقتًا عشان ما تومض لو بنحوّل
+  document.documentElement.classList.add('precheck');
+
+  // نفس صفحة الهوم عندك
+  var HOME_PAGE = "index1.html";
+
+  try{
+    var s = JSON.parse(localStorage.getItem('dynex_session')||'null');
+    var ok = false;
+    if (s){
+      // لو موجود expiresAt استعمله
+      if (s.expiresAt) {
+        ok = Date.now() < Number(s.expiresAt);
+      } else if (s.loginAt) {
+        // احتياط: 6 ساعات من وقت الدخول
+        ok = (Date.now() - Number(s.loginAt)) < (6 * 60 * 60 * 1000);
+      }
+    }
+    if (ok){
+      // تحويل فوري — ما تظهر صفحة الدخول إطلاقًا
+      location.replace(HOME_PAGE);
+      return; // لا تكمل تحميل الصفحة الحالية
+    }
+  }catch(e){/* تجاهل */}
+
+  // مافي تحويل؟ أظهر الصفحة الآن
+  document.documentElement.classList.remove('precheck');
+})();
+</script>
+  
+  
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root{
@@ -22,8 +59,11 @@
       --shadow:0 10px 25px rgba(0,0,0,.08);
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:"Cairo", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color:var(--ink);
+    body {
+  margin: 0;
+  font-family: "IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  color: var(--ink);
+
       background: var(--bg-img) center/cover no-repeat fixed;
       min-height:100vh; display:grid; place-items:center;
       position: relative;

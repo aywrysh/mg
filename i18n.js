@@ -328,10 +328,10 @@
   ['اكتب التفاصيل هنا…','Write details here…'],
   ['* إذا اخترت “غير ذلك” يجب كتابة التفاصيل.','* If you choose “Other”, you must write the details.'],
 
+['تم التحديث','Updated'],
 
-
-
-
+['تعذّر جلب البيانات','Failed to retrieve data '],
+['فشل التحديث','Update failed '],
   // الأزرار
   ['إلغاء','Cancel'],
   ['دولار','USDT'],
