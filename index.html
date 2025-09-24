@@ -6,52 +6,38 @@
   <title data-i18n="title">Dynex</title>
   
   
-  <!-- ✅ فحص مبكّر للجلسة + منع الوميض -->
+<!-- ✅ فحص مبكّر للجلسة + سبلاش خفيف بدون فيديو -->
 <script>
 (function(){
-  // صفحة الهوم عندك
   var HOME_PAGE = "index1.html";
 
-  // إعدادات السْبلاش
-  var INTRO_MAX_WAIT = 4000; // حدّ أقصى للانتظار (ملي ثانية)
-  var overlay = null, video = null, done = false;
+  // إعدادات السْبلاش (بدون فيديو)
+  var INTRO_MAX_WAIT = 2500;  // حدّ أقصى للانتظار (ملي ثانية)
+  var overlay = null, done = false;
 
-  // فعّل وضع الفحص (يمنع تمرير ويُظهر السْبلاش)
+  // فعّل وضع الفحص (يمنع الوميض)
   document.documentElement.classList.add('precheck');
 
   function finishAndShow(){
     if (done) return; done = true;
     document.documentElement.classList.remove('precheck');
     if (overlay) overlay.setAttribute('hidden','');
-    // يمكن أيضًا إيقاف الفيديو لتخفيف الموارد
-    if (video && !video.paused) { try{ video.pause(); }catch(_){} }
   }
 
-  function tryPlay(v){
-    if (!v) return;
-    // تشغيل تلقائي — لازم muted/playsinline
-    var p = v.play();
-    if (p && typeof p.then === 'function') p.catch(function(){ /* تجاهل */ });
-  }
-
-  // اربط عناصر السْبلاش بعد ما تتوفر الـ DOM
+  // اربط عناصر السْبلاش
   function bindIntro(){
     overlay = document.getElementById('introOverlay');
-    video   = document.getElementById('introVideo');
-    tryPlay(video);
 
-    // قصّ السْبلاش أول ما الصفحة تجهز أو الفيديو يكتمل — أيهما أسرع
-    window.addEventListener('load', finishAndShow, {once:true});
-    if (video){
-      video.addEventListener('ended', finishAndShow, {once:true});
-      video.addEventListener('canplaythrough', function(){ setTimeout(finishAndShow, 300); }, {once:true});
-    }
-    // حدّ أقصى أمان
+    // إغلاق بالضغط (اختياري)
+    if (overlay) overlay.addEventListener('click', finishAndShow, { once:true });
+
+    // قصّ السْبلاش عند جاهزية الصفحة أو بعد المهلة
+    window.addEventListener('load', finishAndShow, { once:true });
     setTimeout(finishAndShow, INTRO_MAX_WAIT);
   }
 
   if (document.readyState === 'loading'){
-    document.addEventListener('DOMContentLoaded', bindIntro, {once:true});
+    document.addEventListener('DOMContentLoaded', bindIntro, { once:true });
   } else {
     bindIntro();
   }
@@ -61,15 +47,14 @@
     var s  = JSON.parse(localStorage.getItem('dynex_session')||'null');
     var ok = false;
     if (s){
-      if ('expiresAt' in s)      ok = Date.now() < Number(s.expiresAt);
-      else if ('loginAt' in s)   ok = (Date.now() - Number(s.loginAt)) < (6*60*60*1000); // 6 ساعات
+      if ('expiresAt' in s) ok = Date.now() < Number(s.expiresAt);
+      else if ('loginAt' in s) ok = (Date.now() - Number(s.loginAt)) < (6*60*60*1000);
     }
     if (ok){
-      // إدخال فوري للهوم — الفيديو يُقطع تلقائيًا بسبب الانتقال
       location.replace(HOME_PAGE);
       return; // لا تكمل تحميل الصفحة الحالية
     }
-  }catch(e){/* تجاهل */}
+  }catch(_){}
   // ====== نهاية فحص الجلسة ======
 })();
 </script>
@@ -290,10 +275,7 @@ a.btn.btn-outline[href*="artikarbot"] svg {
       </div>
 
   
-      
-    <div id="introOverlay">
-  <video id="introVideo" src="intro.mp4" autoplay muted playsinline preload="auto"></video>
-</div>
+
       
     
 
@@ -682,18 +664,7 @@ a.btn.btn-outline[href*="artikarbot"] svg {
   </script>
   
   
-<style>
-  /* غطاء الفيديو */
-  #introOverlay{
-    position:fixed; inset:0; z-index:9999;
-    background:#000; display:flex; align-items:center; justify-content:center;
-  }
-  #introOverlay[hidden]{display:none}
-  #introOverlay video{max-width:100vw; max-height:100vh; display:block}
 
-  /* منع تمرير أثناء السْبلاش */
-  html.precheck body{overflow:hidden}
-</style>
   
 </body>
 </html>
