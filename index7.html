@@ -441,21 +441,35 @@
       }
     }
 
+    /* =========================================================
+       ✅ التعديل الوحيد هنا: applyProfitTx لمنع تكرار إضافة الربح
+       ========================================================= */
     function applyProfitTx(amount, sessionId){
       return new Promise(async (resolve,reject)=>{
         try{
+          const txId = 'trade_'+(sessionId||Date.now());
+          const txRef = db.ref('transfers/'+txId);
+
+          // ✅ قفل: لو العملية موجودة قبل لا نعيد إضافة الرصيد
+          const lock = await txRef.transaction(cur=>{
+            if (cur) return; // موجودة مسبقاً
+            return {
+              type:'trade_profit', uid:UID, amount:Number(amount),
+              at:new Date().toISOString()
+            };
+          });
+
+          // إذا ما تم الحجز (يعني سبق وانضافت) ننهي بدون زيادة
+          if (!lock.committed) return resolve();
+
+          // ✅ الآن فقط نزيد الرصيد مرة واحدة
           await db.ref('users/'+UID).transaction(cur=>{
             if(!cur) return cur;
             const bal = Number(cur.balance||0);
             return {...cur, balance: +(bal + Number(amount)).toFixed(2)};
           });
-          await TREF.update({ profitApplied:true, appliedAt: Date.now(), appliedSession: sessionId||null });
 
-          const txId = 'trade_'+(sessionId||Date.now());
-          await db.ref('transfers/'+txId).set({
-            type:'trade_profit', uid:UID, amount:Number(amount),
-            at:new Date().toISOString()
-          });
+          await TREF.update({ profitApplied:true, appliedAt: Date.now(), appliedSession: sessionId||null });
 
           const stSnap = await TREF.get();
           const st = stSnap.val() || {};
@@ -476,6 +490,7 @@
         }catch(e){ reject(e); }
       });
     }
+    /* ===== نهاية التعديل الوحيد ===== */
 
     TREF.on('value', async (s)=>{
       const st=s.val();
