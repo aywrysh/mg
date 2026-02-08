@@ -346,6 +346,81 @@
     
     img.mi, img.ms { width: 1em; height: 1em; vertical-align: middle; }
     
+    
+    
+    
+    
+    
+      
+  /* ===============================
+   ✅ وضع الإيقاف (Suspended Mode)
+   =============================== */
+
+/* شريط أحمر مموج أعلى الصفحة تحت الهيدر */
+#suspendBar{
+  position:fixed;
+  top: calc(var(--top) + 3px);   /* بعد الشريط العلوي + accent line */
+  inset-inline:0;
+  z-index:9999;
+  padding:10px 12px;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(255,255,255,.15) 0 10px,
+      rgba(255,255,255,0) 10px 20px
+    ),
+    linear-gradient(180deg,#ef4444,#b91c1c);
+  color:#fff;
+  box-shadow:0 10px 24px rgba(0,0,0,.18);
+}
+
+#suspendBar .suspend-inner{
+  width:min(520px,92vw);
+  margin:0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  font-weight:900;
+}
+
+/* حتى ما يغطي الشريط المحتوى */
+body.suspended-mode .page{
+  padding-top: calc(var(--top) + 16px + 54px); /* 54px تقريبًا ارتفاع الشريط */
+}
+
+/* قفل كل التفاعل */
+body.suspended-mode a,
+body.suspended-mode button,
+body.suspended-mode .tile,
+body.suspended-mode .tab,
+body.suspended-mode .fab,
+body.suspended-mode .chip,
+body.suspended-mode .acct-item,
+body.suspended-mode .icon-btn,
+body.suspended-mode .exit,
+body.suspended-mode input,
+body.suspended-mode textarea,
+body.suspended-mode select{
+  pointer-events:none !important;
+  user-select:none !important;
+  opacity:.55;
+  filter:grayscale(.2);
+}
+
+/* ✅ نخلي زر الخروج فقط شغال (اختياري) */
+body.suspended-mode #backBtn{
+  pointer-events:auto !important;
+  opacity:1 !important;
+  filter:none !important;
+}
+  
+  
+  
+  
+</style>
+    
+    
   </style>
   
   
@@ -402,6 +477,22 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0">
 </noscript>
+
+
+
+
+<!-- ✅ شريط إيقاف الحساب -->
+<div id="suspendBar" style="display:none">
+  <div class="suspend-inner">
+    <span class="ms">block</span>
+    <span id="suspendText">عذرًا، هذا الحساب موقّف</span>
+  </div>
+</div>
+
+
+
+
+
 
 <style>
   /* إخفاء الأيقونات مؤقتًا + إخفاء الصفحة لحين الجاهزية */
@@ -835,7 +926,7 @@
 
 <script src="12i18n.js"></script>
 
-  <script>
+<script>
     // تبويبات داخل نفس الصفحة
     const views={home:document.getElementById('view-home'),account:document.getElementById('view-account')};
     function show(name){Object.values(views).forEach(v=>v.classList.remove('active'));views[name].classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+(name==='home'?'home':'account')).classList.add('active');window.scrollTo({top:0,behavior:'instant'});}    
@@ -864,6 +955,9 @@
 
     // نسخ ID + توست صغير (سيُستبدل بالقيمة الفعلية بعد التحميل)
     function showToast(msg){ const t=document.getElementById('toast'); if(!t) return; t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1400); }
+
+    // ✅ تثبيت دالة توست في window عشان السكربتات الثانية تقدر تناديها بدون أخطاء
+    window.toast = window.toast || showToast;
 
     // إظهار/إخفاء المبالغ
     const balBox=document.getElementById('balData');
@@ -1032,6 +1126,28 @@
           return;
         }
         fillUI(user);
+
+        // ✅ فحص الإيقاف بعد تحميل المستخدم
+        (function checkSuspended(u){
+          const bar = document.getElementById('suspendBar');
+          const txt = document.getElementById('suspendText');
+
+          function enableSuspended(reason){
+            if(bar) bar.style.display = 'block';
+            if(txt) txt.textContent = reason
+              ? ('عذرًا، هذا الحساب موقّف — ' + reason)
+              : 'عذرًا، هذا الحساب موقّف';
+            document.body.classList.add('suspended-mode');
+          }
+
+          const isSusp =
+            (u && u.suspended === true) ||
+            (u && String(u.status||'').toLowerCase() === 'suspended') ||
+            (u && u.blocked === true);
+
+          if(isSusp) enableSuspended(u.suspendReason || u.reason || '');
+        })(user);
+
       }catch(err){
         const t=document.getElementById('toast'); if(t){ t.textContent='تعذّر جلب البيانات'; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'), 1600); }
         console.error(err);
@@ -1244,8 +1360,10 @@ document.addEventListener('touchstart', unlockSoundOnce, true);
 // === التنبيه عند وصول رسالة جديدة ===
 // إذا عندك مرجع Firebase للرسائل غيّر المسار فقط
 // مثال: رسائل الشركة في Realtime DB تحت /messages/company
+
+// ✅ توحيد المسار مع نظام الرسائل بالأعلى (company/messages)
 const MREF = (typeof firebase!=='undefined')
-  ? firebase.database().ref('messages/company')
+  ? firebase.database().ref('company/messages')
   : null;
 
 // لا نشغّل صوت على الدفعة الأولى (الرسائل القديمة)
@@ -1573,13 +1691,6 @@ if(MREF){
   } else {
     document.documentElement.classList.remove('app-wait');
   }
-  
-  
-  
-  
-
-  
-  
 </script>
   
 <!-- ✅ ثلاث ضغطات رجوع للخروج من الموقع (أفضل مجرّد ويب) -->
