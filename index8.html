@@ -192,6 +192,12 @@
     <button class="btn orange" id="backBtn" title="خروج">  <img src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy"></button>
     <div class="row">
       <button class="btn" id="supportBtn" title="خدمة العملاء"><img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy"></button>
+      
+      <button class="btn" id="p2pBtn" title="P2P">
+  <img src="ايقونة p2p.png" alt="p2p" width="29" height="29" loading="lazy">
+</button>
+      
+      
      <button class="btn orange" id="langBtn" title="تغيير اللغة">
   <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
 </button>
@@ -241,6 +247,10 @@
       <div class="nets" id="networks">
         <!-- TRC20 -->
         <label class="net ripple-container">
+          
+       
+          
+          
           <input type="radio" name="net" value="TRC20" checked>
           <div class="badge b-trc">TRC</div>
           <div>
@@ -351,6 +361,26 @@
     /* ===== header actions ===== */
     $("#backBtn").addEventListener('click', ()=>{ if(history.length>1) history.back(); else window.location.replace('index1.html'); });
     $("#supportBtn").addEventListener('click', ()=> window.open('https://t.me/artikarbot','_blank'));
+
+
+/* ===== header actions ===== */
+$("#backBtn").addEventListener('click', ()=>{ 
+  if(history.length>1) history.back(); 
+  else window.location.replace('index1.html'); 
+});
+
+$("#supportBtn").addEventListener('click', ()=> 
+  window.open('https://t.me/artikarbot','_blank')
+);
+
+/* ===== P2P button ===== */
+const p2pBtn = document.getElementById("p2pBtn");
+if (p2pBtn) {
+  p2pBtn.addEventListener("click", () => {
+    window.location.href = "index3.html";
+  });
+}
+
 
     /* ===== Firebase ===== */
     const cfg = {
