@@ -1,146 +1,903 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="robots" content="noindex,nofollow" />
-  <title>Under Maintenance</title>
+  <title>Dynex P2P</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0" rel="stylesheet">
 
   <style>
     :root{
-      --accent:#F36523;           /* brand accent */
-      --ink:#0f172a;              /* primary text */
-      --muted:#64748b;            /* secondary text */
-      --line:#e6e7ea;             /* subtle border */
-      --bg:#ffffff;               /* white background */
-      --radius:18px;
-      --shadow:0 18px 40px rgba(0,0,0,.08);
+      --gray:#C7C7C7;
+      --accent:#F36523;
+      --ink:#0f172a; --muted:#6b7280; --line:#e5e7eb;
+      --top:54px; --radius:16px; --top-icon:#1E3A8A;
     }
     *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial, "Cairo", sans-serif;
-      background:var(--bg); color:var(--ink); display:grid; place-items:center; padding:20px;
+    body{margin:0;font-family:"Cairo",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:#fff;min-height:100dvh;overflow-x:hidden}
+
+    .appbar{position:fixed;top:0;inset-inline:0;height:var(--top);z-index:40;background:var(--gray);
+      display:flex;align-items:center;justify-content:space-between;padding:4px 10px;box-shadow:0 1px 0 #bfbfbf}
+    .accent-line{height:3px;background:var(--accent)}
+    .btn{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #d3d3d3;display:grid;place-items:center;cursor:pointer;color:var(--top-icon);position:relative;overflow:hidden}
+    .btn.orange{color:var(--accent)}
+    .ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 600,'GRAD' 0,'opsz' 24;line-height:1}
+
+    .page{width:min(720px,92vw);margin:0 auto;padding:14px 0 84px; padding-top:calc(var(--top) + 16px);}
+    h1{margin:8px 10px 4px;font-size:20px}
+    .subhead{margin:0 10px 12px;color:#64748b;font-weight:800;font-size:13px}
+
+    .toolbar{
+      margin:0 10px 12px;
+      display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+    }
+    .pill{
+      padding:10px 12px;border-radius:14px;border:1px solid var(--line);background:#fff;
+      font-weight:900;cursor:pointer;display:flex;align-items:center;gap:8px;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+    }
+    .pill .ms{color:var(--accent)}
+    .pill small{color:#64748b;font-weight:900}
+    .pill .val{color:#111827}
+
+    .seg{
+      display:flex;gap:8px;align-items:center;
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+    }
+    .seg button{
+      border:0;background:transparent;cursor:pointer;
+      padding:8px 10px;border-radius:12px;font-weight:1000;color:#111827;
+      display:flex;align-items:center;gap:6px;
+    }
+    .seg button.active{
+      background:linear-gradient(180deg, rgba(243,101,35,.18), rgba(243,101,35,.06));
+      border:1px solid #f0b08f;
+    }
+    .seg .ms{color:var(--accent)}
+
+    .note{
+      margin:0 10px 12px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      display:flex;align-items:center;gap:8px;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+      font-weight:900;
+    }
+    .note .ms{color:var(--accent)}
+    .note span{color:#111827}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2,1fr);
+      gap:12px;
+      padding:0 10px;
+    }
+    @media (min-width:420px){ .grid{grid-template-columns:repeat(3,1fr);} }
+    @media (min-width:720px){ .grid{grid-template-columns:repeat(4,1fr);} }
+
+    .trader{
+      background:#f7f8fa;border:1px solid #e6e7ea;border-radius:16px;
+      padding:12px;
+      display:flex;flex-direction:column;gap:10px;
+      text-decoration:none;color:inherit;
+      position:relative;overflow:hidden;
+      box-shadow:0 8px 16px rgba(0,0,0,.06);
+      transition:transform .12s, box-shadow .12s, border-color .12s;
+      min-height:170px;
+    }
+    .trader:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(0,0,0,.10); border-color:#f0b08f}
+
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .avatarRow{display:flex;align-items:center;gap:10px;min-width:0}
+    .avatar{
+      width:46px;height:46px;border-radius:14px;
+      border:1px solid #e6e7ea;background:#fff;
+      display:grid;place-items:center;overflow:hidden;flex:0 0 auto;
+    }
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .nameWrap{min-width:0}
+    .name{font-weight:1000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .country{font-size:12px;color:#64748b;font-weight:900;display:flex;align-items:center;gap:6px;white-space:nowrap}
+    .flag{width:18px;height:12px;border-radius:3px;object-fit:cover;border:1px solid #e5e7eb;background:#fff}
+    .phone{font-size:12px;color:#64748b;font-weight:900;direction:ltr}
+
+    .tagline{
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      background:#fff;border:1px solid #e6e7ea;border-radius:14px;padding:8px 10px;
+    }
+    .type{
+      font-weight:1000;
+      display:flex;align-items:center;gap:6px;
+    }
+    .type.buy{color:#065f46}
+    .type.sell{color:#7c2d12}
+    .type .ms{color:currentColor}
+    .price{
+      font-weight:1100;
+      padding:4px 8px;border-radius:999px;
+      border:1px dashed #f0b08f;
+      background:linear-gradient(180deg, rgba(243,101,35,.12), rgba(243,101,35,.04));
+      color:#7c2d12;
+      font-size:12px;
+      white-space:nowrap;
     }
 
-    /* Back button (the ONLY button) */
-    .back{
-      position:fixed; inset-inline-start:14px; top:14px;
-      display:inline-grid; place-items:center;
-      width:44px; height:44px; border-radius:12px;
-      background:#fff; border:1px solid var(--line);
+    .meta{
+      display:flex;align-items:center;justify-content:space-between;gap:8px;
+      color:#64748b;font-weight:900;font-size:12px;
+    }
+    .meta .chip{
+      padding:4px 8px;border-radius:999px;border:1px solid #e6e7ea;background:#fff;
+      display:flex;align-items:center;gap:6px;
+    }
+
+    .sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;transition:.25s;z-index:60}
+    .sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 28px rgba(0,0,0,.2);
+      transform:translateY(100%);transition:.3s;z-index:61;padding:14px;border:1px solid #ececec}
+    .sheet.active{transform:translateY(0)}
+    .sheet-backdrop.active{opacity:1;visibility:visible}
+    .grab{width:40px;height:4px;border-radius:3px;background:#e5e7eb;margin:4px auto 12px}
+    .row{display:flex;align-items:center;gap:10px}
+    .field{display:flex;align-items:center;gap:8px;background:#f9fafb;border:1px solid #e6e7ea;border-radius:12px;padding:10px;margin-top:10px}
+    .field input{flex:1;border:none;background:transparent;outline:none;font-family:inherit}
+
+    .btn-orange,.btn-blue{
+      padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:#fff;cursor:pointer;font-weight:1000;
+      display:flex;align-items:center;justify-content:center;gap:6px
+    }
+    .btn-orange{background:var(--accent);border-color:var(--accent);color:#000}
+    .btn-blue{background:#fff;border-color:#e3e3e3;color:#000}
+    .actions2{display:flex;gap:10px;margin-top:10px}
+    .actions2 button{flex:1}
+
+    .detailBox{
+      margin-top:10px;
+      border:1px solid #e6e7ea;border-radius:16px;background:#fff;
       box-shadow:0 6px 16px rgba(0,0,0,.06);
-      cursor:pointer; user-select:none;
+      padding:12px;
+      display:grid;gap:10px;
     }
-    .back:active{transform:translateY(1px)}
-    .back svg{width:22px;height:22px}
+    .drow{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .drow .k{color:#64748b;font-weight:1000}
+    .drow .v{color:#111827;font-weight:1100}
+    .drow .v.ltr{direction:ltr}
 
-    /* Card */
-    .card{
-      width:min(720px,96vw);
-      background:#fff; border:1px solid var(--line); border-radius:var(--radius);
-      padding:28px 22px; text-align:center; box-shadow:var(--shadow); position:relative; overflow:hidden;
-    }
-    .card::before{
-      content:"";
-      position:absolute; inset:-25% -10% auto -10%; height:200px; border-radius:50%;
-      background:radial-gradient(460px 180px at 50% 40%, rgba(243,101,35,.08), rgba(255,255,255,0) 60%);
-      pointer-events:none;
-    }
+    .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) scale(.96);background:rgba(17,17,17,.92);color:#fff;
+      padding:8px 12px;border-radius:10px;font-weight:800;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:70}
+    .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+    .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(0,0,0,.18);animation:ripple .6s linear;pointer-events:none}
+    @keyframes ripple{to{transform:scale(3);opacity:0}}
+    .ripple-container{position:relative;overflow:hidden}
 
-    /* Animated icon */
-    .hero{display:grid;place-items:center;margin:6px 0 14px}
-    .ring{
-      width:120px;height:120px;border-radius:50%;position:relative;display:grid;place-items:center;
-      background:
-        radial-gradient(closest-side,#fff 68%,transparent 69% 100%),
-        conic-gradient(var(--accent) 0 25%, #ffd7c2 0 50%, var(--accent) 0 75%, #ffd7c2 0 100%);
-      animation:spin 3.6s linear infinite;
-      box-shadow:inset 0 2px 8px rgba(0,0,0,.06), 0 6px 16px rgba(0,0,0,.08);
+    /* Dropdown */
+    .selectWrap{position:relative}
+    select.countrySel{
+      appearance:none;
+      -webkit-appearance:none;
+      font-family:inherit;
+      font-weight:1000;
+      border:0;
+      outline:0;
+      background:transparent;
+      padding:8px 38px 8px 10px;
+      cursor:pointer;
+      color:#111827;
     }
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .gear{
-      width:54px;height:54px;background:#fff;border-radius:999px;padding:10px;display:grid;place-items:center;
-      box-shadow:0 2px 6px rgba(0,0,0,.06);
+    .selectBox{
+      display:flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:14px;border:1px solid var(--line);background:#fff;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
     }
-    .gear svg{width:32px;height:32px;fill:var(--accent)}
-
-    h1{margin:8px 0 6px;font-size:28px;font-weight:900}
-    p{margin:0;color:var(--muted);font-weight:700}
+    .selectBox .ms{color:var(--accent)}
+    .caret{
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:#64748b;pointer-events:none;
+    }
+    
+    
+    
+    /* Language sheet */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;pointer-events:none;transition:.25s;z-index:60}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 28px rgba(0,0,0,.2);
+  transform:translateY(100%);transition:.3s;z-index:61;padding:14px;border:1px solid #ececec;max-width:720px;margin:0 auto}
+.sheet.active{transform:translateY(0)}
+.sheet-backdrop.active{opacity:1;visibility:visible;pointer-events:auto}
+.grab{width:40px;height:4px;border-radius:3px;background:#e5e7eb;margin:4px auto 12px}
+.sheet .langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sheet .langs button{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:1000}
+    
   </style>
-  
-    <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#e5e7eb">
-
-
-<link rel="icon" type="image/png" sizes="32x32" href="32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="16x16.png">
-<link rel="shortcut icon" href="/favicon.ico">
-
-<!-- iOS -->
-<link rel="apple-touch-icon" sizes="180x180" href="icon.png">
-
-<!-- Android / PWA -->
-<link rel="manifest" href="/site.webmanifest">
-
-<!-- Safari pinned tab (اختياري) -->
-<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#e5e7eb">
-
-<!-- ألوان النظام (اختياري) -->
-
-<meta name="msapplication-TileColor" content="#e5e7eb">
-  
-
-  
-  
-  
 </head>
+
 <body>
+  <!-- Appbar -->
+  <header class="appbar">
+    <button class="btn orange ripple-container" id="backBtn" title="خروج">
+      <img src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy">
+    </button>
 
-  <!-- ONLY BUTTON -->
-  <button class="back" aria-label="Go back" title="Back" onclick="goBack()">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M15.5 19a1 1 0 0 1-.7-.3l-6-6a1 1 0 0 1 0-1.4l6-6a1 1 0 1 1 1.4 1.4L10.9 12l5.3 5.3A1 1 0 0 1 15.5 19z"/>
-    </svg>
-  </button>
+    <div class="row">
+      <button class="btn ripple-container" id="supportBtn" title="خدمة العملاء">
+        <img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy">
+      </button>
 
-  <main class="card" role="status" aria-live="polite">
-    <div class="hero">
-      <div class="ring" aria-hidden="true">
-        <div class="gear">
-          <!-- gear icon -->
-          <svg viewBox="0 0 24 24">
-            <path d="M19.14,12.94a7.5,7.5,0,0,0,.05-1l1.7-1.32a.5.5,0,0,0,.12-.65l-1.61-2.79a.5.5,0,0,0-.6-.22l-2,.8a7.42,7.42,0,0,0-.87-.5l-.31-2.11A.5.5,0,0,0,14.14,4H9.86a.5.5,0,0,0-.49.41L9.06,6.52a7.42,7.42,0,0,0-.87.5l-2-.8a.5.5,0,0,0-.6.22L3.98,9.25a.5.5,0,0,0,.12.65L5.8,11.22a7.5,7.5,0,0,0,0,1.56l-1.7,1.32a.5.5,0,0,0-.12.65l1.61,2.79a.5.5,0,0,0,.6.22l2-.8c.28.19.57.36.87.5l.31,2.11a.5.5,0,0,0,.49.41h4.28a.5.5,0,0,0,.49-.41l.31-2.11c.3-.14.59-.31.87-.5l2,.8a.5.5,0,0,0,.6-.22l1.61-2.79a.5.5,0,0,0-.12-.65ZM12,15.5A3.5,3.5,0,1,1,15.5,12,3.5,3.5,0,0,1,12,15.5Z"/>
-          </svg>
+      <button class="btn orange ripple-container" id="langBtn" title="تغيير اللغة">
+        <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+      </button>
+
+      <button class="btn ripple-container" id="traderLoginBtn" title="تسجيل دخول كتاجر">
+        <img src="ايقونةتاجر.png" alt="trader" width="24" height="24" loading="lazy">
+      </button>
+    </div>
+  </header>
+  <div class="accent-line"></div>
+
+  <main class="page">
+    <h1>تداول P2P</h1>
+    <div class="subhead">اختر الدولة ونوع العملية</div>
+
+    <div class="toolbar">
+      <!-- اختيار الدولة -->
+      <div class="selectWrap">
+        <div class="selectBox ripple-container" id="countryBox">
+          <span class="ms">public</span>
+          <div>
+            <div style="font-weight:1000;font-size:12px;color:#64748b">الدولة</div>
+            <div class="val" id="countryLabel" style="font-weight:1100">...</div>
+          </div>
+          <span class="caret">▾</span>
+          <select class="countrySel" id="countrySelect" title="اختر الدولة"></select>
         </div>
+      </div>
+
+      <!-- بيع / شراء -->
+      <div class="seg" role="tablist" aria-label="نوع العملية">
+        <button class="ripple-container active" id="segSell" type="button"><span class="ms">sell</span>بيع</button>
+        <button class="ripple-container" id="segBuy" type="button"><span class="ms">shopping_cart</span>شراء</button>
+        <button class="ripple-container" id="segAll" type="button"><span class="ms">apps</span>الكل</button>
+      </div>
+
+      <!-- عرض الجميع -->
+      <button class="pill ripple-container" id="showAllBtn" type="button" title="عرض جميع تجار العالم">
+        <span class="ms">language</span>
+        <div>
+          <small>عرض</small>
+          <div class="val">جميع التجّار (العالم)</div>
+        </div>
+      </button>
+    </div>
+
+<div id="toast" class="toast"></div>
+
+
+
+<!-- شيت اللغة -->
+<div class="sheet-backdrop" id="sheetBack"></div>
+<div class="sheet" id="langSheet" aria-modal="true" role="dialog">
+  <div class="grab"></div>
+  <div class="langs">
+    <button class="btn-solid ripple-container" data-setlang="ar">العربية</button>
+    <button class="btn-solid ripple-container" data-setlang="en">English</button>
+  </div>
+</div>
+
+
+
+
+    <div class="note">
+      <span class="ms">verified</span>
+      <span>السعر موحّد — (لجميع التجار)</span>
+    </div>
+
+    <section class="grid" id="tradersGrid"></section>
+  </main>
+
+  <!-- Sheet: تفاصيل التاجر -->
+  <div class="sheet-backdrop" id="traderBack"></div>
+  <div class="sheet" id="traderSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
+
+    <div class="row" style="justify-content:space-between">
+      <div class="row" style="gap:8px">
+        <span class="ms" style="color:var(--accent)">badge</span>
+        <h3 style="margin:0">بيانات التاجر</h3>
+      </div>
+      <button class="btn ripple-container" id="traderClose" title="إغلاق">×</button>
+    </div>
+
+    <div class="detailBox">
+      <div class="drow">
+        <div class="k">الاسم</div>
+        <div class="v" id="d_name">—</div>
+      </div>
+      <div class="drow">
+        <div class="k">الدولة</div>
+        <div class="v" id="d_country">—</div>
+      </div>
+      <div class="drow">
+        <div class="k">نوع الإعلان</div>
+        <div class="v" id="d_type">—</div>
+      </div>
+      <div class="drow">
+        <div class="k">السعر</div>
+        <div class="v" style="color:#7c2d12" id="d_price">سعر موحّد</div>
+      </div>
+      <div class="drow">
+        <div class="k">المتاح (USD)</div>
+        <div class="v ltr" id="d_usd">—</div>
+      </div>
+      <div class="drow">
+        <div class="k">رقم الهاتف</div>
+        <div class="v ltr" id="d_phone">—</div>
+      </div>
+      <div class="drow">
+        <div class="k">وقت إنشاء الإعلان</div>
+        <div class="v ltr" id="d_time">—</div>
       </div>
     </div>
 
-    <h1>We’ll be right back</h1>
-    <p>Our service is currently under maintenance. Thank you for your patience.</p>
-  </main>
+    <div class="actions2">
+      <button class="btn-blue ripple-container" id="callBtn">اتصال</button>
+      <button class="btn-orange ripple-container" id="closeTraderBtn">إغلاق</button>
+    </div>
+  </div>
 
+  <!-- Sheet: تسجيل دخول كتاجر -->
+  <div class="sheet-backdrop" id="loginBack"></div>
+  <div class="sheet" id="loginSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
+
+    <div class="row" style="justify-content:space-between">
+      <div class="row" style="gap:8px">
+        <span class="ms" style="color:var(--accent)">storefront</span>
+        <h3 style="margin:0">تسجيل دخول كتاجر</h3>
+      </div>
+      <button class="btn ripple-container" id="loginClose" title="إغلاق">×</button>
+    </div>
+
+    <div class="field">
+      <span class="ms" style="color:#64748b">person</span>
+      <input id="loginUser" placeholder="اسم المستخدم" autocomplete="username">
+    </div>
+    <div class="field">
+      <span class="ms" style="color:#64748b">lock</span>
+      <input id="loginPass" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+    </div>
+
+    <div class="actions2">
+      <button class="btn-blue ripple-container" id="loginCancel">إلغاء</button>
+      <button class="btn-orange ripple-container" id="loginSubmit">دخول</button>
+    </div>
+
+    <div style="margin-top:10px;color:#64748b;font-weight:900;font-size:12px;line-height:1.6">
+    لإنشاء حساب تاجر اضغط على أيقونة خدمة العملاء وسيتم تنفيذ إجراءات فتح الحساب 
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+ <script src="i18n.js"></script>
+
+
+  <!-- ===== Firebase (Compat) ===== -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
   <script>
-    function goBack(){
-      if (history.length > 1) {
-        history.back();
-      } else {
-        // Fallback if there is no history
-        window.location.replace('/');
+  
+   
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      authDomain: "dynex-f4486.firebaseapp.com",
+      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+      projectId: "dynex-f4486",
+      storageBucket: "dynex-f4486.firebasestorage.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+<script>
+  /* Ripple */
+  function ripple(ev){
+    const t = ev.currentTarget || (ev.target && ev.target.closest && ev.target.closest('.ripple-container'));
+    if(!t) return;
+    const r = document.createElement('span');
+    const d = Math.max(t.clientWidth, t.clientHeight);
+    const rect = t.getBoundingClientRect();
+    r.className='ripple';
+    r.style.width=r.style.height=d+'px';
+    r.style.left=(ev.clientX-rect.left-d/2)+'px';
+    r.style.top =(ev.clientY-rect.top -d/2)+'px';
+    const old=t.querySelector('.ripple'); if(old) old.remove();
+    t.appendChild(r); setTimeout(()=>r.remove(),600);
+  }
+  document.querySelectorAll('.ripple-container').forEach(el=>el.addEventListener('click', ripple));
+
+  /* Toast */
+  function toast(msg){
+    const t=document.getElementById('toast'); if(!t) return;
+    t.textContent=msg; t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 1400);
+  }
+
+  /* أعلى الأزرار */
+  document.getElementById('supportBtn').onclick = ()=>window.open('https://t.me/artikarbot','_blank');
+  document.getElementById('backBtn').onclick = ()=>{ if(history.length>1) history.back(); else window.location.replace('index1.html'); };
+  // ===== Language Sheet مثل صفحة الدعوة =====
+const langSheet = document.getElementById('langSheet');
+const sheetBack = document.getElementById('sheetBack');
+
+function getLang() {
+  const l = (localStorage.getItem('lang') || document.documentElement.lang || navigator.language || 'ar').toLowerCase();
+  return l.startsWith('en') ? 'en' : 'ar';
+}
+
+function applyLangLocal(l) {
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l === 'ar') ? 'rtl' : 'ltr';
+  
+  // لو عندك i18n.js فيه applyLang استخدمه
+  if (typeof window.applyLang === 'function') {
+    window.applyLang(l);
+  } else {
+    // fallback بسيط: يبدل النصوص حسب data-i18n لو DynexI18N موجود
+    if (window.DynexI18N && typeof DynexI18N.apply === 'function') {
+      window.DynexI18N.apply(l);
+    }
+  }
+}
+
+document.getElementById('langBtn').onclick = (e) => {
+  ripple(e);
+  langSheet.classList.add('active');
+  sheetBack.classList.add('active');
+};
+
+sheetBack.onclick = () => {
+  langSheet.classList.remove('active');
+  sheetBack.classList.remove('active');
+};
+
+document.querySelectorAll('#langSheet [data-setlang]').forEach(b => {
+  b.addEventListener('click', (e) => {
+    ripple(e);
+    const l = b.dataset.setlang;
+    localStorage.setItem('lang', l);
+    applyLangLocal(l);
+    sheetBack.click();
+  });
+});
+
+// طبّق اللغة عند فتح الصفحة
+applyLangLocal(getLang());
+
+  /* =========================
+     الدول (كل دول العالم تقريبًا - أسماء بالعربي)
+     ========================= */
+  const ALL_COUNTRIES = [
+    "أفغانستان","ألبانيا","الجزائر","أندورا","أنغولا","أنتيغوا وبربودا","الأرجنتين","أرمينيا","أستراليا","النمسا","أذربيجان",
+    "البهاما","البحرين","بنغلاديش","بربادوس","بيلاروس","بلجيكا","بليز","بنين","بوتان","بوليفيا","البوسنة والهرسك","بوتسوانا","البرازيل","بروناي","بلغاريا","بوركينا فاسو","بوروندي",
+    "كمبوديا","الكاميرون","كندا","الرأس الأخضر","جمهورية أفريقيا الوسطى","تشاد","تشيلي","الصين","كولومبيا","جزر القمر","الكونغو","كوستاريكا","ساحل العاج","كرواتيا","كوبا","قبرص","التشيك",
+    "الدنمارك","جيبوتي","دومينيكا","جمهورية الدومينيكان",
+    "الإكوادور","مصر","السلفادور","غينيا الاستوائية","إريتريا","إستونيا","إسواتيني","إثيوبيا",
+    "فيجي","فنلندا","فرنسا",
+    "الغابون","غامبيا","جورجيا","ألمانيا","غانا","اليونان","غرينادا","غواتيمالا","غينيا","غينيا بيساو","غيانا",
+    "هايتي","هندوراس","المجر",
+    "آيسلندا","الهند","إندونيسيا","إيران","العراق","أيرلندا","إيطاليا",
+    "جامايكا","اليابان","الأردن",
+    "كازاخستان","كينيا","كيريباتي","الكويت","قيرغيزستان",
+    "لاوس","لاتفيا","لبنان","ليسوتو","ليبيريا","ليبيا","ليختنشتاين","ليتوانيا","لوكسمبورغ",
+    "مدغشقر","مالاوي","ماليزيا","جزر المالديف","مالي","مالطا","جزر مارشال","موريتانيا","موريشيوس","المكسيك","ميكرونيزيا","مولدوفا","موناكو","منغوليا","الجبل الأسود","المغرب","موزمبيق","ميانمار",
+    "ناميبيا","ناورو","نيبال","هولندا","نيوزيلندا","نيكاراغوا","النيجر","نيجيريا","كوريا الشمالية","مقدونيا الشمالية","النرويج",
+    "عُمان",
+    "باكستان","بالاو","بنما","بابوا غينيا الجديدة","باراغواي","بيرو","الفلبين","بولندا","البرتغال",
+    "قطر",
+    "رومانيا","روسيا","رواندا",
+    "سانت كيتس ونيفيس","سانت لوسيا","سانت فنسنت والغرينادين","ساموا","سان مارينو","ساو تومي وبرينسيب","السعودية","السنغال","صربيا","سيشل","سيراليون","سنغافورة","سلوفاكيا","سلوفينيا","جزر سليمان","الصومال","جنوب أفريقيا","كوريا الجنوبية","جنوب السودان","إسبانيا","سريلانكا","السودان","سورينام","السويد","سويسرا","سوريا",
+    "طاجيكستان","تنزانيا","تايلاند","تيمور الشرقية","توغو","تونغا","ترينيداد وتوباغو","تونس","تركيا","تركمانستان","توفالو",
+    "أوغندا","أوكرانيا","الإمارات","المملكة المتحدة","الولايات المتحدة","الأوروغواي","أوزبستان",
+    "فانواتو","الفاتيكان","فنزويلا","فيتنام",
+    "اليمن","زامبيا","زيمبابوي"
+  ];
+
+  function detectCountryNameFast(){
+    const lang = (navigator.language || '').toLowerCase();
+    if(lang.includes('-ye')) return "اليمن";
+    if(lang.includes('-sa')) return "السعودية";
+    if(lang.includes('-ae')) return "الإمارات";
+    if(lang.includes('-eg')) return "مصر";
+    if(lang.includes('-us')) return "الولايات المتحدة";
+    return "السعودية";
+  }
+
+  /* =========================
+     ✅ (جديد) جلب الإعلانات الحقيقية من القاعدة
+     المسار: p2p_ads/<country>/<pushId>
+     ========================= */
+  const ADS_PATH = 'p2p_ads';
+
+  // هاي مصفوفة التجّار الحقيقية (من القاعدة)
+  let TRADERS = []; // [{id, name, phone, country, type, usd, createdAt, _raw, _countryKey}]
+
+  async function loadAdsFromDB(){
+    try{
+      // SDK
+      const snap = await db.ref(ADS_PATH).get();
+      const all = snap.exists() ? (snap.val() || {}) : {};
+      TRADERS = flattenAds(all);
+      render();
+      return;
+    }catch(e){
+      console.warn('SDK ads load failed → fallback REST', e?.message||e);
+    }
+
+    // REST fallback
+    try{
+      const res = await fetch(firebaseConfig.databaseURL + `/${ADS_PATH}.json`);
+      const all = (await res.json()) || {};
+      TRADERS = flattenAds(all);
+      render();
+    }catch(e2){
+      console.warn('REST ads load failed', e2?.message||e2);
+      TRADERS = [];
+      render();
+    }
+  }
+
+  function flattenAds(all){
+    const out = [];
+    for(const [countryKey, group] of Object.entries(all || {})){
+      if(!group) continue;
+      for(const [id, v] of Object.entries(group || {})){
+        const ad = v || {};
+        const type = String(ad.type || '').trim(); // sell / buy
+        const usd  = Number(ad.usd || 0);
+        const name = ad.ownerName || ad.ownerUsername || '—';
+        const phone = ad.adPhone || ad.ownerPhone || '—';
+        const createdAt = Number(ad.createdAt || 0);
+
+        // نتجاهل الإعلانات الناقصة جدًا
+        if(!type || !countryKey) continue;
+
+        out.push({
+          id,
+          name,
+          phone,
+          country: ad.country || countryKey,
+          type,
+          usd,
+          createdAt,
+          _raw: ad,
+          _countryKey: countryKey
+        });
       }
     }
-  </script>
-  
-    <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("service-worker.js")
-      .then(reg => console.log("✔ Service Worker registered"))
-      .catch(err => console.error("❌ Service Worker failed:", err));
+    // الأحدث أولاً
+    out.sort((a,b)=> (Number(b.createdAt||0) - Number(a.createdAt||0)));
+    return out;
   }
-</script>
-  
 
-  
-  
-</body>
-</html>
+  // تحديث مباشر (لو حد نشر إعلان أو حذف)
+  function watchAdsRealtime(){
+    try{
+      db.ref(ADS_PATH).on('value', (snap)=>{
+        const all = snap.exists() ? (snap.val() || {}) : {};
+        TRADERS = flattenAds(all);
+        render();
+      });
+    }catch(e){
+      // لو ما اشتغل، عادي نكتفي بالتحميل مرة
+      console.warn('watchAdsRealtime failed', e?.message||e);
+    }
+  }
+
+  const tradersGrid = document.getElementById('tradersGrid');
+  const countrySelect = document.getElementById('countrySelect');
+  const countryLabel  = document.getElementById('countryLabel');
+  const showAllBtn = document.getElementById('showAllBtn');
+
+  const segSell = document.getElementById('segSell');
+  const segBuy  = document.getElementById('segBuy');
+  const segAll  = document.getElementById('segAll');
+
+  let filter = {
+    country: detectCountryNameFast(),
+    type: 'all',
+    world: false
+  };
+
+  function fillCountries(){
+    countrySelect.innerHTML = '';
+    ALL_COUNTRIES.forEach(c=>{
+      const opt = document.createElement('option');
+      opt.value = c;
+      opt.textContent = c;
+      countrySelect.appendChild(opt);
+    });
+    if(ALL_COUNTRIES.includes(filter.country)){
+      countrySelect.value = filter.country;
+    }else{
+      filter.country = ALL_COUNTRIES[0];
+      countrySelect.value = filter.country;
+    }
+    countryLabel.textContent = filter.country;
+  }
+  fillCountries();
+
+  countrySelect.addEventListener('change', ()=>{
+    filter.country = countrySelect.value;
+    countryLabel.textContent = filter.country;
+    filter.world = false;
+    render();
+  });
+
+  function setSeg(active){
+    [segSell, segBuy, segAll].forEach(b=>b.classList.remove('active'));
+    active.classList.add('active');
+  }
+  segSell.onclick = (e)=>{ ripple(e); setSeg(segSell); filter.type='sell'; render(); };
+  segBuy.onclick  = (e)=>{ ripple(e); setSeg(segBuy);  filter.type='buy';  render(); };
+  segAll.onclick  = (e)=>{ ripple(e); setSeg(segAll);  filter.type='all';  render(); };
+
+  showAllBtn.onclick = (e)=>{
+    ripple(e);
+    filter.world = true;
+    render();
+    toast('تم عرض جميع التجّار (العالم)');
+  };
+
+  function fmtTime(ts){
+    try{ return new Date(ts).toLocaleString('ar-EG', { hour12:false }); }
+    catch(_){ return String(ts||''); }
+  }
+
+  function render(){
+    tradersGrid.innerHTML = '';
+
+    const list = TRADERS.filter(t=>{
+      if(filter.type !== 'all' && t.type !== filter.type) return false;
+      if(filter.world) return true;
+      return t.country === filter.country;
+    });
+
+    if(!list.length){
+      const empty = document.createElement('div');
+      empty.style.cssText = "grid-column:1/-1;padding:14px;border:1px dashed #e5e7eb;border-radius:16px;background:#fff;color:#64748b;font-weight:1000;text-align:center";
+      empty.textContent = "لا يوجد تجّار متاحين حالياً لهذه الدولة/النوع";
+      tradersGrid.appendChild(empty);
+      return;
+    }
+
+    list.forEach(t=>{
+      const a = document.createElement('a');
+      a.href="#";
+      a.className="trader ripple-container";
+
+      const typeLabel = (t.type === 'sell') ? 'بيع' : 'شراء';
+      const typeIcon  = (t.type === 'sell') ? 'sell' : 'shopping_cart';
+      const typeClass = (t.type === 'sell') ? 'sell' : 'buy';
+
+      a.innerHTML = `
+        <div class="topline">
+          <div class="avatarRow">
+            <div class="avatar"><img src="trader.png" alt="" onerror="this.style.display='none'"></div>
+            <div class="nameWrap">
+              <div class="name">${t.name || '—'}</div>
+              <div class="country">
+                <img class="flag" src="flags/${t.country}.png" alt="" onerror="this.style.display='none'">
+                <span>${t.country || '—'}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tagline">
+          <div class="type ${typeClass}">
+            <span class="ms">${typeIcon}</span>
+            <span>${typeLabel}</span>
+          </div>
+          <div class="price">سعر موحّد</div>
+        </div>
+
+        <div class="meta">
+          <div class="chip"><span class="ms" style="color:#64748b">call</span><span dir="ltr">${t.phone || '—'}</span></div>
+          <div class="chip"><span class="ms" style="color:#64748b">attach_money</span><span>${Number(t.usd||0).toLocaleString('ar-EG')} USD</span></div>
+        </div>
+      `;
+
+      a.addEventListener('click', (e)=>{
+        e.preventDefault();
+        ripple(e);
+        openTrader(t);
+      });
+
+      tradersGrid.appendChild(a);
+    });
+  }
+
+  /* Sheet تفاصيل التاجر */
+  const traderBack  = document.getElementById('traderBack');
+  const traderSheet = document.getElementById('traderSheet');
+  const traderClose = document.getElementById('traderClose');
+  const closeTraderBtn = document.getElementById('closeTraderBtn');
+  const callBtn = document.getElementById('callBtn');
+
+  const d_name    = document.getElementById('d_name');
+  const d_country = document.getElementById('d_country');
+  const d_type    = document.getElementById('d_type');
+  const d_price   = document.getElementById('d_price');
+  const d_usd     = document.getElementById('d_usd');
+  const d_phone   = document.getElementById('d_phone');
+  const d_time    = document.getElementById('d_time');
+
+  let currentTrader = null;
+
+  function openTrader(t){
+    currentTrader = t;
+    d_name.textContent = t.name || '—';
+    d_country.textContent = t.country || '—';
+    d_type.textContent = (t.type==='sell') ? 'بيع' : 'شراء';
+    d_price.textContent = 'سعر موحّد';
+    d_usd.textContent = (Number(t.usd||0)).toLocaleString('en-US') + ' USD';
+    d_phone.textContent = t.phone || '—';
+    d_time.textContent = fmtTime(t.createdAt);
+
+    traderSheet.classList.add('active');
+    traderBack.classList.add('active');
+  }
+  function closeTrader(){
+    traderSheet.classList.remove('active');
+    traderBack.classList.remove('active');
+  }
+
+  traderBack.onclick = closeTrader;
+  traderClose.onclick = closeTrader;
+  closeTraderBtn.onclick = (e)=>{ ripple(e); closeTrader(); };
+
+  callBtn.onclick = (e)=>{
+    ripple(e);
+    if(!currentTrader || !currentTrader.phone){ toast('لا يوجد رقم'); return; }
+    window.location.href = 'tel:' + String(currentTrader.phone).replace(/\s+/g,'');
+  };
+
+  /* =========================
+     تسجيل دخول التاجر (P2P) من p2p_links + fallback REST
+     ========================= */
+  const SESSION_KEY = 'p2p_trader_session';
+  const TRADER_DASH_URL = 'p2p-trader.html';
+  const P2P_PATH = 'p2p_links';
+
+  const loginBtn   = document.getElementById('traderLoginBtn');
+  const loginBack  = document.getElementById('loginBack');
+  const loginSheet = document.getElementById('loginSheet');
+  const loginClose = document.getElementById('loginClose');
+  const loginCancel= document.getElementById('loginCancel');
+  const loginSubmit= document.getElementById('loginSubmit');
+  const loginUser  = document.getElementById('loginUser');
+  const loginPass  = document.getElementById('loginPass');
+
+  function openLogin(){ loginSheet.classList.add('active'); loginBack.classList.add('active'); }
+  function closeLogin(){ loginSheet.classList.remove('active'); loginBack.classList.remove('active'); }
+
+  function hasSession(){
+    try{
+      const s = JSON.parse(localStorage.getItem(SESSION_KEY)||'null');
+      return !!(s && s.ok === true && s.uid);
+    }catch(_){ return false; }
+  }
+  function goTraderPage(){ window.location.href = TRADER_DASH_URL; }
+
+  function refreshLoginButtonBehavior(){
+    if(hasSession()) loginBtn.onclick = ()=>goTraderPage();
+    else loginBtn.onclick = ()=>openLogin();
+  }
+  refreshLoginButtonBehavior();
+
+  loginBack.onclick = closeLogin;
+  loginClose.onclick = closeLogin;
+  loginCancel.onclick = closeLogin;
+
+  // ✅ دخول من p2p_links (p2pUsername/p2pPassword)
+  loginSubmit.onclick = async (e)=>{
+    ripple(e);
+
+    const u = String(loginUser.value||'').trim();
+    const p = String(loginPass.value||'').trim();
+    if(!u || !p){ toast('أدخل اسم المستخدم وكلمة المرور'); return; }
+
+    const prev = loginSubmit.innerHTML;
+    loginSubmit.disabled = true;
+    loginSubmit.style.opacity = .85;
+    loginSubmit.innerHTML = 'جارٍ التحقق...';
+
+    try{
+      let found = null; // { uid, accountId, data }
+
+      // 1) Firebase SDK (تحميل p2p_links بالكامل ثم بحث)
+      try{
+        const snap = await db.ref(P2P_PATH).get();
+        if(snap.exists()){
+          snap.forEach(accSnap=>{
+            const accountId = accSnap.key;
+            accSnap.forEach(ch=>{
+              const v = ch.val() || {};
+              const uname = String(v.p2pUsername || '').trim();
+              if(uname === u && !found){
+                found = { uid: ch.key, accountId, data: v };
+              }
+            });
+          });
+        }
+      }catch(sdkErr){
+        console.warn('SDK login failed → fallback REST', sdkErr?.message||sdkErr);
+      }
+
+      // 2) fallback REST لو SDK ما جاب شيء
+      if(!found){
+        const res = await fetch(firebaseConfig.databaseURL + `/${P2P_PATH}.json`);
+        const all = (await res.json()) || {};
+        for(const [accountId, group] of Object.entries(all)){
+          if(!group) continue;
+          for(const [uid, v] of Object.entries(group)){
+            const uname = String(v?.p2pUsername || '').trim();
+            if(uname === u){
+              found = { uid, accountId, data: v || {} };
+              break;
+            }
+          }
+          if(found) break;
+        }
+      }
+
+      if(!found){
+        toast('اسم المستخدم غير صحيح');
+        return;
+      }
+
+      // 3) تحقق كلمة المرور من p2pPassword
+      const dbPass = String(found.data?.p2pPassword || '').trim();
+      if(dbPass !== p){
+        toast('كلمة المرور غير صحيحة');
+        return;
+      }
+
+      // 4) حفظ جلسة التاجر
+      try{
+        localStorage.setItem(SESSION_KEY, JSON.stringify({
+          ok: true,
+          uid: found.uid,
+          username: u,
+          accountId: found.accountId,
+          savedAt: Date.now()
+        }));
+      }catch(_){}
+
+      closeLogin();
+      toast('تم تسجيل الدخول ✅');
+      refreshLoginButtonBehavior();
+      setTimeout(goTraderPage, 350);
+
+    }catch(err){
+      console.error(err);
+      toast('تعذّر الاتصال بالقاعدة');
+    }finally{
+      loginSubmit.disabled = false;
+      loginSubmit.style.opacity = '';
+      loginSubmit.innerHTML = prev;
+    }
+  };
+
+  /* =========================
+     ✅ تشغيل: تحميل الإعلانات الحقيقية
+     ========================= */
+  // تحميل مرة + مراقبة فورية (لو اشتغلت)
+  loadAdsFromDB();
+  watchAdsRealtime();
+</script>

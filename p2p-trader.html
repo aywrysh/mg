@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>إنشاء إعلان P2P</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,600,0,0" rel="stylesheet">
+
+  <style>
+    :root{
+      --gray:#C7C7C7;
+      --accent:#F36523;
+      --ink:#0f172a; --muted:#6b7280; --line:#e5e7eb;
+      --top:54px; --radius:16px; --top-icon:#1E3A8A;
+      --bg:#fff;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+    body{margin:0;font-family:"Cairo",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100dvh;overflow-x:hidden}
+
+    .appbar{position:fixed;top:0;inset-inline:0;height:var(--top);z-index:40;background:var(--gray);
+      display:flex;align-items:center;justify-content:space-between;padding:4px 10px;box-shadow:0 1px 0 #bfbfbf}
+    .accent-line{height:3px;background:var(--accent)}
+    .btn{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid #d3d3d3;display:grid;place-items:center;cursor:pointer;color:var(--top-icon);position:relative;overflow:hidden}
+    .btn.orange{color:var(--accent)}
+    .ms{font-family:'Material Symbols Rounded';font-variation-settings:'FILL' 0,'wght' 600,'GRAD' 0,'opsz' 24;line-height:1}
+
+    .page{width:min(720px,92vw);margin:0 auto;padding:14px 0 94px; padding-top:calc(var(--top) + 16px);}
+    h1{margin:8px 10px 4px;font-size:20px}
+    .subhead{margin:0 10px 12px;color:#64748b;font-weight:900;font-size:13px}
+
+    .card{
+      margin:0 10px 12px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      box-shadow:0 8px 18px rgba(0,0,0,.06);
+      padding:12px;
+      display:grid;
+      gap:12px;
+    }
+
+    .row{display:flex;align-items:center;gap:10px;justify-content:space-between;flex-wrap:wrap}
+    .note{
+      margin:0 10px 12px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:#fff;
+      display:flex;align-items:center;gap:8px;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+      font-weight:900;
+    }
+    .note .ms{color:var(--accent)}
+    .note span{color:#111827}
+
+    .seg{
+      display:flex;gap:8px;align-items:center;
+      background:#fff;border:1px solid var(--line);border-radius:16px;padding:6px;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+      width:100%;
+      justify-content:space-between;
+    }
+    .seg button{
+      border:0;background:transparent;cursor:pointer;
+      padding:10px 12px;border-radius:12px;font-weight:1000;color:#111827;
+      display:flex;align-items:center;gap:6px;
+      flex:1; justify-content:center;
+      position:relative; overflow:hidden;
+    }
+    .seg button.active{
+      background:linear-gradient(180deg, rgba(243,101,35,.18), rgba(243,101,35,.06));
+      border:1px solid #f0b08f;
+    }
+    .seg .ms{color:var(--accent)}
+
+    /* Dropdown */
+    .selectWrap{position:relative; width:100%}
+    select.countrySel{
+      appearance:none;-webkit-appearance:none;
+      font-family:inherit;font-weight:1000;
+      border:0; outline:0; background:transparent;
+      padding:10px 38px 10px 10px;
+      cursor:pointer;color:#111827;width:100%;
+    }
+    .selectBox{
+      display:flex;align-items:center;gap:8px;
+      padding:8px 10px;border-radius:14px;border:1px solid var(--line);background:#fff;
+      box-shadow:0 6px 14px rgba(0,0,0,.05);
+      position:relative;
+    }
+    .selectBox .ms{color:var(--accent)}
+    .caret{
+      position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:#64748b;pointer-events:none;
+    }
+    .val{font-weight:1100}
+
+    .field{
+      display:flex;align-items:center;gap:8px;background:#f9fafb;
+      border:1px solid #e6e7ea;border-radius:14px;padding:10px;
+      width:100%;
+    }
+    .field input{
+      flex:1;border:none;background:transparent;outline:none;font-family:inherit;
+      font-weight:1000;
+    }
+    .field .ms{color:#64748b}
+
+    .btn-orange,.btn-blue,.btn-red{
+      padding:12px 12px;border-radius:14px;border:1px solid var(--line);
+      background:#fff;cursor:pointer;font-weight:1000;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      position:relative; overflow:hidden;
+    }
+    .btn-orange{background:var(--accent);border-color:var(--accent);color:#000}
+    .btn-blue{background:#fff;border-color:#e3e3e3;color:#000}
+    .btn-red{background:#fff;border-color:#fecaca;color:#991b1b}
+    .btn-orange:disabled{opacity:.75;cursor:not-allowed}
+
+    .actions2{display:flex;gap:10px;flex-wrap:wrap}
+    .actions2 button{flex:1; min-width:160px}
+
+    .listTitle{margin:6px 10px 10px;font-weight:1000;color:#111827}
+
+    .grid{
+      display:grid;gap:12px;padding:0 10px;
+      grid-template-columns:repeat(2,1fr);
+    }
+    @media (min-width:420px){ .grid{grid-template-columns:repeat(3,1fr);} }
+    @media (min-width:720px){ .grid{grid-template-columns:repeat(4,1fr);} }
+
+    .ad{
+      background:#f7f8fa;border:1px solid #e6e7ea;border-radius:16px;
+      padding:12px;display:flex;flex-direction:column;gap:10px;
+      box-shadow:0 8px 16px rgba(0,0,0,.06);
+      min-height:175px;
+      position:relative; overflow:hidden;
+    }
+    .ad .top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .badge{
+      padding:6px 10px;border-radius:999px;font-weight:1000;font-size:12px;
+      border:1px solid #e6e7ea;background:#fff;display:flex;align-items:center;gap:6px;
+    }
+    .badge.sell{color:#7c2d12}
+    .badge.buy{color:#065f46}
+    .ad .kv{display:grid;gap:6px}
+    .ad .kv div{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .ad .k{color:#64748b;font-weight:1000;font-size:12px}
+    .ad .v{color:#111827;font-weight:1100;font-size:12px;direction:ltr}
+    .ad .v.ar{direction:rtl}
+
+    .ad .delWrap{margin-top:auto}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+
+    .toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%) scale(.96);background:rgba(17,17,17,.92);color:#fff;
+      padding:8px 12px;border-radius:10px;font-weight:800;font-size:12px;opacity:0;pointer-events:none;transition:opacity .25s, transform .25s;z-index:70}
+    .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
+    .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(0,0,0,.18);animation:ripple .6s linear;pointer-events:none}
+    @keyframes ripple{to{transform:scale(3);opacity:0}}
+    .ripple-container{position:relative;overflow:hidden}
+    
+    
+    
+    
+    /* Language sheet */
+.sheet-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);opacity:0;visibility:hidden;pointer-events:none;transition:.25s;z-index:60}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:#fff;border-radius:18px 18px 0 0;box-shadow:0 -10px 28px rgba(0,0,0,.2);
+  transform:translateY(100%);transition:.3s;z-index:61;padding:14px;border:1px solid #ececec;max-width:720px;margin:0 auto}
+.sheet.active{transform:translateY(0)}
+.sheet-backdrop.active{opacity:1;visibility:visible;pointer-events:auto}
+.grab{width:40px;height:4px;border-radius:3px;background:#e5e7eb;margin:4px auto 12px}
+.sheet .langs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.sheet .langs button{padding:10px;border:1px solid var(--line);border-radius:12px;background:#fff;cursor:pointer;font-weight:1000}
+    
+    
+    
+  </style>
+</head>
+
+<body>
+  <!-- Appbar -->
+  <header class="appbar">
+    <button class="btn orange ripple-container" id="backBtn" title="رجوع">
+      <img src="ايقونةخروج.png" alt="back" width="24" height="24" loading="lazy">
+    </button>
+
+    <div class="row">
+      <button class="btn ripple-container" id="supportBtn" title="خدمة العملاء">
+        <img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy">
+      </button>
+
+       <button class="btn orange" id="langBtn" title="تغيير اللغة">
+  <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+</button>
+    </div>
+  </header>
+  <div class="accent-line"></div>
+
+  <main class="page">
+    <h1>إنشاء إعلان P2P</h1>
+    <div class="subhead">أنشئ إعلان بيع/شراء ـــــــــــــــــ </div>
+
+    <div class="note">
+      <span class="ms">verified</span>
+      <span>سيتم انشاء اعلان وعرضه على جميع الدول </span>
+    </div>
+
+    <!-- Form -->
+    <section class="card">
+      <div class="row" style="gap:12px;width:100%">
+        <div style="font-weight:1000">نوع الإعلان</div>
+        <div style="color:#64748b;font-weight:900;font-size:12px" id="sessionInfo">.....
+        </div>
+      </div>
+
+      <div class="seg" role="tablist" aria-label="نوع العملية">
+        <button class="ripple-container active" id="segSell" type="button"><span class="ms">sell</span>بيع</button>
+        <button class="ripple-container" id="segBuy" type="button"><span class="ms">shopping_cart</span>شراء</button>
+      </div>
+
+  <!-- شيت اللغة -->
+<div class="sheet-backdrop" id="sheetBack"></div>
+<div class="sheet" id="langSheet" aria-modal="true" role="dialog">
+  <div class="grab"></div>
+  <div class="langs">
+    <button class="btn-solid ripple-container" data-setlang="ar">العربية</button>
+    <button class="btn-solid ripple-container" data-setlang="en">English</button>
+  </div>
+</div>
+
+
+      <!-- Country -->
+      <div class="selectWrap">
+        <div class="selectBox ripple-container">
+          <span class="ms">public</span>
+          <div style="min-width:0">
+            <div style="font-weight:1000;font-size:12px;color:#64748b">الدولة</div>
+            <div class="val" id="countryLabel">....</div>
+          </div>
+          <span class="caret">▾</span>
+          <select class="countrySel" id="countrySelect" title="اختر الدولة"></select>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="field">
+        <span class="ms">attach_money</span>
+        <input id="amountUsd" type="number" min="1" step="1" placeholder="المبلغ (USD) مثل: 500">
+      </div>
+
+      <!-- Phone -->
+      <div class="field">
+        <span class="ms">call</span>
+        <input id="adPhone" type="text" placeholder="رقم الهاتف للتواصل (مثال: 9677xxxxxxx)" dir="ltr">
+      </div>
+
+      <div class="actions2">
+        <button class="btn-blue ripple-container" id="clearBtn" type="button"><span class="ms">refresh</span>تفريغ</button>
+        <button class="btn-orange ripple-container" id="createBtn" type="button"><span class="ms">add_circle</span>نشر الإعلان</button>
+      </div>
+    </section>
+
+    <div class="listTitle">إعلاناتي</div>
+    <section class="grid" id="myAdsGrid"></section>
+  </main>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+<div id="toast" class="toast"></div>
+
+  <script src="i18n.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+      authDomain: "dynex-f4486.firebaseapp.com",
+      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+      projectId: "dynex-f4486",
+      storageBucket: "dynex-f4486.firebasestorage.app"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+  </script>
+
+  <script>
+    /* Ripple */
+    function ripple(ev){
+      const t = ev.currentTarget || (ev.target && ev.target.closest && ev.target.closest('.ripple-container'));
+      if(!t) return;
+      const r = document.createElement('span');
+      const d = Math.max(t.clientWidth, t.clientHeight);
+      const rect = t.getBoundingClientRect();
+      r.className='ripple';
+      r.style.width=r.style.height=d+'px';
+      r.style.left=(ev.clientX-rect.left-d/2)+'px';
+      r.style.top =(ev.clientY-rect.top -d/2)+'px';
+      const old=t.querySelector('.ripple'); if(old) old.remove();
+      t.appendChild(r); setTimeout(()=>r.remove(),600);
+    }
+    document.querySelectorAll('.ripple-container').forEach(el=>el.addEventListener('click', ripple));
+
+    /* Toast */
+    function toast(msg){
+      const t=document.getElementById('toast'); if(!t) return;
+      t.textContent=msg; t.classList.add('show');
+      setTimeout(()=>t.classList.remove('show'), 1500);
+    }
+
+    /* أزرار أعلى */
+    document.getElementById('supportBtn').onclick = ()=>window.open('https://t.me/artikarbot','_blank');
+    document.getElementById('backBtn').onclick = ()=>{ if(history.length>1) history.back(); else window.location.replace('index1.html'); };
+    // ===== Language Sheet مثل صفحة الدعوة =====
+const langSheet = document.getElementById('langSheet');
+const sheetBack = document.getElementById('sheetBack');
+
+function getLang(){
+  const l = (localStorage.getItem('lang') || document.documentElement.lang || navigator.language || 'ar').toLowerCase();
+  return l.startsWith('en') ? 'en' : 'ar';
+}
+
+function applyLangLocal(l){
+  document.documentElement.lang = l;
+  document.documentElement.dir  = (l === 'ar') ? 'rtl' : 'ltr';
+
+  // لو عندك i18n.js فيه applyLang استخدمه
+  if (typeof window.applyLang === 'function') {
+    window.applyLang(l);
+  } else {
+    // fallback بسيط: يبدل النصوص حسب data-i18n لو DynexI18N موجود
+    if (window.DynexI18N && typeof DynexI18N.apply === 'function') {
+      window.DynexI18N.apply(l);
+    }
+  }
+}
+
+document.getElementById('langBtn').onclick = (e)=>{
+  ripple(e);
+  langSheet.classList.add('active');
+  sheetBack.classList.add('active');
+};
+
+sheetBack.onclick = ()=>{
+  langSheet.classList.remove('active');
+  sheetBack.classList.remove('active');
+};
+
+document.querySelectorAll('#langSheet [data-setlang]').forEach(b=>{
+  b.addEventListener('click', (e)=>{
+    ripple(e);
+    const l = b.dataset.setlang;
+    localStorage.setItem('lang', l);
+    applyLangLocal(l);
+    sheetBack.click();
+  });
+});
+
+// طبّق اللغة عند فتح الصفحة
+applyLangLocal(getLang());
+
+    /* دول */
+    const ALL_COUNTRIES = [
+      "أفغانستان","ألبانيا","الجزائر","أندورا","أنغولا","أنتيغوا وبربودا","الأرجنتين","أرمينيا","أستراليا","النمسا","أذربيجان",
+      "البهاما","البحرين","بنغلاديش","بربادوس","بيلاروس","بلجيكا","بليز","بنين","بوتان","بوليفيا","البوسنة والهرسك","بوتسوانا","البرازيل","بروناي","بلغاريا","بوركينا فاسو","بوروندي",
+      "كمبوديا","الكاميرون","كندا","الرأس الأخضر","جمهورية أفريقيا الوسطى","تشاد","تشيلي","الصين","كولومبيا","جزر القمر","الكونغو","كوستاريكا","ساحل العاج","كرواتيا","كوبا","قبرص","التشيك",
+      "الدنمارك","جيبوتي","دومينيكا","جمهورية الدومينيكان",
+      "الإكوادور","مصر","السلفادور","غينيا الاستوائية","إريتريا","إستونيا","إسواتيني","إثيوبيا",
+      "فيجي","فنلندا","فرنسا",
+      "الغابون","غامبيا","جورجيا","ألمانيا","غانا","اليونان","غرينادا","غواتيمالا","غينيا","غينيا بيساو","غيانا",
+      "هايتي","هندوراس","المجر",
+      "آيسلندا","الهند","إندونيسيا","إيران","العراق","أيرلندا","إيطاليا",
+      "جامايكا","اليابان","الأردن",
+      "كازاخستان","كينيا","كيريباتي","الكويت","قيرغيزستان",
+      "لاوس","لاتفيا","لبنان","ليسوتو","ليبيريا","ليبيا","ليختنشتاين","ليتوانيا","لوكسمبورغ",
+      "مدغشقر","مالاوي","ماليزيا","جزر المالديف","مالي","مالطا","جزر مارشال","موريتانيا","موريشيوس","المكسيك","ميكرونيزيا","مولدوفا","موناكو","منغوليا","الجبل الأسود","المغرب","موزمبيق","ميانمار",
+      "ناميبيا","ناورو","نيبال","هولندا","نيوزيلندا","نيكاراغوا","النيجر","نيجيريا","كوريا الشمالية","مقدونيا الشمالية","النرويج",
+      "عُمان",
+      "باكستان","بالاو","بنما","بابوا غينيا الجديدة","باراغواي","بيرو","الفلبين","بولندا","البرتغال",
+      "قطر",
+      "رومانيا","روسيا","رواندا",
+      "سانت كيتس ونيفيس","سانت لوسيا","سانت فنسنت والغرينادين","ساموا","سان مارينو","ساو تومي وبرينسيب","السعودية","السنغال","صربيا","سيشل","سيراليون","سنغافورة","سلوفاكيا","سلوفينيا","جزر سليمان","الصومال","جنوب أفريقيا","كوريا الجنوبية","جنوب السودان","إسبانيا","سريلانكا","السودان","سورينام","السويد","سويسرا","سوريا",
+      "طاجيكستان","تنزانيا","تايلاند","تيمور الشرقية","توغو","تونغا","ترينيداد وتوباغو","تونس","تركيا","تركمانستان","توفالو",
+      "أوغندا","أوكرانيا","الإمارات","المملكة المتحدة","الولايات المتحدة","الأوروغواي","أوزبستان",
+      "فانواتو","الفاتيكان","فنزويلا","فيتنام",
+      "اليمن","زامبيا","زيمبابوي"
+    ];
+
+    function detectCountryNameFast(){
+      const lang = (navigator.language || '').toLowerCase();
+      if(lang.includes('-ye')) return "اليمن";
+      if(lang.includes('-sa')) return "السعودية";
+      if(lang.includes('-ae')) return "الإمارات";
+      if(lang.includes('-eg')) return "مصر";
+      if(lang.includes('-us')) return "الولايات المتحدة";
+      return "السعودية";
+    }
+
+    const countrySelect = document.getElementById('countrySelect');
+    const countryLabel  = document.getElementById('countryLabel');
+
+    const segSell = document.getElementById('segSell');
+    const segBuy  = document.getElementById('segBuy');
+
+    let adType = 'sell'; // sell/buy
+    function setSeg(active){
+      [segSell, segBuy].forEach(b=>b.classList.remove('active'));
+      active.classList.add('active');
+    }
+    segSell.onclick = (e)=>{ ripple(e); setSeg(segSell); adType='sell'; };
+    segBuy.onclick  = (e)=>{ ripple(e); setSeg(segBuy);  adType='buy';  };
+
+    // تعبئة الدول
+    let currentCountry = detectCountryNameFast();
+    function fillCountries(){
+      countrySelect.innerHTML = '';
+      ALL_COUNTRIES.forEach(c=>{
+        const opt = document.createElement('option');
+        opt.value = c;
+        opt.textContent = c;
+        countrySelect.appendChild(opt);
+      });
+      if(!ALL_COUNTRIES.includes(currentCountry)) currentCountry = ALL_COUNTRIES[0];
+      countrySelect.value = currentCountry;
+      countryLabel.textContent = currentCountry;
+    }
+    fillCountries();
+    countrySelect.addEventListener('change', ()=>{
+      currentCountry = countrySelect.value;
+      countryLabel.textContent = currentCountry;
+      loadMyAds(); // تحدث قائمة إعلاناتي حسب الدولة (مع أننا بنجيب من كل الدول)
+    });
+
+    // ===== Session + user info =====
+    const SESSION_KEY = 'p2p_trader_session';
+    const ADS_PATH = 'p2p_ads';
+    let session = null;
+    let owner = null; // {name, phone, accountId, username}
+
+    function getSession(){
+      try{ return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); }catch(_){ return null; }
+    }
+
+    async function fetchUserByAccountIdOrUsername(accId, username){
+      // نحاول SDK أولاً
+      try{
+        // 1) by accountId
+        if(accId){
+          const snap1 = await db.ref('users').orderByChild('accountId').equalTo(String(accId)).get();
+          if(snap1.exists()){
+            let u=null; snap1.forEach(ch=>{ if(!u) u = ch.val(); });
+            if(u) return u;
+          }
+        }
+        // 2) by username
+        if(username){
+          const snap2 = await db.ref('users').orderByChild('username').equalTo(String(username)).get();
+          if(snap2.exists()){
+            let u=null; snap2.forEach(ch=>{ if(!u) u = ch.val(); });
+            if(u) return u;
+          }
+        }
+      }catch(e){
+        console.warn('SDK users query failed, fallback REST', e?.message||e);
+      }
+
+      // fallback REST
+      try{
+        const res = await fetch(firebaseConfig.databaseURL + '/users.json');
+        const all = (await res.json()) || {};
+        for(const [k,v] of Object.entries(all)){
+          if(!v) continue;
+          if(accId && String(v.accountId||'') === String(accId)) return v;
+          if(username && String(v.username||'') === String(username)) return v;
+        }
+      }catch(e2){
+        console.warn('REST users fetch failed', e2?.message||e2);
+      }
+      return null;
+    }
+
+    async function initSession(){
+      session = getSession();
+      const info = document.getElementById('sessionInfo');
+
+      if(!session || !session.ok || !session.accountId){
+        info.textContent = 'لا توجد جلسة تاجر — سجّل دخول أولاً';
+        info.style.color = '#b91c1c';
+        toast('سجّل دخول كتاجر أولاً من صفحة العرض');
+        return;
+      }
+
+      const u = await fetchUserByAccountIdOrUsername(session.accountId, session.username);
+      owner = {
+        accountId: session.accountId,
+        username: session.username || null,
+        name: u?.name || u?.username || session.username || '—',
+        phone: u?.phone || session.phone || null
+      };
+
+      info.textContent = `حساب: ${owner.name} — ${owner.accountId}`;
+      info.style.color = '#065f46';
+    }
+
+    // ===== Create ad =====
+    const amountUsd = document.getElementById('amountUsd');
+    const adPhone   = document.getElementById('adPhone');
+    const createBtn = document.getElementById('createBtn');
+    const clearBtn  = document.getElementById('clearBtn');
+
+    clearBtn.onclick = (e)=>{
+      ripple(e);
+      amountUsd.value = '';
+      adPhone.value = '';
+      toast('تم التفريغ');
+    };
+
+    function normalizePhone(p){
+      return String(p||'').replace(/\s+/g,'').trim();
+    }
+
+    createBtn.onclick = async (e)=>{
+      ripple(e);
+
+      if(!owner || !owner.accountId){
+        toast('سجّل دخول كتاجر أولاً');
+        return;
+      }
+
+      const country = String(currentCountry||'').trim();
+      const usd = Number(amountUsd.value || 0);
+      const phone = normalizePhone(adPhone.value);
+
+      if(!country){ toast('اختر الدولة'); return; }
+      if(!usd || usd < 1){ toast('أدخل مبلغ صحيح'); return; }
+      if(!phone || phone.length < 6){ toast('أدخل رقم هاتف صحيح'); return; }
+
+      const prev = createBtn.innerHTML;
+      createBtn.disabled = true;
+      createBtn.innerHTML = 'جارٍ النشر...';
+
+      try{
+        const ref = db.ref(`${ADS_PATH}/${country}`).push();
+        await ref.set({
+          type: adType,                // sell | buy
+          country: country,
+          usd: usd,
+          adPhone: phone,              // رقم الإعلان
+          ownerName: owner.name || '—',
+          ownerPhone: owner.phone || null, // رقم صاحب الحساب من users
+          accountId: owner.accountId,
+          ownerUsername: owner.username || null,
+          createdAt: Date.now()
+        });
+
+        toast('تم نشر الإعلان ✅');
+        amountUsd.value = '';
+        // نخلي الرقم موجود لو حاب يكرر
+        await loadMyAds();
+
+      }catch(err){
+        console.error(err);
+        toast('تعذّر النشر (تأكد من صلاحيات القاعدة)');
+      }finally{
+        createBtn.disabled = false;
+        createBtn.innerHTML = prev;
+      }
+    };
+
+    // ===== My ads list + delete =====
+    const myAdsGrid = document.getElementById('myAdsGrid');
+
+    function fmtTime(ts){
+      try{ return new Date(ts).toLocaleString('ar-EG', { hour12:false }); }
+      catch(_){ return '—'; }
+    }
+
+    async function loadMyAds(){
+      myAdsGrid.innerHTML = '';
+
+      if(!owner || !owner.accountId){
+        const box = document.createElement('div');
+        box.style.cssText="grid-column:1/-1;padding:14px;border:1px dashed #e5e7eb;border-radius:16px;background:#fff;color:#64748b;font-weight:1000;text-align:center";
+        box.textContent = "سجّل دخول كتاجر ليظهر قسم (إعلاناتي)";
+        myAdsGrid.appendChild(box);
+        return;
+      }
+
+      // نجلب كل الدول لأن إعلانك ممكن يكون بأي دولة
+      let all = {};
+      try{
+        const snap = await db.ref(ADS_PATH).get();
+        all = snap.exists() ? (snap.val() || {}) : {};
+      }catch(e){
+        console.warn('SDK ads load failed → REST', e?.message||e);
+        try{
+          const res = await fetch(firebaseConfig.databaseURL + `/${ADS_PATH}.json`);
+          all = (await res.json()) || {};
+        }catch(_){ all = {}; }
+      }
+
+      const rows = [];
+      for(const [country, group] of Object.entries(all || {})){
+        if(!group) continue;
+        for(const [id, v] of Object.entries(group)){
+          if(String(v?.accountId||'') === String(owner.accountId)){
+            rows.push({ _id:id, _country:country, ...(v||{}) });
+          }
+        }
+      }
+
+      if(!rows.length){
+        const box = document.createElement('div');
+        box.style.cssText="grid-column:1/-1;padding:14px;border:1px dashed #e5e7eb;border-radius:16px;background:#fff;color:#64748b;font-weight:1000;text-align:center";
+        box.textContent = "لا يوجد لديك إعلانات حالياً";
+        myAdsGrid.appendChild(box);
+        return;
+      }
+
+      rows.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0));
+
+      rows.forEach(ad=>{
+        const div = document.createElement('div');
+        div.className = 'ad ripple-container';
+
+        const typeLabel = ad.type === 'buy' ? 'شراء' : 'بيع';
+        const typeClass = ad.type === 'buy' ? 'buy' : 'sell';
+        const icon = ad.type === 'buy' ? 'shopping_cart' : 'sell';
+
+        div.innerHTML = `
+          <div class="top">
+            <div class="badge ${typeClass}">
+              <span class="ms">${icon}</span>
+              <span>${typeLabel}</span>
+            </div>
+            <div class="mono" style="font-size:12px;color:#64748b;font-weight:900">${(ad.usd||0)} USD</div>
+          </div>
+
+          <div class="kv">
+            <div><span class="k">الدولة</span><span class="v ar">${ad._country || ad.country || '—'}</span></div>
+            <div><span class="k">رقم الإعلان</span><span class="v mono">${ad.adPhone || '—'}</span></div>
+            <div><span class="k">صاحب الحساب</span><span class="v ar">${ad.ownerName || '—'}</span></div>
+            <div><span class="k">رقم صاحب الحساب</span><span class="v mono">${ad.ownerPhone || '—'}</span></div>
+            <div><span class="k">الوقت</span><span class="v mono">${fmtTime(ad.createdAt)}</span></div>
+          </div>
+
+          <div class="delWrap">
+            <button class="btn-red ripple-container" data-del="1"><span class="ms">delete</span>حذف الإعلان</button>
+          </div>
+        `;
+
+        div.querySelector('button[data-del]').onclick = async (ev)=>{
+          ripple(ev);
+          const c = String(ad._country||'').trim();
+          const id = String(ad._id||'').trim();
+          if(!c || !id) return;
+
+          try{
+            await db.ref(`${ADS_PATH}/${c}/${id}`).remove();
+            toast('تم حذف الإعلان ✅');
+            await loadMyAds();
+          }catch(err){
+            console.error(err);
+            toast('تعذّر الحذف (تأكد من صلاحيات القاعدة)');
+          }
+        };
+
+        myAdsGrid.appendChild(div);
+      });
+    }
+
+    // تشغيل
+    (async ()=>{
+      await initSession();
+      await loadMyAds();
+    })();
+  </script>
+</body>
+</html>

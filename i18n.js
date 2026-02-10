@@ -507,6 +507,78 @@
   
   
   
+  
+
+
+
+  // ===== Page / Titles =====
+  ['إنشاء إعلان P2P','Create P2P Ad'],
+  ['أنشئ إعلان بيع/شراء ـــــــــــــــــ','Create a Sell/Buy ad'],
+  ['نوع الإعلان','Ad type'],
+  ['بيع','Sell'],
+  ['شراء','Buy'],
+  ['الدولة','Country'],
+  ['المبلغ (USD) مثل: 500','Amount (USD) e.g. 500'],
+  ['رقم الهاتف للتواصل (مثال: 9677xxxxxxx)','Contact phone (e.g. 9677xxxxxxx)'],
+  ['تفريغ','Clear'],
+  ['نشر الإعلان','Publish ad'],
+  ['إعلاناتي','My ads'],
+
+  // ===== Note / Info =====
+  ['سيتم انشاء اعلان وعرضه على جميع الدول','Your ad will be created and shown to all countries'],
+  ['جاري التحقق من الجلسة…','Checking session…'],
+  ['حساب:','Account:'],
+  ['لا توجد جلسة تاجر — سجّل دخول أولاً','No trader session — please log in first'],
+
+  // ===== Buttons / Actions =====
+  ['رجوع','Back'],
+  ['خدمة العملاء','Support'],
+  ['تغيير اللغة','Change language'],
+  ['العربية','Arabic'],
+  ['English','English'],
+  ['حذف الإعلان','Delete ad'],
+
+  // ===== Ad Card Labels =====
+  ['رقم الإعلان','Ad phone'],
+  ['صاحب الحساب','Account owner'],
+  ['رقم صاحب الحساب','Owner phone'],
+  ['الوقت','Time'],
+
+  // ===== Toast / Messages =====
+  ['تم التفريغ','Cleared'],
+  ['سجّل دخول كتاجر أولاً','Please log in as a trader first'],
+  ['سجّل دخول كتاجر أولاً من صفحة العرض','Please log in as a trader first from the listing page'],
+  ['اختر الدولة','Choose a country'],
+  ['أدخل مبلغ صحيح','Enter a valid amount'],
+  ['أدخل رقم هاتف صحيح','Enter a valid phone number'],
+  ['جارٍ النشر...','Publishing...'],
+  ['تم نشر الإعلان ✅','Ad published ✅'],
+  ['تعذّر النشر (تأكد من صلاحيات القاعدة)','Publish failed (check database rules/permissions)'],
+  ['تم حذف الإعلان ✅','Ad deleted ✅'],
+  ['تعذّر الحذف (تأكد من صلاحيات القاعدة)','Delete failed (check database rules/permissions)'],
+  ['لا يوجد لديك إعلانات حالياً','You have no ads yet'],
+  ['سجّل دخول كتاجر ليظهر قسم (إعلاناتي)','Log in as a trader to show (My ads)'],
+
+  // ===== Generic / Common =====
+  ['إغلاق','Close'],
+  ['تم','Done'], 
+  
+  
+ ['جاري التحقق من الجلسة','Session verification in progress '],
+
+ 
+
+
+
+  
+  
+  
+  
+  
+  
+
+  
+  
   // === Receipt / إيصال العملية ===
 ['إيصال العملية','Transaction Receipt'],
 ['المبلغ','Amount'],
@@ -564,6 +636,9 @@
   ['إلغاء','Cancel'],
   ['إنشاء الحساب','Create account'],
 
+ ['عذرًا، هذا الحساب موقّف','Sorry, this account is suspended. '],
+
+
   // ——— نافذة الحساب المنشأ ———
   ['تم إنشاء الحساب بنجاح','Account created successfully'],
   ['الاسم','Name'],
@@ -595,6 +670,304 @@
   ['تعذّر النسخ','Failed to copy'],
   ['تعذّر حفظ الصورة','Failed to save image'],
 
+  
+  
+  ['سانت كيتس ونيفيس','Saint Kitts and Nevis'],
+  ['سانت لوسيا','Saint Lucia'],
+  ['سانت فنسنت والغرينادين','Saint Vincent and the Grenadines'],
+  ['ساموا','Samoa'],
+  ['سان مارينو','San Marino'],
+  ['ساو تومي وبرينسيب','Sao Tome and Principe'], 
+  
+  
+
+  ['أفغانستان','Afghanistan'],
+  ['ألبانيا','Albania'],
+  ['الجزائر','Algeria'],
+  ['أندورا','Andorra'],
+  ['أنغولا','Angola'],
+  ['أنتيغوا وبربودا','Antigua and Barbuda'],
+  ['الأرجنتين','Argentina'],
+  ['أرمينيا','Armenia'],
+  ['أستراليا','Australia'],
+  ['النمسا','Austria'],
+  ['أذربيجان','Azerbaijan'],
+
+  ['البهاما','Bahamas'],
+  ['البحرين','Bahrain'],
+  ['بنغلاديش','Bangladesh'],
+  ['بربادوس','Barbados'],
+  ['بيلاروس','Belarus'],
+  ['بلجيكا','Belgium'],
+  ['بليز','Belize'],
+  ['بنين','Benin'],
+  ['بوتان','Bhutan'],
+  ['بوليفيا','Bolivia'],
+  ['البوسنة والهرسك','Bosnia and Herzegovina'],
+  ['بوتسوانا','Botswana'],
+  ['البرازيل','Brazil'],
+  ['بروناي','Brunei'],
+  ['بلغاريا','Bulgaria'],
+  ['بوركينا فاسو','Burkina Faso'],
+  ['بوروندي','Burundi'],
+
+  ['كمبوديا','Cambodia'],
+  ['الكاميرون','Cameroon'],
+  ['كندا','Canada'],
+  ['الرأس الأخضر','Cape Verde'],
+  ['جمهورية أفريقيا الوسطى','Central African Republic'],
+  ['تشاد','Chad'],
+  ['تشيلي','Chile'],
+  ['الصين','China'],
+  ['كولومبيا','Colombia'],
+  ['جزر القمر','Comoros'],
+  ['الكونغو','Congo'],
+  ['كوستاريكا','Costa Rica'],
+  ['ساحل العاج','Ivory Coast'],
+  ['كرواتيا','Croatia'],
+  ['كوبا','Cuba'],
+  ['قبرص','Cyprus'],
+  ['التشيك','Czech Republic'],
+
+  ['الدنمارك','Denmark'],
+  ['جيبوتي','Djibouti'],
+  ['دومينيكا','Dominica'],
+  ['جمهورية الدومينيكان','Dominican Republic'],
+
+  ['الإكوادور','Ecuador'],
+  ['مصر','Egypt'],
+  ['السلفادور','El Salvador'],
+  ['غينيا الاستوائية','Equatorial Guinea'],
+  ['إريتريا','Eritrea'],
+  ['إستونيا','Estonia'],
+  ['إسواتيني','Eswatini'],
+  ['إثيوبيا','Ethiopia'],
+
+  ['فيجي','Fiji'],
+  ['فنلندا','Finland'],
+  ['فرنسا','France'],
+
+  ['الغابون','Gabon'],
+  ['غامبيا','Gambia'],
+  ['جورجيا','Georgia'],
+  ['ألمانيا','Germany'],
+  ['غانا','Ghana'],
+  ['اليونان','Greece'],
+  ['غرينادا','Grenada'],
+  ['غواتيمالا','Guatemala'],
+  ['غينيا','Guinea'],
+  ['غينيا بيساو','Guinea-Bissau'],
+  ['غيانا','Guyana'],
+
+  ['هايتي','Haiti'],
+  ['هندوراس','Honduras'],
+  ['المجر','Hungary'],
+
+  ['آيسلندا','Iceland'],
+  ['الهند','India'],
+  ['إندونيسيا','Indonesia'],
+  ['إيران','Iran'],
+  ['العراق','Iraq'],
+  ['أيرلندا','Ireland'],
+  ['إيطاليا','Italy'],
+
+  ['جامايكا','Jamaica'],
+  ['اليابان','Japan'],
+  ['الأردن','Jordan'],
+
+  ['كازاخستان','Kazakhstan'],
+  ['كينيا','Kenya'],
+  ['كيريباتي','Kiribati'],
+  ['الكويت','Kuwait'],
+  ['قيرغيزستان','Kyrgyzstan'],
+
+  ['لاوس','Laos'],
+  ['لاتفيا','Latvia'],
+  ['لبنان','Lebanon'],
+  ['ليسوتو','Lesotho'],
+  ['ليبيريا','Liberia'],
+  ['ليبيا','Libya'],
+  ['ليختنشتاين','Liechtenstein'],
+  ['ليتوانيا','Lithuania'],
+  ['لوكسمبورغ','Luxembourg'],
+
+  ['مدغشقر','Madagascar'],
+  ['مالاوي','Malawi'],
+  ['ماليزيا','Malaysia'],
+  ['جزر المالديف','Maldives'],
+  ['مالي','Mali'],
+  ['مالطا','Malta'],
+  ['جزر مارشال','Marshall Islands'],
+  ['موريتانيا','Mauritania'],
+  ['موريشيوس','Mauritius'],
+  ['المكسيك','Mexico'],
+  ['ميكرونيزيا','Micronesia'],
+  ['مولدوفا','Moldova'],
+  ['موناكو','Monaco'],
+  ['منغوليا','Mongolia'],
+  ['الجبل الأسود','Montenegro'],
+  ['المغرب','Morocco'],
+  ['موزمبيق','Mozambique'],
+  ['ميانمار','Myanmar'],
+
+  ['ناميبيا','Namibia'],
+  ['ناورو','Nauru'],
+  ['نيبال','Nepal'],
+  ['هولندا','Netherlands'],
+  ['نيوزيلندا','New Zealand'],
+  ['نيكاراغوا','Nicaragua'],
+  ['النيجر','Niger'],
+  ['نيجيريا','Nigeria'],
+  ['كوريا الشمالية','North Korea'],
+  ['مقدونيا الشمالية','North Macedonia'],
+  ['النرويج','Norway'],
+
+  ['عُمان','Oman'],
+
+  ['باكستان','Pakistan'],
+  ['بالاو','Palau'],
+  ['بنما','Panama'],
+  ['بابوا غينيا الجديدة','Papua New Guinea'],
+  ['باراغواي','Paraguay'],
+  ['بيرو','Peru'],
+  ['الفلبين','Philippines'],
+  ['بولندا','Poland'],
+  ['البرتغال','Portugal'],
+
+  ['قطر','Qatar'],
+
+  ['رومانيا','Romania'],
+  ['روسيا','Russia'],
+  ['رواندا','Rwanda'],
+
+  ['السعودية','Saudi Arabia'],
+  ['السنغال','Senegal'],
+  ['صربيا','Serbia'],
+  ['سيشل','Seychelles'],
+  ['سيراليون','Sierra Leone'],
+  ['سنغافورة','Singapore'],
+  ['سلوفاكيا','Slovakia'],
+  ['سلوفينيا','Slovenia'],
+  ['جزر سليمان','Solomon Islands'],
+  ['الصومال','Somalia'],
+  ['جنوب أفريقيا','South Africa'],
+  ['كوريا الجنوبية','South Korea'],
+  ['جنوب السودان','South Sudan'],
+  ['إسبانيا','Spain'],
+  ['سريلانكا','Sri Lanka'],
+  ['السودان','Sudan'],
+  ['سورينام','Suriname'],
+  ['السويد','Sweden'],
+  ['سويسرا','Switzerland'],
+  ['سوريا','Syria'],
+
+  ['طاجيكستان','Tajikistan'],
+  ['تنزانيا','Tanzania'],
+  ['تايلاند','Thailand'],
+  ['تيمور الشرقية','Timor-Leste'],
+  ['توغو','Togo'],
+  ['تونغا','Tonga'],
+  ['ترينيداد وتوباغو','Trinidad and Tobago'],
+  ['تونس','Tunisia'],
+  ['تركيا','Turkey'],
+  ['تركمانستان','Turkmenistan'],
+  ['توفالو','Tuvalu'],
+
+  ['أوغندا','Uganda'],
+  ['أوكرانيا','Ukraine'],
+  ['الإمارات','United Arab Emirates'],
+  ['المملكة المتحدة','United Kingdom'],
+  ['الولايات المتحدة','United States'],
+  ['الأوروغواي','Uruguay'],
+  ['أوزبستان','Uzbekistan'],
+
+  ['فانواتو','Vanuatu'],
+  ['الفاتيكان','Vatican City'],
+  ['فنزويلا','Venezuela'],
+  ['فيتنام','Vietnam'],
+
+  ['اليمن','Yemen'],
+  ['زامبيا','Zambia'],
+  ['زيمبابوي','Zimbabwe'], 
+  
+  
+  
+  
+  
+  // عامة / عناوين
+  ['Dynex P2P','Dynex P2P'],
+  ['خروج','Exit'],
+  ['خدمة العملاء','Customer Support'],
+  ['تغيير اللغة','Change Language'],
+  ['تسجيل دخول كتاجر','Trader Login'],
+
+  // الصفحة الرئيسية
+  ['تداول P2P','P2P Trading'],
+  ['اختر الدولة ونوع العملية','Choose country and transaction type'],
+
+  // اختيار الدولة
+  ['الدولة','Country'],
+  ['جاري التحديد…','Detecting…'],
+  ['اختر الدولة','Select country'],
+
+  // نوع العملية (التبويب)
+  ['نوع العملية','Transaction type'],
+  ['بيع','Sell'],
+  ['شراء','Buy'],
+  ['الكل','All'],
+
+  // زر عرض الجميع
+  ['عرض جميع تجار العالم','Show all world traders'],
+  ['عرض','Show'],
+  ['جميع التجّار (العالم)','All traders (World)'],
+  ['تم عرض جميع التجّار (العالم)','Showing all traders (World)'],
+
+  // ملاحظة السعر
+  ['السعر موحّد — (لجميع التجار)','Fixed price — (for all traders)'],
+  ['سعر موحّد','Fixed price'],
+
+  // حالة لا يوجد بيانات
+  ['لا يوجد تجّار متاحين حالياً لهذه الدولة/النوع','No traders available for this country/type right now'],
+
+  // شيت اللغة
+  ['العربية','Arabic'],
+  ['English','English'],
+
+  // شيت تفاصيل التاجر
+  ['بيانات التاجر','Trader details'],
+  ['إغلاق','Close'],
+  ['الاسم','Name'],
+  ['نوع الإعلان','Ad type'],
+  ['السعر','Price'],
+  ['المتاح (USD)','Available (USD)'],
+  ['رقم الهاتف','Phone number'],
+  ['وقت إنشاء الإعلان','Ad created time'],
+  ['اتصال','Call'],
+  ['لا يوجد رقم','No number'],
+
+  // شيت تسجيل دخول كتاجر
+  ['تسجيل دخول كتاجر','Trader login'],
+  ['اسم المستخدم','Username'],
+  ['كلمة المرور','Password'],
+  ['إلغاء','Cancel'],
+  ['دخول','Login'],
+
+  // نص إرشادي داخل شيت الدخول
+  ['لإنشاء حساب تاجر اضغط على أيقونة خدمة العملاء وسيتم تنفيذ إجراءات فتح الحساب','To create a trader account, tap Customer Support and the account will be opened for you'],
+
+  // رسائل التوست/التحقق
+  ['أدخل اسم المستخدم وكلمة المرور','Enter username and password'],
+  ['جارٍ التحقق...','Checking...'],
+  ['اسم المستخدم غير صحيح','Invalid username'],
+  ['كلمة المرور غير صحيحة','Incorrect password'],
+  ['تم تسجيل الدخول ✅','Logged in ✅'],
+  ['تعذّر الاتصال بالقاعدة','Failed to connect to database'], 
+
+  
+  
+  
+  
+  
   
   
   
