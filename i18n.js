@@ -967,6 +967,98 @@
   
   
   
+  // ===== Dynex Privacy Page (AR/EN) =====
+
+  // Header
+  ['Dynex • سياسة الخصوصية','Dynex • Privacy Policy'],                 // privacy_header
+  ['شفافية، خصوصية، وأمان — بشكل واضح وسهل','Transparency, privacy, and security — clearly and simply'], // privacy_sub
+  ['آخر تحديث:','Last update:'],                                       // last_update
+  ['اللغة','Language'],                                                // lang_btn
+  ['رجوع','Back'],                                                     // back_btn
+  ['نسخ الرابط','Copy link'],                                          // copy_link
+  ['تم النسخ ✓','Copied ✓'],                                           // copied_ok (للزر بعد النسخ)
+  ['انسخ الرابط يدويًا من شريط العنوان','Copy the link manually from the address bar'], // copy_fail
+
+  // TOC
+  ['فهرس سريع','Quick index'],                                         // toc_title
+  ['اضغط وانتقل للقسم','Tap to jump to a section'],                    // toc_sub
+  ['مقدمة','Intro'],                                                   // toc_0
+  ['كيف ننظر لخصوصيتك','How we approach your privacy'],                // toc_0_sub
+  ['البيانات التي نجمعها','Data we collect'],                           // toc_1
+  ['ما الذي يتم جمعه ولماذا','What we collect and why'],               // toc_1_sub
+  ['استخدام البيانات','How we use data'],                              // toc_2
+  ['كيف نستفيد لتحسين الخدمة','How we improve the service'],           // toc_2_sub
+  ['التخزين والأمان','Storage & security'],                            // toc_3
+  ['التخزين محليًا وFirebase','Local storage & Firebase'],             // toc_3_sub (اختياري لو تبغاه)
+  ['المشاركة مع أطراف ثالثة','Third-party sharing'],                   // toc_4
+  ['متى ولماذا','When and why'],                                       // toc_4_sub
+  ['حقوقك وخياراتك','Your rights & choices'],                          // toc_5
+  ['تحكمك ببياناتك','Control your data'],                              // toc_5_sub
+  ['التواصل','Contact'],                                               // toc_6
+  ['طرق تواصل واضحة','Clear ways to reach us'],                        // toc_6_sub
+
+  // Main content
+  ['سياسة الخصوصية','Privacy Policy'],                                 // privacy_title
+  ['هذه الصفحة تشرح بشكل واضح كيف تتعامل منصة Dynex مع البيانات. هدفنا: أقل بيانات ممكنة، استخدام واضح، وحماية أعلى.',
+   'This page explains clearly how Dynex handles data. Our goal: minimal data, clear usage, and strong protection.'], // privacy_intro
+  ['معلومة مهمة:','Important:'],                                       // privacy_note
+  ['لا نطلب منك معلومات حساسة غير ضرورية لتشغيل الخدمة.',
+   'We don’t ask for sensitive information that isn’t necessary to run the service.'], // privacy_note_text
+
+  // Section 1
+  ['البيانات التي نجمعها','Data we collect'],                           // sec1_title
+  ['بيانات إدخال تسجيل الدخول (مثل اسم المستخدم).',
+   'Login input data (such as username).'],                             // sec1_1
+  ['بيانات تقنية أساسية لتحسين التجربة (مثل اللغة المختارة).',
+   'Basic technical data to improve the experience (such as selected language).'], // sec1_2
+  ['قد يتم حفظ بعض القيم محليًا داخل المتصفح عبر LocalStorage (مثل الجلسة، وآخر اسم مستخدم).',
+   'Some values may be stored locally in your browser via LocalStorage (such as session and last username).'], // sec1_3
+
+  // Section 2
+  ['كيف نستخدم البيانات','How we use data'],                           // sec2_title
+  ['لتمكين تسجيل الدخول وتشغيل وظائف المنصة.',
+   'To enable login and run platform features.'],                       // sec2_1
+  ['لحفظ تفضيلاتك (مثل اللغة) لتجربة أسهل.',
+   'To save your preferences (such as language) for an easier experience.'], // sec2_2
+  ['لتحسين الاستقرار وتجربة المستخدم بشكل عام.',
+   'To improve stability and the overall user experience.'],            // sec2_3
+
+  // Section 3
+  ['التخزين والأمان','Storage & security'],                             // sec3_title
+  ['تستخدم Dynex تخزينين أساسيين:','Dynex uses two main storage methods:'], // sec3_p
+  ['LocalStorage: لتخزين بعض بيانات الجلسة والتفضيلات على جهازك.',
+   'LocalStorage: to store some session data and preferences on your device.'], // sec3_1
+  ['Firebase: لتخزين بيانات المستخدمين وتشغيل أجزاء من النظام.',
+   'Firebase: to store user data and run parts of the system.'],        // sec3_2
+  ['ننصحك دائمًا: لا تشارك كلمة المرور، واستخدم جهازك الشخصي، وسجّل خروجك عند الانتهاء.',
+   'We always recommend: do not share your password, use your personal device, and log out when finished.'], // sec3_tip
+
+  // Section 4
+  ['مشاركة البيانات مع أطراف ثالثة','Third-party sharing'],             // sec4_title
+  ['لا نقوم ببيع بياناتك. قد يتم التعامل مع بيانات محدودة فقط عبر مزودات الخدمة اللازمة لتشغيل المنصة (مثل الاستضافة/قواعد البيانات).',
+   'We do not sell your data. Limited data may be handled only by service providers needed to operate the platform (such as hosting/databases).'], // sec4_p
+
+  // Section 5
+  ['حقوقك وخياراتك','Your rights & choices'],                           // sec5_title
+  ['يمكنك مسح بيانات المتصفح (Cache/Storage) لإزالة بيانات الجلسة.',
+   'You can clear browser data (Cache/Storage) to remove session data.'], // sec5_1
+  ['يمكنك طلب تحديث/حذف بياناتك — عبر التواصل مع الدعم.',
+   'You can request updating/deleting your data — by contacting support.'], // sec5_2
+  ['يمكنك اختيار عدم حفظ بعض التفضيلات (حسب إعدادات المتصفح).',
+   'You may choose not to save some preferences (depending on browser settings).'], // sec5_3
+
+  // Section 6
+  ['تواصل معنا','Contact us'],                                          // sec6_title
+  ['لأي استفسار متعلق بالخصوصية، تواصل معنا عبر صفحة الدعم داخل المنصة.',
+   'For any privacy-related question, contact us via the Support page inside the platform.'], // sec6_p
+
+  // Footer
+  ['هذه السياسة قد تتغير عند إضافة مزايا جديدة',
+   'This policy may change when new features are added'], 
+  
+  
+  
+  
   
   
   

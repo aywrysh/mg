@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>سياسة الخصوصية - Dynex</title>
+
+  <!-- Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#0a2a2a;
+      --card:rgba(255,255,255,.08);
+      --card2:rgba(255,255,255,.06);
+      --stroke:rgba(255,255,255,.14);
+      --text:#eaf2ff;
+      --muted:#b6c3dd;
+      --accent:#f97316; /* Dynex orange */
+      --accent2:#22c55e;
+      --shadow: 0 18px 60px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+
+    /* Light mode (optional) */
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg1:#f7fafc;
+        --bg2:#eef2ff;
+        --card:rgba(255,255,255,.86);
+        --card2:rgba(255,255,255,.7);
+        --stroke:rgba(2,6,23,.08);
+        --text:#0f172a;
+        --muted:#475569;
+        --shadow: 0 18px 60px rgba(2,6,23,.14);
+      }
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:"IBM Plex Sans Arabic", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+      color:var(--text);
+      min-height:100vh;
+      background:
+        radial-gradient(900px 500px at 85% 10%, rgba(249,115,22,.25), transparent 55%),
+        radial-gradient(900px 500px at 15% 30%, rgba(34,197,94,.16), transparent 55%),
+        radial-gradient(900px 500px at 50% 90%, rgba(59,130,246,.12), transparent 55%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    /* subtle animated noise */
+    .noise{
+      position:fixed; inset:-40px;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.25'/%3E%3C/svg%3E");
+      opacity:.07; pointer-events:none;
+      mix-blend-mode:overlay;
+      animation: floatNoise 12s linear infinite;
+    }
+    @keyframes floatNoise{from{transform:translate3d(0,0,0)}to{transform:translate3d(40px,30px,0)}}
+
+    .container{
+      width:min(1120px, 92vw);
+      margin: 26px auto 40px;
+    }
+
+    /* glass header */
+    .header{
+      position:sticky; top:14px; z-index:20;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border:1px solid var(--stroke);
+      box-shadow: var(--shadow);
+      border-radius: 20px;
+      padding: 12px 12px;
+    }
+    .header-inner{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px; min-width:0;
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, rgba(249,115,22,.9), rgba(249,115,22,.25) 45%, rgba(255,255,255,.08) 75%);
+      border:1px solid var(--stroke);
+      box-shadow: 0 10px 25px rgba(249,115,22,.18);
+      display:grid; place-items:center;
+      overflow:hidden;
+    }
+    .logo span{
+      font-weight:900; letter-spacing:.5px;
+      transform: translateY(-1px);
+    }
+    .titlebox{min-width:0}
+    .titlebox h1{
+      margin:0; font-size:16px; font-weight:900;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .titlebox p{
+      margin:2px 0 0;
+      color:var(--muted); font-size:12px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    .actions{
+      display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+    }
+    .btn{
+      border:none; cursor:pointer;
+      border-radius:14px;
+      padding: 10px 12px;
+      font-weight:800;
+      display:inline-flex; align-items:center; gap:8px;
+      text-decoration:none;
+      transition: transform .15s ease, opacity .15s ease, box-shadow .15s ease;
+      will-change: transform;
+    }
+    .btn:hover{transform: translateY(-1px)}
+    .btn:active{transform: translateY(0)}
+    .btn-ghost{
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      color: var(--text);
+    }
+    .btn-primary{
+      background: linear-gradient(135deg, rgba(249,115,22,.95), rgba(249,115,22,.55));
+      color:#fff;
+      box-shadow: 0 14px 30px rgba(249,115,22,.25);
+    }
+
+    .icon{
+      width:18px; height:18px; display:inline-block;
+    }
+
+    /* Layout */
+    .grid{
+      margin-top:16px;
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap: 14px;
+      align-items:start;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    /* Side card */
+    .side{
+      position:sticky; top:92px;
+    }
+    @media (max-width: 920px){
+      .side{position:relative; top:0}
+    }
+
+    .card{
+      background: linear-gradient(180deg, var(--card), var(--card2));
+      border:1px solid var(--stroke);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card-pad{padding: 16px}
+    .kicker{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:14px 16px;
+      border-bottom:1px solid var(--stroke);
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      font-weight:800;
+      font-size:12px;
+      color: var(--text);
+    }
+    .chip .dot{
+      width:8px; height:8px; border-radius:999px;
+      background: radial-gradient(circle, var(--accent), rgba(249,115,22,.2));
+      box-shadow: 0 0 0 5px rgba(249,115,22,.12);
+    }
+
+    .toc a{
+      display:flex; gap:10px; align-items:flex-start;
+      text-decoration:none;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius:14px;
+      border:1px solid transparent;
+      transition:.15s ease;
+    }
+    .toc a:hover{
+      background: rgba(255,255,255,.07);
+      border-color: var(--stroke);
+    }
+    .toc .num{
+      width:26px; height:26px; border-radius:10px;
+      display:grid; place-items:center;
+      font-weight:900;
+      background: rgba(255,255,255,.08);
+      border:1px solid var(--stroke);
+      flex:0 0 auto;
+    }
+    .toc .txt{
+      line-height:1.45;
+      font-size:13px;
+      color: var(--muted);
+    }
+    .toc strong{display:block; color:var(--text); font-size:14px}
+
+    /* Main content */
+    .hero{
+      padding: 18px 18px 10px;
+      border-bottom:1px solid var(--stroke);
+      background:
+        radial-gradient(600px 220px at 15% 0%, rgba(249,115,22,.18), transparent 60%),
+        radial-gradient(600px 220px at 85% 0%, rgba(34,197,94,.10), transparent 60%);
+    }
+    .hero h2{
+      margin:0;
+      font-size:22px;
+      font-weight:900;
+    }
+    .hero p{
+      margin:8px 0 0;
+      color:var(--muted);
+      line-height:1.9;
+      font-size:14px;
+    }
+
+    .section{
+      padding: 16px 18px;
+    }
+    .section + .section{border-top:1px solid var(--stroke)}
+    .section h3{
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:900;
+      display:flex; align-items:center; gap:10px;
+    }
+    .badge{
+      font-size:12px;
+      font-weight:900;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+    }
+    .section p, .section li{
+      color:var(--muted);
+      line-height:1.95;
+      font-size:14px;
+    }
+    ul{margin:10px 0 0; padding:0 18px}
+    li{margin:8px 0}
+
+    .callout{
+      margin-top:12px;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border:1px dashed rgba(249,115,22,.45);
+      background: rgba(249,115,22,.10);
+      color: var(--text);
+    }
+    .callout b{color: #fff}
+    @media (prefers-color-scheme: light){
+      .callout b{color:#0f172a}
+    }
+
+    .footer{
+      padding: 14px 18px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      color: var(--muted);
+      font-size:12px;
+      border-top:1px solid var(--stroke);
+      background: rgba(255,255,255,.04);
+    }
+
+    /* Floating to-top */
+    .toTop{
+      position:fixed;
+      bottom:18px;
+      inset-inline-end:18px;
+      width:46px; height:46px;
+      border-radius:16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.10);
+      backdrop-filter: blur(10px);
+      box-shadow: var(--shadow);
+      display:grid; place-items:center;
+      cursor:pointer;
+      opacity:0; transform: translateY(10px);
+      transition:.2s ease;
+      z-index:30;
+    }
+    .toTop.show{opacity:1; transform: translateY(0)}
+
+    /* ✅ Sheet like your app */
+    .sheet-backdrop{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.35);
+      opacity:0; visibility:hidden;
+      transition:.25s; z-index:60;
+    }
+    .sheet{
+      position:fixed; left:0; right:0; bottom:0;
+      background:rgba(255,255,255,.92);
+      border-radius:18px 18px 0 0;
+      box-shadow:0 -10px 28px rgba(0,0,0,.22);
+      transform:translateY(100%);
+      transition:.3s;
+      z-index:61;
+      padding:14px;
+      border:1px solid rgba(0,0,0,.08);
+      backdrop-filter: blur(10px);
+    }
+    .sheet.active{transform:translateY(0)}
+    .sheet-backdrop.active{opacity:1; visibility:visible}
+    .grab{
+      width:40px; height:4px; border-radius:3px;
+      background:rgba(0,0,0,.12);
+      margin:4px auto 12px;
+    }
+    @media (prefers-color-scheme: dark){
+      .sheet{background:rgba(15,23,42,.92); border-color:rgba(255,255,255,.10)}
+      .grab{background:rgba(255,255,255,.18)}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="noise"></div>
+
+  <div class="container">
+    <!-- Glass Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"><span>Dx</span></div>
+          <div class="titlebox">
+            <h1 data-i18n="privacy_header">Dynex • سياسة الخصوصية</h1>
+            <p data-i18n="privacy_sub">شفافية، خصوصية، وأمان — بشكل واضح وسهل</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <span class="chip" title="آخر تحديث">
+            <span class="dot"></span>
+            <span data-i18n="last_update">آخر تحديث:</span> <b id="d">—</b>
+          </span>
+
+          <!-- ✅ زر اللغة -->
+          <button class="btn btn-ghost" id="langBtn" type="button" title="تغيير اللغة">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <path d="M4 5h7m-7 5h7m-7 5h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M15 19c2.5-2.5 4-6 4-10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M13 14h7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span data-i18n="lang_btn">اللغة</span>
+          </button>
+
+          <!-- ✅ رجوع -->
+          <a class="btn btn-ghost" href="index.html" title="رجوع">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span data-i18n="back_btn">رجوع</span>
+          </a>
+
+          <!-- ✅ نسخ الرابط -->
+          <button class="btn btn-primary" id="copyBtn" type="button" title="نسخ رابط السياسة">
+            <svg class="icon" viewBox="0 0 24 24" fill="none">
+              <path d="M9 9h10v10H9V9Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" stroke="currentColor" stroke-width="2"/>
+            </svg>
+            <span data-i18n="copy_link">نسخ الرابط</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Side / TOC -->
+      <aside class="side">
+        <div class="card">
+          <div class="kicker">
+            <div>
+              <div style="font-weight:900; font-size:14px;" data-i18n="toc_title">فهرس سريع</div>
+              <div style="color:var(--muted); font-size:12px; margin-top:2px;" data-i18n="toc_sub">اضغط وانتقل للقسم</div>
+            </div>
+            <span class="badge">Dynex</span>
+          </div>
+          <div class="card-pad toc">
+            <a href="#s0"><span class="num">0</span><div><strong data-i18n="toc_0">مقدمة</strong><div class="txt" data-i18n="toc_0_sub">كيف ننظر لخصوصيتك</div></div></a>
+            <a href="#s1"><span class="num">1</span><div><strong data-i18n="toc_1">البيانات التي نجمعها</strong><div class="txt" data-i18n="toc_1_sub">ما الذي يتم جمعه ولماذا</div></div></a>
+            <a href="#s2"><span class="num">2</span><div><strong data-i18n="toc_2">استخدام البيانات</strong><div class="txt" data-i18n="toc_2_sub">كيف نستفيد لتحسين الخدمة</div></div></a>
+            <a href="#s3"><span class="num">3</span><div><strong data-i18n="toc_3">التخزين والأمان</strong><div class="txt">LocalStorage و Firebase</div></div></a>
+            <a href="#s4"><span class="num">4</span><div><strong data-i18n="toc_4">المشاركة مع أطراف ثالثة</strong><div class="txt" data-i18n="toc_4_sub">متى ولماذا</div></div></a>
+            <a href="#s5"><span class="num">5</span><div><strong data-i18n="toc_5">حقوقك وخياراتك</strong><div class="txt" data-i18n="toc_5_sub">تحكمك ببياناتك</div></div></a>
+            <a href="#s6"><span class="num">6</span><div><strong data-i18n="toc_6">التواصل</strong><div class="txt" data-i18n="toc_6_sub">طرق تواصل واضحة</div></div></a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="card">
+        <div class="hero" id="s0">
+          <h2 data-i18n="privacy_title">سياسة الخصوصية</h2>
+          <p data-i18n="privacy_intro">
+            هذه الصفحة تشرح بشكل واضح كيف تتعامل منصة Dynex مع البيانات. هدفنا: أقل بيانات ممكنة، استخدام واضح، وحماية أعلى.
+          </p>
+          <div class="callout">
+            <b data-i18n="privacy_note">معلومة مهمة:</b>
+            <span data-i18n="privacy_note_text">لا نطلب منك معلومات حساسة غير ضرورية لتشغيل الخدمة.</span>
+          </div>
+        </div>
+
+        <section class="section" id="s1">
+          <h3><span class="badge">1</span><span data-i18n="sec1_title">البيانات التي نجمعها</span></h3>
+          <ul>
+            <li data-i18n="sec1_1">بيانات إدخال تسجيل الدخول (مثل اسم المستخدم).</li>
+            <li data-i18n="sec1_2">بيانات تقنية أساسية لتحسين التجربة (مثل اللغة المختارة).</li>
+            <li data-i18n="sec1_3">قد يتم حفظ بعض القيم محليًا داخل المتصفح عبر LocalStorage (مثل الجلسة، وآخر اسم مستخدم).</li>
+          </ul>
+        </section>
+
+        <section class="section" id="s2">
+          <h3><span class="badge">2</span><span data-i18n="sec2_title">كيف نستخدم البيانات</span></h3>
+          <ul>
+            <li data-i18n="sec2_1">لتمكين تسجيل الدخول وتشغيل وظائف المنصة.</li>
+            <li data-i18n="sec2_2">لحفظ تفضيلاتك (مثل اللغة) لتجربة أسهل.</li>
+            <li data-i18n="sec2_3">لتحسين الاستقرار وتجربة المستخدم بشكل عام.</li>
+          </ul>
+        </section>
+
+        <section class="section" id="s3">
+          <h3><span class="badge">3</span><span data-i18n="sec3_title">التخزين والأمان</span></h3>
+          <p data-i18n="sec3_p">تستخدم Dynex تخزينين أساسيين:</p>
+          <ul>
+            <li data-i18n="sec3_1">LocalStorage: لتخزين بعض بيانات الجلسة والتفضيلات على جهازك.</li>
+            <li data-i18n="sec3_2">Firebase: لتخزين بيانات المستخدمين وتشغيل أجزاء من النظام.</li>
+          </ul>
+          <div class="callout" data-i18n="sec3_tip">ننصحك دائمًا: لا تشارك كلمة المرور، واستخدم جهازك الشخصي، وسجّل خروجك عند الانتهاء.</div>
+        </section>
+
+        <section class="section" id="s4">
+          <h3><span class="badge">4</span><span data-i18n="sec4_title">مشاركة البيانات مع أطراف ثالثة</span></h3>
+          <p data-i18n="sec4_p">لا نقوم ببيع بياناتك. قد يتم التعامل مع بيانات محدودة فقط عبر مزودات الخدمة اللازمة لتشغيل المنصة (مثل الاستضافة/قواعد البيانات).</p>
+        </section>
+
+        <section class="section" id="s5">
+          <h3><span class="badge">5</span><span data-i18n="sec5_title">حقوقك وخياراتك</span></h3>
+          <ul>
+            <li data-i18n="sec5_1">يمكنك مسح بيانات المتصفح (Cache/Storage) لإزالة بيانات الجلسة.</li>
+            <li data-i18n="sec5_2">يمكنك طلب تحديث/حذف بياناتك — عبر التواصل مع الدعم.</li>
+            <li data-i18n="sec5_3">يمكنك اختيار عدم حفظ بعض التفضيلات (حسب إعدادات المتصفح).</li>
+          </ul>
+        </section>
+
+        <section class="section" id="s6">
+          <h3><span class="badge">6</span><span data-i18n="sec6_title">تواصل معنا</span></h3>
+          <p data-i18n="sec6_p">لأي استفسار متعلق بالخصوصية، تواصل معنا عبر صفحة الدعم داخل المنصة.</p>
+        </section>
+
+        <div class="footer">
+          <div>© <span id="y"></span> Dynex</div>
+          <div data-i18n="footer_note">هذه السياسة قد تتغير عند إضافة مزايا جديدة</div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+
+
+  <!-- ✅ Sheet اللغة (خارج الهيدر) -->
+  <div class="sheet-backdrop" id="sheetBackLang"></div>
+  <div class="sheet" id="langSheet" aria-modal="true" role="dialog">
+    <div class="grab"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="btn btn-ghost" data-setlang="ar" id="btnAr">العربية</button>
+      <button class="btn btn-ghost" data-setlang="en" id="btnEn">English</button>
+    </div>
+  </div>
+
+  <!-- Floating to top -->
+  <button class="toTop" id="toTop" type="button" aria-label="إلى الأعلى">
+    <svg class="icon" viewBox="0 0 24 24" fill="none">
+      <path d="M12 5l-6 6m6-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <path d="M12 5v14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </button>
+
+  <!-- ✅ i18n -->
+  <script src="i18n.js"></script>
+
+  <script>
+    // Dates
+    const lang = localStorage.getItem('lang') || 'ar';
+document.getElementById('d').textContent = new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'ar-YE');
+    document.getElementById('y').textContent = new Date().getFullYear();
+
+    // Copy link
+    document.getElementById('copyBtn').addEventListener('click', async ()=>{
+      try{
+        await navigator.clipboard.writeText(location.href);
+        const btn = document.getElementById('copyBtn');
+        const old = btn.textContent;
+        btn.textContent = 'تم النسخ ✓';
+        setTimeout(()=> btn.textContent = old, 1200);
+      }catch(e){
+        alert('انسخ الرابط يدويًا من شريط العنوان');
+      }
+    });
+
+    // To top
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', ()=>{
+      if (window.scrollY > 350) toTop.classList.add('show');
+      else toTop.classList.remove('show');
+    });
+    toTop.addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+    // ✅ اللغة: تطبيق أولي
+    if (typeof applyLang === 'function') {
+      applyLang(localStorage.getItem('lang') || 'ar');
+    }
+
+    // ✅ فتح/إغلاق شيت اللغة
+    const langBtn = document.getElementById('langBtn');
+    const langSheet = document.getElementById('langSheet');
+    const sheetBackLang = document.getElementById('sheetBackLang');
+
+    function openLang(){
+      langSheet.classList.add('active');
+      sheetBackLang.classList.add('active');
+    }
+    function closeLang(){
+      langSheet.classList.remove('active');
+      sheetBackLang.classList.remove('active');
+    }
+
+    langBtn && langBtn.addEventListener('click', openLang);
+    sheetBackLang && sheetBackLang.addEventListener('click', closeLang);
+
+    document.querySelectorAll('[data-setlang]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const L = btn.dataset.setlang || 'ar';
+        if (typeof applyLang === 'function') applyLang(L);
+        closeLang();
+      });
+    });
+  </script>
+</body>
+</html>
