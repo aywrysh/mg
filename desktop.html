@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+  <!-- ✅ Firebase (مرة واحدة فقط) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
   <style>
     :root{
       --ink:#0f172a;
@@ -29,6 +33,84 @@
       min-height:100vh;
       overflow-x:hidden;
       background:#0b1220;
+    }
+
+    /* ✅ نخفي صفحة التسجيل بالكامل وقت الفحص */
+    html.boot .shell{ display:none !important; }
+
+    /* =========================
+       ✅ مقدمة Splash (واتساب)
+       ========================= */
+    .splash{
+      position:fixed; inset:0;
+      background:#ffffff;
+      display:grid;
+      place-items:center;
+      z-index:99999;
+      transition:opacity .22s ease, visibility .22s ease;
+    }
+    .splash.hide{
+      opacity:0;
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .splashBox{
+      width:min(520px, 92vw);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:16px;
+      padding:26px 18px;
+    }
+    .sLogo{
+      width:86px; height:86px;
+      border-radius:26px;
+      background:linear-gradient(180deg, rgba(249,115,22,.18), rgba(249,115,22,.06));
+      border:1px solid rgba(249,115,22,.28);
+      display:grid;
+      place-items:center;
+      overflow:hidden;
+      box-shadow:0 18px 40px rgba(2,6,23,.10);
+    }
+    .sLogo img{
+      width:64px; height:64px; object-fit:contain; display:block;
+    }
+    .sTitle{
+      font-weight:1000;
+      font-size:16px;
+      color:#0f172a;
+      letter-spacing:.2px;
+    }
+    .dashLine{
+      width:min(420px, 86vw);
+      height:12px;
+      border-radius:999px;
+      border:2px dashed rgba(15,23,42,.18);
+      background:rgba(248,250,252,.9);
+      position:relative;
+      overflow:hidden;
+    }
+    .dashFill{
+      position:absolute;
+      inset:3px;
+      width:35%;
+      border-radius:999px;
+      background:linear-gradient(90deg, rgba(249,115,22,.95), rgba(249,115,22,.55));
+      box-shadow:0 10px 20px rgba(249,115,22,.20);
+      transform:translateX(0);
+      animation:moveFill 1.05s ease-in-out infinite;
+    }
+    @keyframes moveFill{
+      0%   { transform:translateX(-120%); width:30%; }
+      50%  { transform:translateX(10%);   width:55%; }
+      100% { transform:translateX(120%);  width:30%; }
+    }
+    .sHint{
+      font-weight:900;
+      font-size:12px;
+      color:#64748b;
+      text-align:center;
+      line-height:1.7;
     }
 
     /* ===== خلفية 4 صور (من عندك) ===== */
@@ -56,12 +138,11 @@
       transform:scale(1.04);
     }
     /* غيّر أسماء الصور هنا لصورك */
-    .bg4 .p.p1::before{ background-image:url('logo.png'); }
-    .bg4 .p.p2::before{ background-image:url('logo.png'); }
-    .bg4 .p.p3::before{ background-image:url('logo.png'); }
+    .bg4 .p.p1::before{ background-image:url(''); }
+    .bg4 .p.p2::before{ background-image:url(''); }
+    .bg4 .p.p3::before{ background-image:url(''); }
     .bg4 .p.p4::before{ background-image:url('logo.png'); }
 
-    /* طبقة بلور + تدرج عشان القراءة */
     .bgOverlay{
       position:fixed; inset:0;
       background:
@@ -120,7 +201,6 @@
       gap:12px;
     }
 
-    /* ===== Header ===== */
     .brand{
       display:flex;
       align-items:center;
@@ -162,7 +242,6 @@
       box-shadow:0 0 0 6px rgba(34,197,94,.18);
     }
 
-    /* ===== Input Box ===== */
     .box{
       margin-top:12px;
       border:1px solid rgba(255,255,255,.35);
@@ -208,7 +287,6 @@
       box-shadow:0 12px 26px rgba(249,115,22,.26);
     }
 
-    /* ===== Fancy Status Notification ===== */
     .status{
       margin-top:12px;
       border-radius:20px;
@@ -264,7 +342,6 @@
     .ok{border-color:#bbf7d0!important;background:#f0fdf4!important;color:#166534!important}
     .no{border-color:#fecaca!important;background:#fff1f2!important;color:#991b1b!important}
 
-    /* ===== Right Panel ===== */
     .help{
       border:1px solid rgba(255,255,255,.18);
       border-radius:22px;
@@ -285,39 +362,42 @@
       background:rgba(255,255,255,.16);
     }
 
-    /* معلومات الجهاز (اختيارية للعرض) */
-    .kv{
-      margin-top:10px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:8px;
-    }
+    .kv{margin-top:10px;display:grid;grid-template-columns:1fr;gap:8px}
     .kv .item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:10px 12px;
-      border-radius:16px;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;
+      padding:10px 12px;border-radius:16px;
       background:rgba(255,255,255,.18);
       border:1px solid rgba(255,255,255,.18);
-      color:#fff;
-      font-weight:900;
+      color:#fff;font-weight:900;
     }
     .kv .k{opacity:.85;font-size:12px}
     .kv .v{
-      direction:ltr;
-      font-size:12px;
-      max-width:62%;
-      white-space:nowrap;
-      overflow:hidden;
-      text-overflow:ellipsis;
-      opacity:.95;
+      direction:ltr;font-size:12px;max-width:62%;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.95;
     }
   </style>
+
+  <!-- ✅ فعل وضع boot من البداية قبل ما يظهر أي شيء -->
+  <script>
+    document.documentElement.classList.add('boot');
+  </script>
 </head>
 
 <body>
+  <!-- ✅ Splash شاشة مقدمة -->
+  <div class="splash" id="splash">
+    <div class="splashBox">
+      <div class="sLogo">
+        <img src="logo.png" alt="Dynex">
+      </div>
+      <div class="sTitle">Dynex</div>
+      <div class="dashLine" aria-hidden="true">
+        <div class="dashFill"></div>
+      </div>
+      <div class="sHint" id="sHint">جاري الفحص…</div>
+    </div>
+  </div>
+
   <!-- خلفية 4 صور -->
   <div class="bg4" aria-hidden="true">
     <div class="p p1"></div>
@@ -355,11 +435,10 @@
             <button id="resetBtn" class="btn" type="button">إعادة</button>
           </div>
 
-          <!-- إشعار فخم + صورة حقيقية -->
+          <!-- إشعار فخم + صورة -->
           <div id="status" class="status">
             <div class="statusL">
               <div class="avatar" title="صورة الإشعار">
-                <!-- غيّر notify.jpg لصورتك الحقيقية -->
                 <img src="logo.png" alt="notify">
               </div>
               <div class="statusTextWrap">
@@ -399,10 +478,6 @@
     </div>
   </div>
 
-  <!-- Firebase (Compat) -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
   <script>
     // ===== Firebase Config =====
     const firebaseConfig = {
@@ -418,7 +493,12 @@
     const PC_LINKS_PATH = "pc_links";
     const REQ_ROOT = "pc_link_requests";
     const HOME_PAGE = "index1.html";
-    const SESSION_TTL_MS = 6 * 60 * 60 * 1000;
+
+    // ✅ 15 يوم
+    const SESSION_TTL_MS = 15 * 24 * 60 * 60 * 1000;
+
+    const splash = document.getElementById('splash');
+    const sHint  = document.getElementById('sHint');
 
     const codeInput  = document.getElementById('codeInput');
     const sendBtn    = document.getElementById('sendBtn');
@@ -426,10 +506,45 @@
     const statusText = document.getElementById('statusText');
     const statusPill = document.getElementById('statusPill');
     const statusBox  = document.getElementById('status');
-
-    // شريط أعلى (Ready/Live)
     const liveDot = document.getElementById('liveDot');
     const liveTxt = document.getElementById('liveTxt');
+
+    function hideSplashShowLogin(){
+      splash.classList.add('hide');
+      document.documentElement.classList.remove('boot');
+    }
+
+    // ✅ فحص الجلسة أثناء المقدمة
+    (function bootCheck(){
+      let ok = false;
+
+      try{
+        const raw = localStorage.getItem('dynex_session');
+        if(raw){
+          const sess = JSON.parse(raw);
+          const now  = Date.now();
+          const exp  = Number(sess?.expiresAt || 0);
+          if(sess?.uid && exp > now){
+            ok = true;
+          } else {
+            localStorage.removeItem('dynex_session');
+          }
+        }
+      }catch(_){
+        localStorage.removeItem('dynex_session');
+      }
+
+      if(ok){
+        // ✅ دخول مباشر بدون إظهار صفحة التسجيل
+        sHint.textContent = 'تم العثور على جلسةجاري الدخول…';
+        // مهلة بسيطة عشان تشوف المقدمة بشكل طبيعي (خفيف)
+        setTimeout(()=>window.location.replace(HOME_PAGE), 220);
+      }else{
+        // ✅ لا توجد جلسة → افتح صفحة التسجيل بعد الفحص
+        sHint.textContent = 'لا توجد جلسة — افتح تسجيل الدخول';
+        setTimeout(hideSplashShowLogin, 240);
+      }
+    })();
 
     function setStatus(text, pill, type){
       statusText.textContent = text;
@@ -438,15 +553,13 @@
       if(type==='ok') statusBox.classList.add('ok');
       if(type==='no') statusBox.classList.add('no');
 
-      // تحديث Chip العلوي (بدون تغيير خصائصك)
       liveTxt.textContent = pill || 'READY';
-      if(type==='ok'){ liveDot.classList.add('on'); }
-      else if(type==='no'){ liveDot.classList.remove('on'); }
+      if(type==='ok') liveDot.classList.add('on');
+      else liveDot.classList.remove('on');
     }
 
     function normalizeCode(s){
-      s = String(s||'').trim().replace(/\s+/g,'');
-      return s.toUpperCase();
+      return String(s||'').trim().replace(/\s+/g,'').toUpperCase();
     }
 
     function getDeviceInfo(){
@@ -457,7 +570,6 @@
       };
     }
 
-    // عرض معلومات الجهاز في اللوحة اليمنى
     (function fillDeviceCard(){
       const d = getDeviceInfo();
       document.getElementById('vBrowser').textContent  = (d.ua || '—').slice(0, 90);
@@ -466,7 +578,6 @@
     })();
 
     let currentListenerOff = null;
-
     function stopListening(){
       if(currentListenerOff){
         try{ currentListenerOff(); }catch(_){}
@@ -476,7 +587,7 @@
 
     async function createDesktopSession(uid){
       const snap = await db.ref('users/' + uid).get();
-      const user = snap.exists() ? (snap.val()||{}) : {};
+      const user = snap.exists() ? (snap.val() || {}) : {};
 
       const now = Date.now();
       const sess = {
@@ -513,17 +624,18 @@
           setStatus('هذا الكود مستخدم من قبل', 'USED', 'no');
           return;
         }
-        if(Number(link.expiresAt||0) < now){
+
+        if(Number(link.expiresAt || 0) < now){
           setStatus('انتهت صلاحية الكود — ولّد كود جديد من الجوال', 'EXPIRED', 'no');
           return;
         }
-        const uid = String(link.uid||'');
+
+        const uid = String(link.uid || '');
         if(!uid){
           setStatus('الكود غير صالح', 'BAD', 'no');
           return;
         }
 
-        // ارسل طلب للجوال
         const reqRef = db.ref(`${REQ_ROOT}/${uid}`).push();
         const reqId = reqRef.key;
 
@@ -536,16 +648,16 @@
 
         setStatus('تم إرسال الطلب… بانتظار موافقة الجوال', 'PENDING', '');
 
-        // استمع لقرار الجوال
+        const reqNode = db.ref(`${REQ_ROOT}/${uid}/${reqId}`);
+
         const onValue = async (snap)=>{
           if(!snap.exists()) return;
           const v = snap.val() || {};
-          const st = String(v.status||'pending').toLowerCase();
+          const st = String(v.status || 'pending').toLowerCase();
 
           if(st === 'approved'){
             setStatus('تمت الموافقة ✅ جاري تسجيل الدخول…', 'APPROVED', 'ok');
 
-            // علّم الكود كمستخدم
             try{
               await db.ref(`${PC_LINKS_PATH}/${code}`).update({
                 used: true,
@@ -563,9 +675,7 @@
           }
         };
 
-        const reqNode = db.ref(`${REQ_ROOT}/${uid}/${reqId}`);
         reqNode.on('value', onValue);
-
         currentListenerOff = ()=> reqNode.off('value', onValue);
 
       }catch(e){
@@ -589,7 +699,6 @@
       if(e.key === 'Enter') sendRequest();
     });
 
-    // حالة أولية للـ chip
     setStatus('اكتب الكود ثم اضغط إرسال الطلب.', 'READY', '');
   </script>
 </body>
