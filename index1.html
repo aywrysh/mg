@@ -540,11 +540,19 @@ body.suspended-mode #backBtn{
     <button class="icon-btn ripple-container" id="installBtn" title="تثبيت كتطبيق" style="display:none">
       <img src="ايقونةتحميل.png" alt="install" width="24" height="24" loading="lazy">
     </button>
+    
+    
+    <button class="btn ripple-container" id="pcLinkBtn" type="button" title="ربط الكمبيوتر">
+  <img src="pc.png" alt="pc" width="24" height="24" loading="lazy">
+</button>
 
     <button class="icon-btn ripple-container" id="langBtn" title="تغيير اللغة" 
             style="font-weight:800;color:var(--accent);font-size:24px;">
       <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
     </button>
+    
+
+    
   </div>
 </header>
 <div class="accent-line"></div>
@@ -730,6 +738,10 @@ body.suspended-mode #backBtn{
   /* حالات الفتح والإغلاق — نفس منطقك الحالي يغيّر opacity/visibility/transform */
   #annBack.active{ opacity:1; visibility:visible; }
   #annSheet.active{ opacity:1; visibility:visible; transform:translate(-50%,-50%) scale(1); }
+  
+  
+  
+
 </style>
 
 
@@ -1905,6 +1917,31 @@ if(MREF){
   if (!amtEl?.getAttribute('data-val')) refreshNow();
 
 })();
+
+
+
+
+
+
+
+</script>
+  
+  
+  
+  <script>
+document.addEventListener('DOMContentLoaded', ()=>{
+  const pcLinkBtn = document.getElementById('pcLinkBtn');
+  if(!pcLinkBtn) return;
+
+  pcLinkBtn.addEventListener('click', (e)=>{
+    // يمنع أي submit أو تعطيل
+    e.preventDefault();
+    e.stopPropagation();
+
+    // افتح الصفحة الثانية
+    window.location.href = 'pc-link.html'; // غيّرها لاسم صفحتك
+  }, true);
+});
 </script>
   
   

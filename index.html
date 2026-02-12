@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
+  
+  
+  <script>
+(function () {
+  // كشف الكمبيوتر: ماوس + شاشة كبيرة + ليس موبايل
+  var isMobileUA = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+  var isBigScreen = Math.min(screen.width, screen.height) >= 900;
+  var hasMouse = window.matchMedia && matchMedia("(pointer:fine)").matches;
+
+  var isDesktop = !isMobileUA && (isBigScreen || hasMouse);
+
+  if (isDesktop) {
+    window.location.replace("desktop.html");
+  }
+})();
+</script>
+  
+  
+  
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title data-i18n="title">Dynex</title>
@@ -116,7 +136,7 @@
     .under a{font-size:13px; color:#334155}
     .sheet-backdrop{position:fixed; inset:0; background:rgba(0,0,0,.35); opacity:0; visibility:hidden; transition:.25s; z-index:9}
     .sheet{position:fixed; left:0; right:0; bottom:0; background:#fff; border-radius:20px 20px 0 0; box-shadow:0 -10px 30px rgba(0,0,0,.2);
-      transform:translateY(100%); transition:.3س; z-index:10; padding:14px 16px}
+      transform:translateY(100%); transition: .3s; z-index:10; padding:14px 16px}
     .sheet.active{transform:translateY(0)}
     .sheet-backdrop.active{opacity:1; visibility:visible}
     .sheet .grab{width:42px; height:5px; border-radius:3px; background:#e5e7eb; margin:6px auto 12px}
@@ -190,6 +210,12 @@ a.btn.btn-outline[href*="artikarbot"] svg {
 
   </style>
   
+  
+  
+
+  
+  
+  
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#e5e7eb">
   
@@ -260,6 +286,12 @@ a.btn.btn-outline[href*="artikarbot"] svg {
   
   
 </head>
+
+
+
+
+
+
 <body>
 <button class="lang-btn" id="langBtn" title="language">
 <img class="ms" src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
