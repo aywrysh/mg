@@ -195,310 +195,368 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-  <script>
-    /* ===== أدوات عامة (توست + ربل) ===== */
-    const $$ = (id)=>document.getElementById(id);
-    function toast(msg){
-      const t=$$('toast');
-      t.textContent=msg;
-      t.classList.add('show');
-      setTimeout(()=>t.classList.remove('show'),1200);
-    }
-    function ripple(ev){
-      const t=ev.currentTarget||ev.target.closest('.ripple-container'); if(!t) return;
-      const r=document.createElement('span'); const d=Math.max(t.clientWidth,t.clientHeight);
-      const rect=t.getBoundingClientRect(); r.className='ripple'; r.style.width=r.style.height=d+'px';
-      r.style.left=(ev.clientX-rect.left-d/2)+'px'; r.style.top=(ev.clientY-rect.top-d/2)+'px';
-      const old=t.querySelector('.ripple'); if(old) old.remove(); t.appendChild(r); setTimeout(()=>r.remove(),600);
-    }
-    document.addEventListener('click',(e)=>{const t=e.target.closest('.ripple-container'); if(t) ripple(e);},true);
+<script src="i18n.js"></script>
 
-    /* ===== Firebase Config (كما هو) ===== */
-    const firebaseConfig = {
-      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
-      authDomain: "dynex-f4486.firebaseapp.com",
-      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
-      projectId: "dynex-f4486",
-      storageBucket: "dynex-f4486.firebasestorage.app"
-    };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
 
-    /* ===== Session ===== */
-    function readSession(){ try{ return JSON.parse(localStorage.getItem('dynex_session')||'null'); }catch(_){ return null; } }
-    const SESSION = readSession();
-    if(!SESSION || !SESSION.uid){
-      toast('الرجاء تسجيل الدخول');
-      setTimeout(()=>window.location.replace('index.html'), 700);
-    }
 
-    /* ===== Routes/Buttons (ترجمة + تواصل + رجوع) ===== */
-    $$('supportBtn').onclick=()=>window.open('https://t.me/artikarbot','_blank');
-    $$('backBtn').onclick=()=>{ if(history.length>1){history.back();} else {window.location.replace('index1.html');} };
 
-    // شيت اللغة (لو عندك applyLang في i18n.js بيشتغل، إذا لا عادي)
-    const langSheet = $$('langSheet');
-    const sheetBack = $$('sheetBack');
-    function openLang(){ langSheet.style.transform='translateY(0)'; sheetBack.style.opacity='1'; sheetBack.style.visibility='visible'; }
-    function closeLang(){ langSheet.style.transform='translateY(100%)'; sheetBack.style.opacity='0'; sheetBack.style.visibility='hidden'; }
-    $$('langBtn').onclick=(e)=>{ ripple(e); openLang(); };
-    sheetBack.onclick=closeLang;
-    document.querySelectorAll('[data-setlang]').forEach(b=>b.onclick=()=>{
-      const l=b.dataset.setlang;
+
+<script>
+  /* ===== أدوات عامة (توست + ربل) ===== */
+  const $$ = (id)=>document.getElementById(id);
+  function toast(msg){
+    const t=$$('toast');
+    t.textContent=msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'),1200);
+  }
+  function ripple(ev){
+    const t=ev.currentTarget||ev.target.closest('.ripple-container'); if(!t) return;
+    const r=document.createElement('span'); const d=Math.max(t.clientWidth,t.clientHeight);
+    const rect=t.getBoundingClientRect(); r.className='ripple'; r.style.width=r.style.height=d+'px';
+    r.style.left=(ev.clientX-rect.left-d/2)+'px'; r.style.top=(ev.clientY-rect.top-d/2)+'px';
+    const old=t.querySelector('.ripple'); if(old) old.remove(); t.appendChild(r); setTimeout(()=>r.remove(),600);
+  }
+  document.addEventListener('click',(e)=>{const t=e.target.closest('.ripple-container'); if(t) ripple(e);},true);
+
+  /* ==========================================================
+     ✅✅✅ (1) قاموس النصوص + دالة ترجمة (بدون i18n.js)
+     ========================================================== */
+  const TEXT = {
+    login_required: ['الرجاء تسجيل الدخول','Please login'],
+    lang_changed_ar: ['تم تغيير اللغة','Language changed'],
+    code_generated: ['تم توليد الكود','Code generated'],
+    copy_done: ['تم النسخ','Copied'],
+    gen_first: ['ولّد كود أولاً','Generate a code first'],
+    refreshed: ['تم التحديث','Refreshed'],
+    refresh_failed: ['فشل التحديث','Refresh failed'],
+
+    warn_no_session: ['لا توجد جلسة مستخدم. لازم تسجّل دخول من الجوال أولاً.','No user session. Please login on your phone first.'],
+
+    exp_done: ['انتهت صلاحية الكود','Code expired'],
+    exp_left: ['متبقي:','Left:'],
+
+    session_deleted: ['تم حذف الجلسة','Session deleted'],
+    session_delete_fail: ['تعذر حذف الجلسة','Failed to delete session'],
+
+    op_failed: ['تعذّر تنفيذ العملية','Operation failed'],
+    approved_ok: ['تمت الموافقة ✅','Approved ✅'],
+    rejected_no: ['تم الرفض ❌','Rejected ❌'],
+    new_req: ['طلب ربط جديد','New linking request'],
+
+    pc_connected: ['متصل','Connected'],
+    pc_disconnected: ['غير متصل','Disconnected'],
+  };
+
+  function getLang(){
+    return (localStorage.getItem('lang') || 'ar').toLowerCase().startsWith('en') ? 'en' : 'ar';
+  }
+  function t(key){
+    const lang = getLang()==='en' ? 1 : 0;
+    return (TEXT[key] && TEXT[key][lang]) || key;
+  }
+
+  /* ===== Firebase Config (كما هو) ===== */
+  const firebaseConfig = {
+    apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+    authDomain: "dynex-f4486.firebaseapp.com",
+    databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+    projectId: "dynex-f4486",
+    storageBucket: "dynex-f4486.firebasestorage.app"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  /* ===== Session ===== */
+  function readSession(){ try{ return JSON.parse(localStorage.getItem('dynex_session')||'null'); }catch(_){ return null; } }
+  const SESSION = readSession();
+  if(!SESSION || !SESSION.uid){
+    toast(t('login_required'));
+    setTimeout(()=>window.location.replace('index.html'), 700);
+  }
+
+  /* ===== Routes/Buttons (ترجمة + تواصل + رجوع) ===== */
+  $$('supportBtn').onclick=()=>window.open('https://t.me/artikarbot','_blank');
+  $$('backBtn').onclick=()=>{ if(history.length>1){history.back();} else {window.location.replace('index1.html');} };
+
+  // ✅ زر الترجمة (بدون i18n.js) — يغيّر lang/dir ويعمل Reload
+  const langSheet = $$('langSheet');
+  const sheetBack = $$('sheetBack');
+
+  function applyLangLocal(l){
+    const lang = (l || 'ar').toLowerCase().startsWith('en') ? 'en' : 'ar';
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
+  }
+
+  function openLang(){
+    langSheet.style.transform='translateY(0)';
+    sheetBack.style.opacity='1';
+    sheetBack.style.visibility='visible';
+  }
+  function closeLang(){
+    langSheet.style.transform='translateY(100%)';
+    sheetBack.style.opacity='0';
+    sheetBack.style.visibility='hidden';
+  }
+
+  $$('langBtn').onclick=(e)=>{ ripple(e); openLang(); };
+  sheetBack.onclick=closeLang;
+
+  document.querySelectorAll('[data-setlang]').forEach(btn=>{
+    btn.onclick=()=>{
+      const l = btn.dataset.setlang;
       try{ localStorage.setItem('lang', l); }catch(_){}
-      try{ if(typeof applyLang==='function') applyLang(l); }catch(_){}
+      applyLangLocal(l);
       closeLang();
-      toast(l==='ar'?'تم تغيير اللغة':'Language changed');
-    });
+      toast(t('lang_changed_ar')); // نفس الرسالة بالعربي/انجليزي
+      setTimeout(()=>location.reload(), 200);
+    };
+  });
 
-    /* ===== Paths ===== */
-    const PC_LINKS_PATH = "pc_links";
-    const REQ_PATH_ROOT = "pc_link_requests";
-    const PC_SESS_PATH  = "pc_sessions";     // ✅ جلسة الكمبيوتر
-    const TTL_MS = 10 * 60 * 1000;
+  // ✅ طبّق اللغة أول ما تفتح الصفحة
+  try{
+    const saved = localStorage.getItem('lang') || 'ar';
+    applyLangLocal(saved);
+  }catch(_){}
 
-    /* ===== Code/Countdown ===== */
-    const linkCode = $$('linkCode');
-    const expiresLabel = $$('expiresLabel');
-    let lastExpiresAt = 0, countdownTimer = null;
+  /* ===== Paths ===== */
+  const PC_LINKS_PATH = "pc_links";
+  const REQ_PATH_ROOT = "pc_link_requests";
+  const PC_SESS_PATH  = "pc_sessions";
+  const TTL_MS = 10 * 60 * 1000;
 
-    function setExpires(expiresAt){
-      lastExpiresAt = Number(expiresAt||0);
-      if (countdownTimer) clearInterval(countdownTimer);
-      const tick = ()=>{
-        if(!lastExpiresAt){ expiresLabel.textContent='—'; return; }
-        const ms = lastExpiresAt - Date.now();
-        if(ms <= 0){
-          expiresLabel.textContent = 'انتهت صلاحية الكود';
-          clearInterval(countdownTimer); countdownTimer=null;
-          return;
-        }
-        const m = Math.floor(ms/60000);
-        const s = Math.floor((ms%60000)/1000);
-        expiresLabel.textContent = `متبقي: ${m}:${String(s).padStart(2,'0')}`;
-      };
-      tick();
-      countdownTimer = setInterval(tick, 1000);
-    }
+  /* ===== Code/Countdown ===== */
+  const linkCode = $$('linkCode');
+  const expiresLabel = $$('expiresLabel');
+  let lastExpiresAt = 0, countdownTimer = null;
 
-    function randCode(len=8){
-      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-      let out = "";
-      for(let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
-      return out;
-    }
-    function showWarn(text){ $$('warn').style.display='block'; $$('warn').textContent=text; }
-    function hideWarn(){ $$('warn').style.display='none'; $$('warn').textContent=''; }
-
-    async function createCode(){
-      hideWarn();
-      const s = readSession();
-      if(!s || !s.uid){
-        showWarn("لا توجد جلسة مستخدم. لازم تسجّل دخول من الجوال أولاً.");
+  function setExpires(expiresAt){
+    lastExpiresAt = Number(expiresAt||0);
+    if (countdownTimer) clearInterval(countdownTimer);
+    const tick = ()=>{
+      if(!lastExpiresAt){ expiresLabel.textContent='—'; return; }
+      const ms = lastExpiresAt - Date.now();
+      if(ms <= 0){
+        expiresLabel.textContent = t('exp_done');
+        clearInterval(countdownTimer); countdownTimer=null;
         return;
       }
+      const m = Math.floor(ms/60000);
+      const s = Math.floor((ms%60000)/1000);
+      expiresLabel.textContent = `${t('exp_left')} ${m}:${String(s).padStart(2,'0')}`;
+    };
+    tick();
+    countdownTimer = setInterval(tick, 1000);
+  }
 
-      let code = randCode(8);
-      let tries = 0;
-      while(tries < 6){
-        const snap = await db.ref(`${PC_LINKS_PATH}/${code}`).get();
-        if(!snap.exists()) break;
-        code = randCode(8);
-        tries++;
-      }
+  function randCode(len=8){
+    const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let out = "";
+    for(let i=0;i<len;i++) out += chars[Math.floor(Math.random()*chars.length)];
+    return out;
+  }
+  function showWarn(text){ $$('warn').style.display='block'; $$('warn').textContent=text; }
+  function hideWarn(){ $$('warn').style.display='none'; $$('warn').textContent=''; }
 
-      const now = Date.now();
-      const data = { uid:String(s.uid), accountId:String(s.accountId||''), createdAt:now, expiresAt: now+TTL_MS, used:false };
-      await db.ref(`${PC_LINKS_PATH}/${code}`).set(data);
-
-      linkCode.textContent = code;
-      setExpires(data.expiresAt);
-      toast("تم توليد الكود");
+  async function createCode(){
+    hideWarn();
+    const s = readSession();
+    if(!s || !s.uid){
+      showWarn(t('warn_no_session'));
+      return;
     }
 
-    async function copyCode(){
-      const c = (linkCode.textContent||'').trim();
-      if(!c || c==='—'){ toast("ولّد كود أولاً"); return; }
-      try{ await navigator.clipboard.writeText(c); toast("تم النسخ"); }
-      catch(_){ toast(c); }
+    let code = randCode(8);
+    let tries = 0;
+    while(tries < 6){
+      const snap = await db.ref(`${PC_LINKS_PATH}/${code}`).get();
+      if(!snap.exists()) break;
+      code = randCode(8);
+      tries++;
     }
 
-    // تحديث: يجيب آخر كود لهذا المستخدم (بدون ما يغير شي) - سريع ومفيد
-    async function refreshState(){
-      hideWarn();
-      const s = readSession();
-      if(!s || !s.uid) return;
+    const now = Date.now();
+    const data = { uid:String(s.uid), accountId:String(s.accountId||''), createdAt:now, expiresAt: now+TTL_MS, used:false };
+    await db.ref(`${PC_LINKS_PATH}/${code}`).set(data);
 
+    linkCode.textContent = code;
+    setExpires(data.expiresAt);
+    toast(t('code_generated'));
+  }
+
+  async function copyCode(){
+    const c = (linkCode.textContent||'').trim();
+    if(!c || c==='—'){ toast(t('gen_first')); return; }
+    try{ await navigator.clipboard.writeText(c); toast(t('copy_done')); }
+    catch(_){ toast(c); }
+  }
+
+  async function refreshState(){
+    hideWarn();
+    const s = readSession();
+    if(!s || !s.uid) return;
+
+    try{
+      toast(t('refreshed'));
+    }catch(e){
+      console.error(e);
+      toast(t('refresh_failed'));
+    }
+  }
+
+  $$('newBtn').addEventListener('click', createCode);
+  $$('copyBtn').addEventListener('click', copyCode);
+  $$('refreshBtn').addEventListener('click', refreshState);
+
+  createCode().catch(()=>{});
+
+  /* ==========================================================
+     ✅ عرض الجهاز المتصل + حذف الجلسة (pc_sessions/<UID>)
+  ========================================================== */
+  (function pcSessionWatcher(){
+    const s = readSession();
+    const UID = s && s.uid ? String(s.uid) : null;
+    if(!UID) return;
+
+    const stEl = $$('pcState');
+    const brEl = $$('pcBrowser');
+    const plEl = $$('pcPlatform');
+    const lsEl = $$('pcLast');
+
+    function fmt(ts){
+      if(!ts) return '—';
+      try{ return new Date(Number(ts)).toLocaleString('ar-EG',{hour12:false}); }catch(_){ return '—'; }
+    }
+
+    const ref = db.ref(`${PC_SESS_PATH}/${UID}`);
+    ref.on('value', (snap)=>{
+      const v = snap.val() || {};
+      const connected = v.connected === true;
+
+      stEl.textContent = connected ? t('pc_connected') : t('pc_disconnected');
+      stEl.style.borderColor = connected ? '#bbf7d0' : '#d1d5db';
+      stEl.style.background  = connected ? '#f0fdf4' : '#fff';
+
+      brEl.textContent = (v.browser || v.ua || '—');
+      plEl.textContent = (v.platform || '—');
+      lsEl.textContent = fmt(v.lastSeenAt || v.connectedAt || v.updatedAt);
+    });
+
+    $$('killBtn').onclick = async (e)=>{
+      ripple(e);
       try{
-        // آخر كود (بحث بسيط عبر المسار - إذا ما عندك indexing، خلّينا نكتفي بعرض الجلسة فقط)
-        // ما نقدر نعمل query على keys هنا بدون هيكلة إضافية، فـ بنكتفي بتحديث جلسة الكمبيوتر + عداد الوقت إذا كان موجود محليًا.
-        toast('تم التحديث');
-        // تحديث عرض جلسة الكمبيوتر
-        // (سيعمل لأننا مراقبينه في pcSessionWatcher)
+        await db.ref(`${PC_SESS_PATH}/${UID}`).update({
+          connected: false,
+          revokedAt: Date.now(),
+          updatedAt: Date.now()
+        });
+        toast(t('session_deleted'));
+      }catch(err){
+        console.error(err);
+        toast(t('session_delete_fail'));
+      }
+    };
+  })();
+
+  /* ==========================================================
+     ✅ استقبال طلب الربط من الكمبيوتر (موافقة/رفض)
+  ========================================================== */
+  (function pcRequestsWatcher(){
+    const s = readSession();
+    const UID = s && s.uid ? String(s.uid) : null;
+    if(!UID) return;
+
+    const reqBack = $$('reqBack');
+    const reqSheet= $$('reqSheet');
+    const reqClose= $$('reqClose');
+    const reqApprove = $$('reqApprove');
+    const reqReject  = $$('reqReject');
+    const reqCodeEl  = $$('reqCode');
+    const reqTimeEl  = $$('reqTime');
+    const reqDeviceEl= $$('reqDevice');
+
+    function openReq(){ reqBack.classList.add('active'); reqSheet.classList.add('active'); }
+    function closeReq(){ reqBack.classList.remove('active'); reqSheet.classList.remove('active'); }
+
+    reqBack.addEventListener('click', closeReq);
+    reqClose.addEventListener('click', (e)=>{ ripple(e); closeReq(); });
+
+    function fmtTime(ts){
+      try{ return new Date(Number(ts||0)).toLocaleString('ar-EG',{hour12:false}); }
+      catch(_){ return '—'; }
+    }
+
+    let currentReqRef = null;
+    let currentReqId  = null;
+
+    async function setStatus(status){
+      if(!currentReqRef) return;
+      try{
+        await currentReqRef.update({ status, decidedAt: Date.now() });
+
+        if(status === 'approved'){
+          await db.ref(`pc_sessions/${UID}`).update({
+            connected: true,
+            connectedAt: Date.now(),
+            updatedAt: Date.now(),
+            browser: (currentReqRef.__lastDeviceBrowser || ''),
+            platform: (currentReqRef.__lastDevicePlatform || ''),
+            ua: (currentReqRef.__lastDeviceUA || ''),
+            lastSeenAt: Date.now()
+          });
+        }
+
+        closeReq();
+        toast(status==='approved' ? t('approved_ok') : t('rejected_no'));
       }catch(e){
         console.error(e);
-        toast('فشل التحديث');
+        toast(t('op_failed'));
       }
     }
 
-    $$('newBtn').addEventListener('click', createCode);
-    $$('copyBtn').addEventListener('click', copyCode);
-    $$('refreshBtn').addEventListener('click', refreshState);
+    reqApprove.addEventListener('click', (e)=>{ ripple(e); setStatus('approved'); });
+    reqReject .addEventListener('click', (e)=>{ ripple(e); setStatus('rejected'); });
 
-    // توليد تلقائي عند فتح الصفحة
-    createCode().catch(()=>{});
+    db.ref(`${REQ_PATH_ROOT}/${UID}`)
+      .orderByChild('createdAt')
+      .limitToLast(1)
+      .on('value', (snap)=>{
+        if(!snap.exists()) return;
 
-    /* ==========================================================
-       ✅ عرض الجهاز المتصل + حذف الجلسة (pc_sessions/<UID>)
-    ========================================================== */
-    (function pcSessionWatcher(){
-      const s = readSession();
-      const UID = s && s.uid ? String(s.uid) : null;
-      if(!UID) return;
+        let reqId=null, v=null;
+        snap.forEach(ch=>{ reqId=ch.key; v=ch.val()||{}; });
 
-      const stEl = $$('pcState');
-      const brEl = $$('pcBrowser');
-      const plEl = $$('pcPlatform');
-      const lsEl = $$('pcLast');
+        const st = String(v.status||'pending').toLowerCase();
+        if(st !== 'pending') return;
+        if(currentReqId === reqId) return;
 
-      function fmt(ts){
-        if(!ts) return '—';
-        try{ return new Date(Number(ts)).toLocaleString('ar-EG',{hour12:false}); }catch(_){ return '—'; }
-      }
+        currentReqId = reqId;
+        currentReqRef = db.ref(`${REQ_PATH_ROOT}/${UID}/${reqId}`);
 
-      const ref = db.ref(`${PC_SESS_PATH}/${UID}`);
-      ref.on('value', (snap)=>{
-        const v = snap.val() || {};
-        const connected = v.connected === true;
+        reqCodeEl.textContent = v.code || '—';
+        reqTimeEl.textContent = fmtTime(v.createdAt || Date.now());
 
-        stEl.textContent = connected ? 'متصل' : 'غير متصل';
-        stEl.style.borderColor = connected ? '#bbf7d0' : '#d1d5db';
-        stEl.style.background  = connected ? '#f0fdf4' : '#fff';
+        const dev = v.device || {};
+        const ua = (dev.ua || '').slice(0, 120);
+        const info = [
+          dev.platform ? ('platform: ' + dev.platform) : '',
+          dev.lang ? ('lang: ' + dev.lang) : '',
+          ua ? ('ua: ' + ua) : ''
+        ].filter(Boolean).join(' | ');
+        reqDeviceEl.textContent = info || '—';
 
-        brEl.textContent = (v.browser || v.ua || '—');
-        plEl.textContent = (v.platform || '—');
-        lsEl.textContent = fmt(v.lastSeenAt || v.connectedAt || v.updatedAt);
+        try{
+          currentReqRef.__lastDeviceBrowser  = ua ? ua : '';
+          currentReqRef.__lastDevicePlatform = dev.platform || '';
+          currentReqRef.__lastDeviceUA       = ua || '';
+        }catch(_){}
+
+        openReq();
+        toast(t('new_req'));
       });
-
-      // زر حذف الجلسة: يفصل فورًا ويوقف
-      $$('killBtn').onclick = async (e)=>{
-        ripple(e);
-        try{
-          await db.ref(`${PC_SESS_PATH}/${UID}`).update({
-            connected: false,
-            revokedAt: Date.now(),
-            updatedAt: Date.now()
-          });
-          toast('تم حذف الجلسة');
-        }catch(err){
-          console.error(err);
-          toast('تعذر حذف الجلسة');
-        }
-      };
-    })();
-
-    /* ==========================================================
-       ✅ داخل نفس الصفحة: استقبال طلب الربط من الكمبيوتر (موافقة/رفض)
-       (نفس منطقك – بس على شيت bottom)
-    ========================================================== */
-    (function pcRequestsWatcher(){
-      const s = readSession();
-      const UID = s && s.uid ? String(s.uid) : null;
-      if(!UID) return;
-
-      const reqBack = $$('reqBack');
-      const reqSheet= $$('reqSheet');
-      const reqClose= $$('reqClose');
-      const reqApprove = $$('reqApprove');
-      const reqReject  = $$('reqReject');
-      const reqCodeEl  = $$('reqCode');
-      const reqTimeEl  = $$('reqTime');
-      const reqDeviceEl= $$('reqDevice');
-
-      function openReq(){ reqBack.classList.add('active'); reqSheet.classList.add('active'); }
-      function closeReq(){ reqBack.classList.remove('active'); reqSheet.classList.remove('active'); }
-
-      reqBack.addEventListener('click', closeReq);
-      reqClose.addEventListener('click', (e)=>{ ripple(e); closeReq(); });
-
-      function fmtTime(ts){
-        try{ return new Date(Number(ts||0)).toLocaleString('ar-EG',{hour12:false}); }
-        catch(_){ return '—'; }
-      }
-
-      let currentReqRef = null;
-      let currentReqId  = null;
-
-      async function setStatus(status){
-        if(!currentReqRef) return;
-        try{
-          await currentReqRef.update({ status, decidedAt: Date.now() });
-
-          // ✅ لو وافق: نكتب جلسة متصلة مبدئيًا (الكمبيوتر يكملها)
-          if(status === 'approved'){
-            await db.ref(`pc_sessions/${UID}`).update({
-              connected: true,
-              connectedAt: Date.now(),
-              updatedAt: Date.now(),
-              // خزّن بيانات الجهاز اللي طلب الربط
-              browser: (currentReqRef.__lastDeviceBrowser || ''),
-              platform: (currentReqRef.__lastDevicePlatform || ''),
-              ua: (currentReqRef.__lastDeviceUA || ''),
-              lastSeenAt: Date.now()
-            });
-          }
-
-          closeReq();
-          toast(status==='approved' ? 'تمت الموافقة ✅' : 'تم الرفض ❌');
-        }catch(e){
-          console.error(e);
-          toast('تعذّر تنفيذ العملية');
-        }
-      }
-
-      reqApprove.addEventListener('click', (e)=>{ ripple(e); setStatus('approved'); });
-      reqReject .addEventListener('click', (e)=>{ ripple(e); setStatus('rejected'); });
-
-      db.ref(`${REQ_PATH_ROOT}/${UID}`)
-        .orderByChild('createdAt')
-        .limitToLast(1)
-        .on('value', (snap)=>{
-          if(!snap.exists()) return;
-
-          let reqId=null, v=null;
-          snap.forEach(ch=>{ reqId=ch.key; v=ch.val()||{}; });
-
-          const st = String(v.status||'pending').toLowerCase();
-          if(st !== 'pending') return;
-          if(currentReqId === reqId) return;
-
-          currentReqId = reqId;
-          currentReqRef = db.ref(`${REQ_PATH_ROOT}/${UID}/${reqId}`);
-
-          reqCodeEl.textContent = v.code || '—';
-          reqTimeEl.textContent = fmtTime(v.createdAt || Date.now());
-
-          const dev = v.device || {};
-          const ua = (dev.ua || '').slice(0, 120);
-          const info = [
-            dev.platform ? ('platform: ' + dev.platform) : '',
-            dev.lang ? ('lang: ' + dev.lang) : '',
-            ua ? ('ua: ' + ua) : ''
-          ].filter(Boolean).join(' | ');
-          reqDeviceEl.textContent = info || '—';
-
-          // نخزن آخر معلومات جهاز داخل ref كخصائص محلية (بدون لمس DB)
-          try{
-            currentReqRef.__lastDeviceBrowser  = ua ? ua : '';
-            currentReqRef.__lastDevicePlatform = dev.platform || '';
-            currentReqRef.__lastDeviceUA       = ua || '';
-          }catch(_){}
-
-          openReq();
-          toast('طلب ربط جديد');
-        });
-    })();
-  </script>
+  })();
+</script>
 
 </body>
 </html>

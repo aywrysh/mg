@@ -478,228 +478,357 @@
     </div>
   </div>
 
-  <script>
-    // ===== Firebase Config =====
-    const firebaseConfig = {
-      apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
-      authDomain: "dynex-f4486.firebaseapp.com",
-      databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
-      projectId: "dynex-f4486",
-      storageBucket: "dynex-f4486.firebasestorage.app"
+<script src="i18n.js"></script>
+
+
+
+
+
+<script>
+  (function(){
+    const saved = (localStorage.getItem('lang') || 'ar').toLowerCase();
+    const lang = saved.startsWith('en') ? 'en' : 'ar';
+
+    // ضبط لغة الصفحة واتجاهها
+    document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
+
+    // لو عندك applyLang داخل i18n.js
+    if (typeof window.applyLang === 'function'){
+      window.applyLang(lang);
+    }
+  })();
+</script>
+
+
+
+
+
+
+
+<script>
+  // ===== Firebase Config =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyBr3mtTHa_nJajn9H5N1V5sWNHIHY8RU8g",
+    authDomain: "dynex-f4486.firebaseapp.com",
+    databaseURL: "https://dynex-f4486-default-rtdb.firebaseio.com",
+    projectId: "dynex-f4486",
+    storageBucket: "dynex-f4486.firebasestorage.app"
+  };
+  if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const PC_LINKS_PATH = "pc_links";
+  const REQ_ROOT = "pc_link_requests";
+  const HOME_PAGE = "index100.html";
+
+  // ✅✅ مسار جلسة الكمبيوتر في Firebase (عشان حذف الجلسة يطلع الكمبيوتر فوراً)
+  const PC_SESS_PATH = "pc_sessions";
+
+  // ✅ 15 يوم
+  const SESSION_TTL_MS = 15 * 24 * 60 * 60 * 1000;
+
+  // ✅✅ اسم جلسة الكمبيوتر فقط (مختلف عن الهاتف)
+  const PC_SESSION_KEY = "dynex_pc_session";
+
+
+  const splash = document.getElementById('splash');
+  const sHint  = document.getElementById('sHint');
+
+  const codeInput  = document.getElementById('codeInput');
+  const sendBtn    = document.getElementById('sendBtn');
+  const resetBtn   = document.getElementById('resetBtn');
+  const statusText = document.getElementById('statusText');
+  const statusPill = document.getElementById('statusPill');
+  const statusBox  = document.getElementById('status');
+  const liveDot = document.getElementById('liveDot');
+  const liveTxt = document.getElementById('liveTxt');
+
+  /* ==========================
+     ✅✅ إضافة الترجمة (AR/EN)
+     لا تغيّر شيء ثاني
+     ========================== */
+  const MSG = {
+    ar: {
+      sessionFound: 'تم العثور على جلسة — جاري الدخول…',
+      noSession: 'لا توجد جلسة — افتح تسجيل الدخول',
+      enterFirst: 'أدخل الكود أولاً',
+      checking: 'جاري التحقق من الكود…',
+      invalid: 'الكود غير صحيح',
+      used: 'هذا الكود مستخدم من قبل',
+      expired: 'انتهت صلاحية الكود — ولّد كود جديد من الجوال',
+      bad: 'الكود غير صالح',
+      pending: 'تم إرسال الطلب… بانتظار موافقة الجوال',
+      approved: 'تمت الموافقة ✅ جاري تسجيل الدخول…',
+      rejected: 'المستخدم لغى العملية ❌',
+      dbError: 'تعذّر الاتصال بالقاعدة',
+      readyHint: 'اكتب الكود ثم اضغط إرسال الطلب.'
+    },
+    en: {
+      sessionFound: 'Session found — logging in…',
+      noSession: 'No session — open login',
+      enterFirst: 'Enter the code first',
+      checking: 'Checking code…',
+      invalid: 'Invalid code',
+      used: 'This code has been used before',
+      expired: 'Code expired — generate a new code from your phone',
+      bad: 'Bad code',
+      pending: 'Request sent… waiting for phone approval',
+      approved: 'Approved ✅ Logging in…',
+      rejected: 'User canceled ❌',
+      dbError: 'Could not connect to database',
+      readyHint: 'Enter the code then press Send request.'
+    }
+  };
+
+  function getLang(){
+    const saved = (localStorage.getItem('lang') || 'ar').toLowerCase();
+    return saved.startsWith('en') ? 'en' : 'ar';
+  }
+  function t(key){
+    const lang = getLang();
+    return (MSG[lang] && MSG[lang][key]) || (MSG.ar[key] || key);
+  }
+  /* ========================== */
+
+  function hideSplashShowLogin(){
+    splash.classList.add('hide');
+    document.documentElement.classList.remove('boot');
+  }
+
+  /* ==========================================================
+     ✅✅ مراقبة جلسة الكمبيوتر في Firebase
+     إذا الجوال عمل connected=false أو revokedAt -> يخرج الكمبيوتر فوراً
+     ========================================================== */
+  /* ==========================================================
+   ✅✅ مراقبة جلسة الكمبيوتر في Firebase
+   إذا الجوال عمل connected=false أو revokedAt -> يخرج الكمبيوتر فوراً
+   ========================================================== */
+let pcWatchOff = null;
+function startPcSessionWatch(uid){
+  const U = String(uid || '');
+  if(!U) return;
+
+  if(pcWatchOff){
+    try{ pcWatchOff(); }catch(_){}
+    pcWatchOff = null;
+  }
+
+  const ref = db.ref(`${PC_SESS_PATH}/${U}`);
+
+  const kick = ()=>{
+    try{ localStorage.removeItem(PC_SESSION_KEY); }catch(_){}
+    // ✅ يرجع لصفحة إدخال الكود مباشرة
+    window.location.replace(window.location.pathname + window.location.search);
+  };
+
+  const onValue = (snap)=>{
+    const v = snap.val() || {};
+    if(v.connected === false || v.revokedAt){
+      kick();
+    }
+  };
+
+  ref.on('value', onValue);
+  pcWatchOff = ()=> ref.off('value', onValue);
+}
+
+/* ==========================
+   ✅ فحص الجلسة وقت المقدمة
+   ========================== */
+(function bootCheck(){
+  let ok = false;
+
+  try{
+    const raw = localStorage.getItem(PC_SESSION_KEY);
+    if(raw){
+      const sess = JSON.parse(raw);
+      const now  = Date.now();
+      const exp  = Number(sess?.expiresAt || 0);
+
+      if(sess?.uid && exp > now){
+        ok = true;
+        startPcSessionWatch(sess.uid);
+      } else {
+        localStorage.removeItem(PC_SESSION_KEY);
+      }
+    }
+  }catch(_){
+    localStorage.removeItem(PC_SESSION_KEY);
+  }
+
+  if(ok){
+    sHint.textContent = t('sessionFound');
+    setTimeout(()=>window.location.replace(HOME_PAGE), 220);
+  }else{
+    sHint.textContent = t('noSession');
+    setTimeout(hideSplashShowLogin, 240);
+  }
+})();
+
+  function setStatus(text, pill, type){
+    statusText.textContent = text;
+    statusPill.textContent = pill;
+    statusBox.classList.remove('ok','no');
+    if(type==='ok') statusBox.classList.add('ok');
+    if(type==='no') statusBox.classList.add('no');
+
+    liveTxt.textContent = pill || 'READY';
+    if(type==='ok') liveDot.classList.add('on');
+    else liveDot.classList.remove('on');
+  }
+
+  function normalizeCode(s){
+    return String(s||'').trim().replace(/\s+/g,'').toUpperCase();
+  }
+
+  function getDeviceInfo(){
+    return {
+      ua: navigator.userAgent || '',
+      platform: navigator.platform || '',
+      lang: navigator.language || ''
     };
-    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  }
 
-    const PC_LINKS_PATH = "pc_links";
-    const REQ_ROOT = "pc_link_requests";
-    const HOME_PAGE = "index100.html";
+  (function fillDeviceCard(){
+    const d = getDeviceInfo();
+    document.getElementById('vBrowser').textContent  = (d.ua || '—').slice(0, 90);
+    document.getElementById('vPlatform').textContent = (d.platform || '—').slice(0, 60);
+    document.getElementById('vLang').textContent     = (d.lang || '—').slice(0, 20);
+  })();
 
-    // ✅ 15 يوم
-    const SESSION_TTL_MS = 15 * 24 * 60 * 60 * 1000;
-
-    const splash = document.getElementById('splash');
-    const sHint  = document.getElementById('sHint');
-
-    const codeInput  = document.getElementById('codeInput');
-    const sendBtn    = document.getElementById('sendBtn');
-    const resetBtn   = document.getElementById('resetBtn');
-    const statusText = document.getElementById('statusText');
-    const statusPill = document.getElementById('statusPill');
-    const statusBox  = document.getElementById('status');
-    const liveDot = document.getElementById('liveDot');
-    const liveTxt = document.getElementById('liveTxt');
-
-    function hideSplashShowLogin(){
-      splash.classList.add('hide');
-      document.documentElement.classList.remove('boot');
+  let currentListenerOff = null;
+  function stopListening(){
+    if(currentListenerOff){
+      try{ currentListenerOff(); }catch(_){}
+      currentListenerOff = null;
     }
+  }
 
-    // ✅ فحص الجلسة أثناء المقدمة
-    (function bootCheck(){
-      let ok = false;
+  async function createDesktopSession(uid){
+    const snap = await db.ref('users/' + uid).get();
+    const user = snap.exists() ? (snap.val() || {}) : {};
 
-      try{
-        const raw = localStorage.getItem('dynex_session');
-        if(raw){
-          const sess = JSON.parse(raw);
-          const now  = Date.now();
-          const exp  = Number(sess?.expiresAt || 0);
-          if(sess?.uid && exp > now){
-            ok = true;
-          } else {
-            localStorage.removeItem('dynex_session');
-          }
-        }
-      }catch(_){
-        localStorage.removeItem('dynex_session');
+    const now = Date.now();
+    const sess = {
+      uid: String(uid),
+      accountId: user.accountId || null,
+      name: user.name || '',
+      username: user.username || '',
+      phone: user.phone || '',
+      loginAt: now,
+      expiresAt: now + SESSION_TTL_MS
+    };
+
+    // ✅ حفظ جلسة الكمبيوتر
+    localStorage.setItem(PC_SESSION_KEY, JSON.stringify(sess));
+
+    // ✅ مهم جداً: احفظ كمان في المفتاح القديم عشان index100.html يشتغل
+    
+  }
+
+  async function sendRequest(){
+    stopListening();
+    const code = normalizeCode(codeInput.value);
+    if(!code){ setStatus(t('enterFirst'), 'EMPTY', 'no'); return; }
+
+    sendBtn.disabled = true;
+    setStatus(t('checking'), 'CHECK', '');
+
+    try{
+      const linkSnap = await db.ref(`${PC_LINKS_PATH}/${code}`).get();
+      if(!linkSnap.exists()){
+        setStatus(t('invalid'), 'INVALID', 'no');
+        return;
       }
 
-      if(ok){
-        // ✅ دخول مباشر بدون إظهار صفحة التسجيل
-        sHint.textContent = 'تم العثور على جلسةجاري الدخول…';
-        // مهلة بسيطة عشان تشوف المقدمة بشكل طبيعي (خفيف)
-        setTimeout(()=>window.location.replace(HOME_PAGE), 220);
-      }else{
-        // ✅ لا توجد جلسة → افتح صفحة التسجيل بعد الفحص
-        sHint.textContent = 'لا توجد جلسة — افتح تسجيل الدخول';
-        setTimeout(hideSplashShowLogin, 240);
-      }
-    })();
-
-    function setStatus(text, pill, type){
-      statusText.textContent = text;
-      statusPill.textContent = pill;
-      statusBox.classList.remove('ok','no');
-      if(type==='ok') statusBox.classList.add('ok');
-      if(type==='no') statusBox.classList.add('no');
-
-      liveTxt.textContent = pill || 'READY';
-      if(type==='ok') liveDot.classList.add('on');
-      else liveDot.classList.remove('on');
-    }
-
-    function normalizeCode(s){
-      return String(s||'').trim().replace(/\s+/g,'').toUpperCase();
-    }
-
-    function getDeviceInfo(){
-      return {
-        ua: navigator.userAgent || '',
-        platform: navigator.platform || '',
-        lang: navigator.language || ''
-      };
-    }
-
-    (function fillDeviceCard(){
-      const d = getDeviceInfo();
-      document.getElementById('vBrowser').textContent  = (d.ua || '—').slice(0, 90);
-      document.getElementById('vPlatform').textContent = (d.platform || '—').slice(0, 60);
-      document.getElementById('vLang').textContent     = (d.lang || '—').slice(0, 20);
-    })();
-
-    let currentListenerOff = null;
-    function stopListening(){
-      if(currentListenerOff){
-        try{ currentListenerOff(); }catch(_){}
-        currentListenerOff = null;
-      }
-    }
-
-    async function createDesktopSession(uid){
-      const snap = await db.ref('users/' + uid).get();
-      const user = snap.exists() ? (snap.val() || {}) : {};
-
+      const link = linkSnap.val() || {};
       const now = Date.now();
-      const sess = {
-        uid: String(uid),
-        accountId: user.accountId || null,
-        name: user.name || '',
-        username: user.username || '',
-        phone: user.phone || '',
-        loginAt: now,
-        expiresAt: now + SESSION_TTL_MS
-      };
-      localStorage.setItem('dynex_session', JSON.stringify(sess));
-    }
 
-    async function sendRequest(){
-      stopListening();
-      const code = normalizeCode(codeInput.value);
-      if(!code){ setStatus('أدخل الكود أولاً', 'EMPTY', 'no'); return; }
-
-      sendBtn.disabled = true;
-      setStatus('جاري التحقق من الكود…', 'CHECK', '');
-
-      try{
-        const linkSnap = await db.ref(`${PC_LINKS_PATH}/${code}`).get();
-        if(!linkSnap.exists()){
-          setStatus('الكود غير صحيح', 'INVALID', 'no');
-          return;
-        }
-
-        const link = linkSnap.val() || {};
-        const now = Date.now();
-
-        if(link.used === true){
-          setStatus('هذا الكود مستخدم من قبل', 'USED', 'no');
-          return;
-        }
-
-        if(Number(link.expiresAt || 0) < now){
-          setStatus('انتهت صلاحية الكود — ولّد كود جديد من الجوال', 'EXPIRED', 'no');
-          return;
-        }
-
-        const uid = String(link.uid || '');
-        if(!uid){
-          setStatus('الكود غير صالح', 'BAD', 'no');
-          return;
-        }
-
-        const reqRef = db.ref(`${REQ_ROOT}/${uid}`).push();
-        const reqId = reqRef.key;
-
-        await reqRef.set({
-          status: 'pending',
-          code: code,
-          createdAt: now,
-          device: getDeviceInfo()
-        });
-
-        setStatus('تم إرسال الطلب… بانتظار موافقة الجوال', 'PENDING', '');
-
-        const reqNode = db.ref(`${REQ_ROOT}/${uid}/${reqId}`);
-
-        const onValue = async (snap)=>{
-          if(!snap.exists()) return;
-          const v = snap.val() || {};
-          const st = String(v.status || 'pending').toLowerCase();
-
-          if(st === 'approved'){
-            setStatus('تمت الموافقة ✅ جاري تسجيل الدخول…', 'APPROVED', 'ok');
-
-            try{
-              await db.ref(`${PC_LINKS_PATH}/${code}`).update({
-                used: true,
-                usedAt: Date.now(),
-                usedByRequest: reqId
-              });
-            }catch(_){}
-
-            await createDesktopSession(uid);
-            setTimeout(()=>window.location.replace(HOME_PAGE), 350);
-          }
-
-          if(st === 'rejected'){
-            setStatus('المستخدم لغى العملية ❌', 'REJECTED', 'no');
-          }
-        };
-
-        reqNode.on('value', onValue);
-        currentListenerOff = ()=> reqNode.off('value', onValue);
-
-      }catch(e){
-        console.error(e);
-        setStatus('تعذّر الاتصال بالقاعدة', 'ERROR', 'no');
-      }finally{
-        sendBtn.disabled = false;
+      if(link.used === true){
+        setStatus(t('used'), 'USED', 'no');
+        return;
       }
+
+      if(Number(link.expiresAt || 0) < now){
+        setStatus(t('expired'), 'EXPIRED', 'no');
+        return;
+      }
+
+      const uid = String(link.uid || '');
+      if(!uid){
+        setStatus(t('bad'), 'BAD', 'no');
+        return;
+      }
+
+      const reqRef = db.ref(`${REQ_ROOT}/${uid}`).push();
+      const reqId = reqRef.key;
+
+      await reqRef.set({
+        status: 'pending',
+        code: code,
+        createdAt: now,
+        device: getDeviceInfo()
+      });
+
+      setStatus(t('pending'), 'PENDING', '');
+
+      const reqNode = db.ref(`${REQ_ROOT}/${uid}/${reqId}`);
+
+      const onValue = async (snap)=>{
+        if(!snap.exists()) return;
+        const v = snap.val() || {};
+        const st = String(v.status || 'pending').toLowerCase();
+
+        if(st === 'approved'){
+          setStatus(t('approved'), 'APPROVED', 'ok');
+
+          try{
+            await db.ref(`${PC_LINKS_PATH}/${code}`).update({
+              used: true,
+              usedAt: Date.now(),
+              usedByRequest: reqId
+            });
+          }catch(_){}
+
+          await createDesktopSession(uid);
+
+          // ✅ ابدأ مراقبة جلسة الكمبيوتر بعد الدخول
+          startPcSessionWatch(uid);
+
+          setTimeout(()=>window.location.replace(HOME_PAGE), 350);
+        }
+
+        if(st === 'rejected'){
+          setStatus(t('rejected'), 'REJECTED', 'no');
+        }
+      };
+
+      reqNode.on('value', onValue);
+      currentListenerOff = ()=> reqNode.off('value', onValue);
+
+    }catch(e){
+      console.error(e);
+      setStatus(t('dbError'), 'ERROR', 'no');
+    }finally{
+      sendBtn.disabled = false;
     }
+  }
 
-    sendBtn.addEventListener('click', sendRequest);
+  sendBtn.addEventListener('click', sendRequest);
 
-    resetBtn.addEventListener('click', ()=>{
-      stopListening();
-      codeInput.value = '';
-      setStatus('اكتب الكود ثم اضغط إرسال الطلب.', 'READY', '');
-      codeInput.focus();
-    });
+  resetBtn.addEventListener('click', ()=>{
+    stopListening();
+    codeInput.value = '';
+    setStatus(t('readyHint'), 'READY', '');
+    codeInput.focus();
+  });
 
-    codeInput.addEventListener('keydown', (e)=>{
-      if(e.key === 'Enter') sendRequest();
-    });
+  codeInput.addEventListener('keydown', (e)=>{
+    if(e.key === 'Enter') sendRequest();
+  });
 
-    setStatus('اكتب الكود ثم اضغط إرسال الطلب.', 'READY', '');
-  </script>
+  setStatus(t('readyHint'), 'READY', '');
+</script>
 </body>
 </html>

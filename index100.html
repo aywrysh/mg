@@ -555,6 +555,13 @@
       -webkit-backdrop-filter: blur(10px);
     }
   }
+  
+  
+  /* اخفاء زر اللغة فقط بدون ما يتأثر كود الترجمة */
+#langBtn{
+  display:none !important;
+}
+  
 </style>
     
     
@@ -654,6 +661,11 @@
 
 
 <body>
+  
+   <button class="btn orange" id="langBtn" title="تغيير اللغة">
+  <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+</button>
+  
   <!-- الشريط العلوي -->
   <header class="appbar">
   <button class="exit ripple-container" id="backBtn" title="خروج">
@@ -664,6 +676,11 @@
     <button class="icon-btn ripple-container" id="supportBtn" title="خدمة العملاء">
       <img src="ايقوناتتواصل.png" alt="support" width="24" height="24" loading="lazy">
     </button>
+
+<button class="icon-btn ripple-container" id="langBtn" title="تغيير اللغة">
+  <img src="ايقونةترجمه.png" alt="translate" width="24" height="24" loading="lazy">
+</button>
+
 
     <!-- زر الرسائل -->
     <button class="icon-btn ripple-container" id="messagesBtn" title="رسائل الشركة" style="position:relative">
@@ -1154,7 +1171,7 @@
     function show(name){Object.values(views).forEach(v=>v.classList.remove('active'));views[name].classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));document.getElementById('tab-'+(name==='home'?'home':'account')).classList.add('active');window.scrollTo({top:0,behavior:'instant'});}    
     document.getElementById('tab-home').onclick=()=>show('home');
     document.getElementById('tab-account').onclick=()=>show('account');
-    document.getElementById('tab-trade').onclick=()=>window.location.href='index3.html';
+    document.getElementById('tab-trade').onclick=()=>window.location.href='index7.html';
 
     // فتح صفحات الأزرار
     const routes={deposit:'deposit.html',withdraw:'withdraw.html',transfer:'transfer.html','deposit-account':'deposit-account.html',details:'details.html',invite:'invite.html'};
@@ -1170,7 +1187,7 @@
     document.getElementById('backBtn').onclick=(e)=>{ripple(e); exitSheet.classList.add('active'); exitBack.classList.add('active');};
     function closeExit(){ exitSheet.classList.remove('active'); exitBack.classList.remove('active'); }
     exitBack.onclick=closeExit; exitNo.onclick=(e)=>{ ripple(e); closeExit(); };
-    exitYes.onclick=(e)=>{ ripple(e); window.location.replace('index.html'); };
+    exitYes.onclick=(e)=>{ ripple(e); window.location.replace('desktop.html'); };
 
     // خدمة العملاء تليجرام
     document.getElementById('supportBtn').onclick=()=>window.open('https://t.me/artikarbot','_blank');
@@ -1214,22 +1231,69 @@
           const r=new FileReader(); r.onload=e=>{ img.src=e.target.result; }; r.readAsDataURL(f);
         });
       }
-      const routesAcc={ edit:'profile-edit.html', appeal:'appeal.html', lang:'#langSheet', delete:'delete.html', logout:'#exitSheet' };
-      document.querySelectorAll('#view-account .acct-item').forEach(a=>{
-        a.addEventListener('click',(e)=>{
-          ripple(e);
-          const k=a.dataset.go;
-          if(k==='lang'){ document.getElementById('langSheet').classList.add('active'); document.getElementById('sheetBack').classList.add('active'); return; }
-          if(k==='logout'){ document.getElementById('exitSheet').classList.add('active'); document.getElementById('sheetBackExit').classList.add('active'); return; }
-          const url=routesAcc[k]; if(url && !url.startsWith('#')) window.location.href=url;
-        });
-      });
-    })();
+    const routesAcc = {
+  edit: 'profile-edit.html',
+  appeal: 'appeal.html',
+  lang: '#langSheet',
+  logout: '#exitSheet'
+};
+
+document.querySelectorAll('#view-account .acct-item').forEach(a => {
+  a.addEventListener('click', (e) => {
+    ripple(e);
+    const k = a.dataset.go;
+    
+    // فتح اللغة
+    if (k === 'lang') {
+      document.getElementById('langSheet').classList.add('active');
+      document.getElementById('sheetBack').classList.add('active');
+      return;
+    }
+    
+    // تسجيل الخروج العادي
+    if (k === 'logout') {
+      document.getElementById('exitSheet').classList.add('active');
+      document.getElementById('sheetBackExit').classList.add('active');
+      return;
+    }
+    
+    // 🔴 حذف حسابي (نسخة الكمبيوتر = حذف جلسة فقط)
+    if (k === 'delete') {
+  // ✅ حذف جلسة الكمبيوتر فقط
+  const PC_KEY = 'dynex_pc_session';
+  
+  // ✅ افصل الكمبيوتر فوراً من Firebase (عشان صفحة الكود تطلع مباشرة لو كانت مفتوحة)
+  try {
+    const s = JSON.parse(localStorage.getItem(PC_KEY) || 'null');
+    if (s && s.uid && window.firebase && firebase.database) {
+      firebase.database().ref('pc_sessions/' + String(s.uid)).update({
+        connected: false,
+        revokedAt: Date.now(),
+        updatedAt: Date.now()
+      }).catch(() => {});
+    }
+  } catch (_) {}
+  
+  try { localStorage.removeItem(PC_KEY); } catch (_) {}
+  
+  // ✅ يرجع لشاشة إدخال كود الربط
+  window.location.replace('pc-link.html');
+  return;
+}
+    
+    const url = routesAcc[k];
+    if (url && !url.startsWith('#')) {
+      window.location.href = url;
+    }
+  });
+});
     
     // فحص إذا الرابط يحتوي #account → نفتح تبويب حسابي مباشرة
-    if(window.location.hash === '#account'){
-      show('account');
-    }
+   // فحص إذا الرابط يحتوي #account → نفتح تبويب حسابي مباشرة
+if (window.location.hash === '#account') {
+  show('account');
+}
+})(); // ✅ هذا كان ناقص
   </script>
 
   <!-- ===== Firebase (Compat) لقراءة بيانات المستخدم دون تغيير التنسيق ===== -->

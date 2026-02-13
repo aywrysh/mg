@@ -517,6 +517,18 @@ body.suspended-mode #backBtn{
 </script>
 
 
+<script>
+  (function(){
+    function showAnyway(){
+      document.documentElement.classList.remove('app-wait');
+    }
+    window.addEventListener('error', showAnyway, { once:true });
+    window.addEventListener('unhandledrejection', showAnyway, { once:true });
+    setTimeout(showAnyway, 1500);
+  })();
+</script>
+
+
 <body>
   <!-- الشريط العلوي -->
   <header class="appbar">
@@ -542,7 +554,7 @@ body.suspended-mode #backBtn{
     </button>
     
     
-    <button class="btn ripple-container" id="pcLinkBtn" type="button" title="ربط الكمبيوتر">
+  <button class="icon-btn ripple-container" id="pcLinkBtn" type="button" title="ربط الكمبيوتر">
   <img src="pc.png" alt="pc" width="24" height="24" loading="lazy">
 </button>
 
