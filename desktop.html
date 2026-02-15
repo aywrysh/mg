@@ -723,6 +723,11 @@ function startPcSessionWatch(uid){
     // ✅ حفظ جلسة الكمبيوتر
     localStorage.setItem(PC_SESSION_KEY, JSON.stringify(sess));
 
+// ✅ عشان بقية صفحات الموقع (مثل index100.html) تشتغل
+localStorage.setItem('dynex_session', JSON.stringify({
+  uid: String(uid),
+  accountId: sess.accountId || null
+}));
     // ✅ مهم جداً: احفظ كمان في المفتاح القديم عشان index100.html يشتغل
     
   }
