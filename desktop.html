@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dynex | ربط الكمبيوتر</title>
+  <title>Dynex | Link Computer</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- ✅ Firebase (مرة واحدة فقط) -->
+  <!-- ✅ Firebase (only once) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
@@ -35,11 +35,11 @@
       background:#0b1220;
     }
 
-    /* ✅ نخفي صفحة التسجيل بالكامل وقت الفحص */
+    /* ✅ hide login UI during boot check */
     html.boot .shell{ display:none !important; }
 
     /* =========================
-       ✅ مقدمة Splash (واتساب)
+       ✅ Splash (WhatsApp style)
        ========================= */
     .splash{
       position:fixed; inset:0;
@@ -113,7 +113,7 @@
       line-height:1.7;
     }
 
-    /* ===== خلفية 4 صور (من عندك) ===== */
+    /* ===== 4 images background ===== */
     .bg4{
       position:fixed; inset:0;
       display:grid;
@@ -137,7 +137,7 @@
       background-position:center;
       transform:scale(1.04);
     }
-    /* غيّر أسماء الصور هنا لصورك */
+    /* set your images here */
     .bg4 .p.p1::before{ background-image:url(''); }
     .bg4 .p.p2::before{ background-image:url(''); }
     .bg4 .p.p3::before{ background-image:url(''); }
@@ -377,14 +377,14 @@
     }
   </style>
 
-  <!-- ✅ فعل وضع boot من البداية قبل ما يظهر أي شيء -->
+  <!-- ✅ enable boot mode before anything shows -->
   <script>
     document.documentElement.classList.add('boot');
   </script>
 </head>
 
 <body>
-  <!-- ✅ Splash شاشة مقدمة -->
+  <!-- ✅ Splash -->
   <div class="splash" id="splash">
     <div class="splashBox">
       <div class="sLogo">
@@ -394,11 +394,11 @@
       <div class="dashLine" aria-hidden="true">
         <div class="dashFill"></div>
       </div>
-      <div class="sHint" id="sHint">جاري الفحص…</div>
+      <div class="sHint" id="sHint">Checking…</div>
     </div>
   </div>
 
-  <!-- خلفية 4 صور -->
+  <!-- 4 images background -->
   <div class="bg4" aria-hidden="true">
     <div class="p p1"></div>
     <div class="p p2"></div>
@@ -417,33 +417,33 @@
           <div class="brandL">
             <div class="logo">Dx</div>
             <div>
-              <h1>تسجيل الدخول للكمبيوتر</h1>
-              <div class="sub">أدخل كود الربط من الجوال. سيصلك طلب موافقة داخل صفحة الجوال (ربط الكمبيوتر).</div>
+              <h1>Desktop Login</h1>
+              <div class="sub">Enter the link code from your phone. You will receive an approval request on your phone page (Link Computer).</div>
             </div>
           </div>
-          <div class="chip" id="liveChip" title="حالة الصفحة">
+          <div class="chip" id="liveChip" title="Page status">
             <span class="dot" id="liveDot"></span>
             <span id="liveTxt">READY</span>
           </div>
         </div>
 
         <div class="box">
-          <div class="label">كود الربط</div>
+          <div class="label">Link Code</div>
           <div class="row">
-            <input id="codeInput" class="input" placeholder="مثال: A8K3ZP2Q" maxlength="12" autocomplete="one-time-code" />
-            <button id="sendBtn" class="btn primary" type="button">إرسال الطلب</button>
-            <button id="resetBtn" class="btn" type="button">إعادة</button>
+            <input id="codeInput" class="input" placeholder="Example: A8K3ZP2Q" maxlength="12" autocomplete="one-time-code" />
+            <button id="sendBtn" class="btn primary" type="button">Send Request</button>
+            <button id="resetBtn" class="btn" type="button">Reset</button>
           </div>
 
-          <!-- إشعار فخم + صورة -->
+          <!-- Status -->
           <div id="status" class="status">
             <div class="statusL">
-              <div class="avatar" title="صورة الإشعار">
+              <div class="avatar" title="Notification image">
                 <img src="logo.png" alt="notify">
               </div>
               <div class="statusTextWrap">
-                <div class="statusTitle">إشعار النظام</div>
-                <div id="statusText" class="statusText">اكتب الكود ثم اضغط إرسال الطلب.</div>
+                <div class="statusTitle">System Notice</div>
+                <div id="statusText" class="statusText">Enter the code then press Send Request.</div>
               </div>
             </div>
             <span id="statusPill" class="pill">READY</span>
@@ -454,12 +454,12 @@
       <!-- Right: Fancy Panel -->
       <div class="panel">
         <div class="help">
-          <h2>طريقة الربط</h2>
+          <h2>How to link</h2>
           <ol>
-            <li>افتح Dynex على الجوال.</li>
-            <li>ادخل صفحة <b>ربط الكمبيوتر</b> وولّد كود.</li>
-            <li>انسخ الكود والصقه هنا.</li>
-            <li>سيظهر على الجوال طلب موافقة — عند الموافقة يتم تسجيل الدخول هنا تلقائيًا.</li>
+            <li>Open Dynex on your phone.</li>
+            <li>Go to <b>Link Computer</b> and generate a code.</li>
+            <li>Copy the code and paste it here.</li>
+            <li>You will see an approval request on your phone — once approved, you will be logged in here automatically.</li>
           </ol>
 
           <div class="kv" style="margin-top:14px">
@@ -470,41 +470,16 @@
         </div>
 
         <div class="footerNote">
-          ⚠ إذا لم تكن أنت من طلب الربط لا توافق على الطلب.<br>
-          ✅ استخدم كود جديد دائمًا ولا تشاركه مع أحد.
+          ⚠ If you did not request this link, do not approve it.<br>
+          ✅ Always use a new code and never share it with anyone.
         </div>
       </div>
 
     </div>
   </div>
 
+
 <script src="i18n.js"></script>
-
-
-
-
-
-<script>
-  (function(){
-    const saved = (localStorage.getItem('lang') || 'ar').toLowerCase();
-    const lang = saved.startsWith('en') ? 'en' : 'ar';
-
-    // ضبط لغة الصفحة واتجاهها
-    document.documentElement.setAttribute('lang', lang);
-    document.documentElement.setAttribute('dir', lang === 'en' ? 'ltr' : 'rtl');
-
-    // لو عندك applyLang داخل i18n.js
-    if (typeof window.applyLang === 'function'){
-      window.applyLang(lang);
-    }
-  })();
-</script>
-
-
-
-
-
-
 
 <script>
   // ===== Firebase Config =====
@@ -522,15 +497,14 @@
   const REQ_ROOT = "pc_link_requests";
   const HOME_PAGE = "index100.html";
 
-  // ✅✅ مسار جلسة الكمبيوتر في Firebase (عشان حذف الجلسة يطلع الكمبيوتر فوراً)
+  // ✅ PC session path in Firebase
   const PC_SESS_PATH = "pc_sessions";
 
-  // ✅ 15 يوم
+  // ✅ 15 days
   const SESSION_TTL_MS = 15 * 24 * 60 * 60 * 1000;
 
-  // ✅✅ اسم جلسة الكمبيوتر فقط (مختلف عن الهاتف)
+  // ✅ PC session key
   const PC_SESSION_KEY = "dynex_pc_session";
-
 
   const splash = document.getElementById('splash');
   const sHint  = document.getElementById('sHint');
@@ -545,50 +519,24 @@
   const liveTxt = document.getElementById('liveTxt');
 
   /* ==========================
-     ✅✅ إضافة الترجمة (AR/EN)
-     لا تغيّر شيء ثاني
+     ✅ English only messages
      ========================== */
   const MSG = {
-    ar: {
-      sessionFound: 'تم العثور على جلسة — جاري الدخول…',
-      noSession: 'لا توجد جلسة — افتح تسجيل الدخول',
-      enterFirst: 'أدخل الكود أولاً',
-      checking: 'جاري التحقق من الكود…',
-      invalid: 'الكود غير صحيح',
-      used: 'هذا الكود مستخدم من قبل',
-      expired: 'انتهت صلاحية الكود — ولّد كود جديد من الجوال',
-      bad: 'الكود غير صالح',
-      pending: 'تم إرسال الطلب… بانتظار موافقة الجوال',
-      approved: 'تمت الموافقة ✅ جاري تسجيل الدخول…',
-      rejected: 'المستخدم لغى العملية ❌',
-      dbError: 'تعذّر الاتصال بالقاعدة',
-      readyHint: 'اكتب الكود ثم اضغط إرسال الطلب.'
-    },
-    en: {
-      sessionFound: 'Session found — logging in…',
-      noSession: 'No session — open login',
-      enterFirst: 'Enter the code first',
-      checking: 'Checking code…',
-      invalid: 'Invalid code',
-      used: 'This code has been used before',
-      expired: 'Code expired — generate a new code from your phone',
-      bad: 'Bad code',
-      pending: 'Request sent… waiting for phone approval',
-      approved: 'Approved ✅ Logging in…',
-      rejected: 'User canceled ❌',
-      dbError: 'Could not connect to database',
-      readyHint: 'Enter the code then press Send request.'
-    }
+    sessionFound: 'Session found — logging in…',
+    noSession: 'No session — open login',
+    enterFirst: 'Enter the code first',
+    checking: 'Checking code…',
+    invalid: 'Invalid code',
+    used: 'This code has been used before',
+    expired: 'Code expired — generate a new code from your phone',
+    bad: 'Bad code',
+    pending: 'Request sent… waiting for phone approval',
+    approved: 'Approved ✅ Logging in…',
+    rejected: 'User canceled ❌',
+    dbError: 'Could not connect to database',
+    readyHint: 'Enter the code then press Send Request.'
   };
-
-  function getLang(){
-    const saved = (localStorage.getItem('lang') || 'ar').toLowerCase();
-    return saved.startsWith('en') ? 'en' : 'ar';
-  }
-  function t(key){
-    const lang = getLang();
-    return (MSG[lang] && MSG[lang][key]) || (MSG.ar[key] || key);
-  }
+  function t(key){ return MSG[key] || key; }
   /* ========================== */
 
   function hideSplashShowLogin(){
@@ -597,74 +545,139 @@
   }
 
   /* ==========================================================
-     ✅✅ مراقبة جلسة الكمبيوتر في Firebase
-     إذا الجوال عمل connected=false أو revokedAt -> يخرج الكمبيوتر فوراً
+     ✅ NEW: Language (load + live update)
+     - reads users/<uid>/lang
+     - applies via i18n.js if موجود (window.applyLang)
+     - updates instantly when value changes
      ========================================================== */
-  /* ==========================================================
-   ✅✅ مراقبة جلسة الكمبيوتر في Firebase
-   إذا الجوال عمل connected=false أو revokedAt -> يخرج الكمبيوتر فوراً
-   ========================================================== */
-let pcWatchOff = null;
-function startPcSessionWatch(uid){
-  const U = String(uid || '');
-  if(!U) return;
-
-  if(pcWatchOff){
-    try{ pcWatchOff(); }catch(_){}
-    pcWatchOff = null;
+  function normLang(v){
+    var s = String(v || '').toLowerCase();
+    return s.indexOf('ar') === 0 ? 'ar' : 'en';
   }
 
-  const ref = db.ref(`${PC_SESS_PATH}/${U}`);
-
-  const kick = ()=>{
-    try{ localStorage.removeItem(PC_SESSION_KEY); }catch(_){}
-    // ✅ يرجع لصفحة إدخال الكود مباشرة
-    window.location.replace(window.location.pathname + window.location.search);
-  };
-
-  const onValue = (snap)=>{
-    const v = snap.val() || {};
-    if(v.connected === false || v.revokedAt){
-      kick();
-    }
-  };
-
-  ref.on('value', onValue);
-  pcWatchOff = ()=> ref.off('value', onValue);
-}
-
-/* ==========================
-   ✅ فحص الجلسة وقت المقدمة
-   ========================== */
-(function bootCheck(){
-  let ok = false;
-
-  try{
-    const raw = localStorage.getItem(PC_SESSION_KEY);
-    if(raw){
-      const sess = JSON.parse(raw);
-      const now  = Date.now();
-      const exp  = Number(sess?.expiresAt || 0);
-
-      if(sess?.uid && exp > now){
-        ok = true;
-        startPcSessionWatch(sess.uid);
-      } else {
-        localStorage.removeItem(PC_SESSION_KEY);
+  function applyLangSafe(lang){
+    try{
+      var L = normLang(lang);
+      localStorage.setItem('lang', L);          // نفس مفتاح i18n.js
+      // لو i18n.js موجود بيترجم فورًا
+      if (typeof window.applyLang === 'function'){
+        window.applyLang(L);
+      } else if (window.DynexI18N && typeof window.DynexI18N.apply === 'function'){
+        window.DynexI18N.apply(L);
       }
-    }
-  }catch(_){
-    localStorage.removeItem(PC_SESSION_KEY);
+    }catch(_){}
   }
 
-  if(ok){
-    sHint.textContent = t('sessionFound');
-    setTimeout(()=>window.location.replace(HOME_PAGE), 220);
-  }else{
-    sHint.textContent = t('noSession');
-    setTimeout(hideSplashShowLogin, 240);
+  function readPcSession(){
+    try{ return JSON.parse(localStorage.getItem(PC_SESSION_KEY) || 'null'); }catch(_){ return null; }
   }
-})();
+
+  var langWatchOff = null;
+  function startLangWatch(uid){
+    try{
+      var U = String(uid || '');
+      if(!U) return;
+
+      // فك أي مراقبة قديمة
+      if(langWatchOff){
+        try{ langWatchOff(); }catch(_){}
+        langWatchOff = null;
+      }
+
+      var ref = db.ref('users/' + U + '/lang');
+
+      // طبّق الحالي مرة أولى
+      ref.get().then(function(snap){
+        if(snap && snap.exists()){
+          applyLangSafe(snap.val());
+        }else{
+          // fallback: localStorage.lang أو 'en'
+          applyLangSafe(localStorage.getItem('lang') || 'en');
+        }
+      }).catch(function(){
+        applyLangSafe(localStorage.getItem('lang') || 'en');
+      });
+
+      // تحديث لحظي عند التغيير
+      var onValue = function(snap){
+        if(!snap || !snap.exists()) return;
+        applyLangSafe(snap.val());
+      };
+      ref.on('value', onValue);
+      langWatchOff = function(){ ref.off('value', onValue); };
+    }catch(_){}
+  }
+  /* ========================================================== */
+
+  /* ==========================================================
+     ✅ Watch PC session in Firebase
+     If phone sets connected=false or revokedAt -> kick immediately
+     ========================================================== */
+  let pcWatchOff = null;
+  function startPcSessionWatch(uid){
+    const U = String(uid || '');
+    if(!U) return;
+
+    if(pcWatchOff){
+      try{ pcWatchOff(); }catch(_){}
+      pcWatchOff = null;
+    }
+
+    const ref = db.ref(`${PC_SESS_PATH}/${U}`);
+
+    const kick = function(){
+      try{ localStorage.removeItem(PC_SESSION_KEY); }catch(_){}
+      // back to the code entry page
+      window.location.replace(window.location.pathname + window.location.search);
+    };
+
+    const onValue = function(snap){
+      const v = snap.val() || {};
+      if(v.connected === false || v.revokedAt){
+        kick();
+      }
+    };
+
+    ref.on('value', onValue);
+    pcWatchOff = function(){ ref.off('value', onValue); };
+  }
+
+  /* ==========================
+     ✅ Boot session check
+     (fix: no optional chaining + no arrow)
+     ========================== */
+  (function bootCheck(){
+    var ok = false;
+
+    try{
+      var raw = localStorage.getItem(PC_SESSION_KEY);
+      if(raw){
+        var sess = JSON.parse(raw);
+        var now  = Date.now();
+        var exp  = Number((sess && sess.expiresAt) ? sess.expiresAt : 0);
+
+        if(sess && sess.uid && exp > now){
+          ok = true;
+          startPcSessionWatch(sess.uid);
+
+          // ✅ NEW: start language watch too
+          startLangWatch(sess.uid);
+        } else {
+          localStorage.removeItem(PC_SESSION_KEY);
+        }
+      }
+    }catch(_){
+      localStorage.removeItem(PC_SESSION_KEY);
+    }
+
+    if(ok){
+      sHint.textContent = t('sessionFound');
+      setTimeout(function(){ window.location.replace(HOME_PAGE); }, 220);
+    }else{
+      sHint.textContent = t('noSession');
+      setTimeout(hideSplashShowLogin, 240);
+    }
+  })();
 
   function setStatus(text, pill, type){
     statusText.textContent = text;
@@ -720,16 +733,18 @@ function startPcSessionWatch(uid){
       expiresAt: now + SESSION_TTL_MS
     };
 
-    // ✅ حفظ جلسة الكمبيوتر
+    // ✅ Save PC session
     localStorage.setItem(PC_SESSION_KEY, JSON.stringify(sess));
 
-// ✅ عشان بقية صفحات الموقع (مثل index100.html) تشتغل
-localStorage.setItem('dynex_session', JSON.stringify({
-  uid: String(uid),
-  accountId: sess.accountId || null
-}));
-    // ✅ مهم جداً: احفظ كمان في المفتاح القديم عشان index100.html يشتغل
-    
+    // ✅ Keep this for other pages (like index100.html) to avoid "empty account"
+    localStorage.setItem('dynex_session', JSON.stringify({
+      uid: String(uid),
+      accountId: sess.accountId || null
+    }));
+
+    // ✅ NEW: apply language immediately from account + start live watch
+    if (user && user.lang) applyLangSafe(user.lang);
+    startLangWatch(uid);
   }
 
   async function sendRequest(){
@@ -780,7 +795,7 @@ localStorage.setItem('dynex_session', JSON.stringify({
 
       const reqNode = db.ref(`${REQ_ROOT}/${uid}/${reqId}`);
 
-      const onValue = async (snap)=>{
+      const onValue = async function(snap){
         if(!snap.exists()) return;
         const v = snap.val() || {};
         const st = String(v.status || 'pending').toLowerCase();
@@ -798,10 +813,10 @@ localStorage.setItem('dynex_session', JSON.stringify({
 
           await createDesktopSession(uid);
 
-          // ✅ ابدأ مراقبة جلسة الكمبيوتر بعد الدخول
+          // ✅ start watching PC session after login
           startPcSessionWatch(uid);
 
-          setTimeout(()=>window.location.replace(HOME_PAGE), 350);
+          setTimeout(function(){ window.location.replace(HOME_PAGE); }, 350);
         }
 
         if(st === 'rejected'){
@@ -810,7 +825,7 @@ localStorage.setItem('dynex_session', JSON.stringify({
       };
 
       reqNode.on('value', onValue);
-      currentListenerOff = ()=> reqNode.off('value', onValue);
+      currentListenerOff = function(){ reqNode.off('value', onValue); };
 
     }catch(e){
       console.error(e);
@@ -822,18 +837,16 @@ localStorage.setItem('dynex_session', JSON.stringify({
 
   sendBtn.addEventListener('click', sendRequest);
 
-  resetBtn.addEventListener('click', ()=>{
+  resetBtn.addEventListener('click', function(){
     stopListening();
     codeInput.value = '';
     setStatus(t('readyHint'), 'READY', '');
     codeInput.focus();
   });
 
-  codeInput.addEventListener('keydown', (e)=>{
+  codeInput.addEventListener('keydown', function(e){
     if(e.key === 'Enter') sendRequest();
   });
 
   setStatus(t('readyHint'), 'READY', '');
 </script>
-</body>
-</html>

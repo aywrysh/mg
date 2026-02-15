@@ -1,7 +1,7 @@
 /* Dynex Global i18n (AR/EN) — clean build (dedupe-friendly) */
 (function (window, document) {
   const STORAGE_KEY = 'lang';
-  const DEFAULT = localStorage.getItem(STORAGE_KEY) || 'en';
+const DEFAULT_FALLBACK = 'en';
 
   /* ===== DICTIONARY (يقبل التكرار؛ آخر تكرار هو المُعتمد) ===== */
   const PAIRS = [
@@ -1342,92 +1342,194 @@
     document.documentElement.dir  = (lang==='ar') ? 'rtl' : 'ltr';
   }
 
-  function applyLang(lang){
-    const L = (lang==='ar'||lang==='en') ? lang : 'en';
-    localStorage.setItem(STORAGE_KEY, L);
-    setDir(L);
-    translateTitle(L);
-    translateAttrs(L);
-    translateTextNodes(document.body, L);
-    document.dispatchEvent(new CustomEvent('i18n:change',{detail:{lang:L}}));
-  }
+function applyLang(lang){
+  const L = (lang==='ar'||lang==='en') ? lang : 'en';
 
-  /* ===== Observer ===== */
-  const mo = new MutationObserver(muts=>{
-    const lang = localStorage.getItem(STORAGE_KEY) || 'en';
-    muts.forEach(m=>{
-      if (m.type==='characterData' && m.target && m.target.nodeType===3){
-        translateTextNode(m.target, lang);
-        return;
-      }
-      if (m.type==='attributes'){
-        if (ATTRS.includes(m.attributeName)) translateAttrs(lang);
-        return;
-      }
-      if (m.type==='childList'){
-        m.addedNodes.forEach(node=>{
-          if (!node) return;
-          if (node.nodeType===3) translateTextNode(node, lang);
-          else if (node.nodeType===1){ translateAttrs(lang); translateTextNodes(node, lang); }
-        });
-      }
-    });
-  });
-  mo.observe(document.documentElement,{
-    childList:true, subtree:true, characterData:true,
-    attributes:true, attributeFilter:ATTRS
-  });
+  // ✅ خزّن في localStorage
+  localStorage.setItem(STORAGE_KEY, L);
 
-  /* ===== Wrap toast ===== */
+  // ✅ خزّن داخل الجلسة dynex_session كمان
   try{
-    let _toast=null;
-    Object.defineProperty(window,'toast',{
-      configurable:true,
-      get(){ return _toast; },
-      set(fn){
-        if (typeof fn!=='function'){ _toast = fn; return; }
-        _toast = function(msg){
-          const lang = localStorage.getItem(STORAGE_KEY) || 'en';
-          return fn.call(window, translateSmart(msg, lang));
-        };
-      }
-    });
+    const s = JSON.parse(localStorage.getItem('dynex_session')||'null') || {};
+    s.lang = L;
+    localStorage.setItem('dynex_session', JSON.stringify(s));
   }catch(_){}
 
-  /* ===== Public API ===== */
-  window.applyLang = applyLang;
-  window.DynexI18N = {
-    apply: applyLang,
-    current: ()=> localStorage.getItem(STORAGE_KEY)||'en',
-    addPairs: (arr)=>{
-      try{
-        // نفس منطق التكرارات: آخر قيمة تغلب + نحافظ على "الأطول أولاً"
-        arr.forEach(([ar,en])=>{
-          const kAr = normAr(ar), kEn = normEn(en);
-          ar2en.set(kAr, en);
-          en2ar.set(kEn, ar);
-          arRaw.set(kAr, pickLonger(arRaw.get(kAr), String(ar)));
-          enRaw.set(kEn, pickLonger(enRaw.get(kEn), String(en)));
-        });
-        // إعادة بناء القوائم (الأطول أولًا)
-        AR_LIST.length = 0;
-        EN_LIST.length = 0;
-        Array.from(ar2en.entries())
-          .map(([k,to])=>({from:k,to,raw:arRaw.get(k)||k}))
-          .sort((a,b)=>b.raw.length-a.raw.length)
-          .forEach(o=>AR_LIST.push(o));
-        Array.from(en2ar.entries())
-          .map(([k,to])=>({from:k,to,raw:enRaw.get(k)||k}))
-          .sort((a,b)=>b.raw.length-a.raw.length)
-          .forEach(o=>EN_LIST.push(o));
-      }catch(e){}
-    }
-  };
+  setDir(L);
+  translateTitle(L);
+  translateAttrs(L);
+  translateTextNodes(document.body, L);
+  document.dispatchEvent(new CustomEvent('i18n:change',{detail:{lang:L}}));
+}
 
-  /* ===== First run ===== */
-  const run = ()=>applyLang(DEFAULT);
-  if (document.readyState==='loading') document.addEventListener('DOMContentLoaded', run, {once:true});
-  else run();
-  window.addEventListener('load', ()=>applyLang(localStorage.getItem(STORAGE_KEY)||DEFAULT));
-  setTimeout(()=>applyLang(localStorage.getItem(STORAGE_KEY)||DEFAULT), 0);
+/* ==========================================================
+   ✅ Language bootstrap (Session -> Local -> Firebase -> en)
+   - Reads dynex_session.lang first (fast + consistent)
+   - Falls back to localStorage.lang
+   - Then tries Firebase users/<uid>/lang (wait a bit)
+   ========================================================== */
+function readDynexSession(){
+  try{ return JSON.parse(localStorage.getItem('dynex_session')||'null'); }catch(_){ return null; }
+}
+function normLang(v){
+  const s = String(v||'').toLowerCase();
+  return s.startsWith('ar') ? 'ar' : 'en';
+}
+function hasFirebase(){
+  try{
+    return !!(window.firebase && window.firebase.apps && window.firebase.apps.length && window.firebase.database);
+  }catch(_){
+    return false;
+  }
+}
+
+async function fetchAccountLang(){
+  const sess = readDynexSession() || {};
+  const uid  = sess.uid ? String(sess.uid) : '';
+  if(!uid) return null;
+  if(!hasFirebase()) return null;
+
+  try{
+    const snap = await window.firebase.database().ref('users/' + uid + '/lang').get();
+    if(!snap.exists()) return null;
+    return normLang(snap.val());
+  }catch(_){
+    return null;
+  }
+}
+
+let __bootingLang = false;
+async function bootstrapLang(){
+  if(__bootingLang) return;
+  __bootingLang = true;
+
+  // 1) ✅ طبّق اللغة بسرعة من session ثم local ثم en
+  const sess = readDynexSession() || {};
+  const cached = normLang(sess.lang || localStorage.getItem(STORAGE_KEY) || 'en');
+  applyLang(cached);
+
+  // 2) ✅ جرّب تجيب من Firebase (لو موجود) بدون ما تخرب على الكاش
+  let acc = null;
+  for(let i=0;i<25;i++){ // ~3s max
+    acc = await fetchAccountLang();
+    if(acc) break;
+    await new Promise(r=>setTimeout(r, 120));
+  }
+
+  if(acc && acc !== cached){
+    // خزّنها
+    localStorage.setItem(STORAGE_KEY, acc);
+    try{
+      const s2 = readDynexSession() || {};
+      s2.lang = acc;
+      localStorage.setItem('dynex_session', JSON.stringify(s2));
+    }catch(_){}
+
+    // طبّقها
+    applyLang(acc);
+  }
+
+  __bootingLang = false;
+}
+
+/* ===== Observer ===== */
+const mo = new MutationObserver(muts=>{
+  // ✅ اقرأ من session أولاً (أقوى)
+  const sess = readDynexSession() || {};
+  const lang = normLang(sess.lang || localStorage.getItem(STORAGE_KEY) || 'en');
+
+  muts.forEach(m=>{
+    if (m.type==='characterData' && m.target && m.target.nodeType===3){
+      translateTextNode(m.target, lang);
+      return;
+    }
+    if (m.type==='attributes'){
+      if (ATTRS.includes(m.attributeName)) translateAttrs(lang);
+      return;
+    }
+    if (m.type==='childList'){
+      m.addedNodes.forEach(node=>{
+        if (!node) return;
+        if (node.nodeType===3) translateTextNode(node, lang);
+        else if (node.nodeType===1){ translateAttrs(lang); translateTextNodes(node, lang); }
+      });
+    }
+  });
+});
+mo.observe(document.documentElement,{
+  childList:true, subtree:true, characterData:true,
+  attributes:true, attributeFilter:ATTRS
+});
+
+/* ===== Wrap toast ===== */
+try{
+  let _toast=null;
+  Object.defineProperty(window,'toast',{
+    configurable:true,
+    get(){ return _toast; },
+    set(fn){
+      if (typeof fn!=='function'){ _toast = fn; return; }
+      _toast = function(msg){
+        const sess = readDynexSession() || {};
+        const lang = normLang(sess.lang || localStorage.getItem(STORAGE_KEY) || 'en');
+        return fn.call(window, translateSmart(msg, lang));
+      };
+    }
+  });
+}catch(_){}
+
+/* ===== Public API ===== */
+window.applyLang = applyLang;
+window.DynexI18N = {
+  apply: applyLang,
+  current: ()=>{
+    const s = readDynexSession() || {};
+    return normLang(s.lang || localStorage.getItem(STORAGE_KEY) || 'en');
+  },
+  debug: ()=>{
+    const s = readDynexSession() || {};
+    return {
+      local_lang: localStorage.getItem(STORAGE_KEY) || null,
+      session_lang: s.lang || null,
+      session_uid: s.uid || null
+    };
+  },
+  addPairs: (arr)=>{
+    try{
+      arr.forEach(([ar,en])=>{
+        const kAr = normAr(ar), kEn = normEn(en);
+        ar2en.set(kAr, en);
+        en2ar.set(kEn, ar);
+        arRaw.set(kAr, pickLonger(arRaw.get(kAr), String(ar)));
+        enRaw.set(kEn, pickLonger(enRaw.get(kEn), String(en)));
+      });
+
+      AR_LIST.length = 0;
+      EN_LIST.length = 0;
+
+      Array.from(ar2en.entries())
+        .map(([k,to])=>({from:k,to,raw:arRaw.get(k)||k}))
+        .sort((a,b)=>b.raw.length-a.raw.length)
+        .forEach(o=>AR_LIST.push(o));
+
+      Array.from(en2ar.entries())
+        .map(([k,to])=>({from:k,to,raw:enRaw.get(k)||k}))
+        .sort((a,b)=>b.raw.length-a.raw.length)
+        .forEach(o=>EN_LIST.push(o));
+    }catch(e){}
+  }
+};
+
+/* ===== First run ===== */
+const run = function(){ bootstrapLang(); };
+
+if (document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', run, { once:true });
+}else{
+  run();
+}
+
+// (اختياري) إعادة محاولة بعد load إذا Firebase يتأخر
+window.addEventListener('load', function(){ bootstrapLang(); });
+setTimeout(function(){ bootstrapLang(); }, 0);
 })(window, document);
