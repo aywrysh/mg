@@ -625,11 +625,13 @@
 
     const ref = db.ref(`${PC_SESS_PATH}/${U}`);
 
-    const kick = function(){
-      try{ localStorage.removeItem(PC_SESSION_KEY); }catch(_){}
-      // back to the code entry page
-      window.location.replace(window.location.pathname + window.location.search);
-    };
+    let skipKick = false; // أضف هذا في الأعلى
+
+const kick = function() {
+  if (skipKick) return; // تمنع الرجوع فور الموافقة
+  try { localStorage.removeItem(PC_SESSION_KEY); } catch (_) {}
+  window.location.replace(window.location.pathname + window.location.search);
+};
 
     const onValue = function(snap){
       const v = snap.val() || {};
@@ -816,7 +818,7 @@
           // ✅ start watching PC session after login
           startPcSessionWatch(uid);
 
-          setTimeout(function(){ window.location.replace(HOME_PAGE); }, 350);
+          setTimeout(function(){ window.location.href = HOME_PAGE; }, 500);
         }
 
         if(st === 'rejected'){
