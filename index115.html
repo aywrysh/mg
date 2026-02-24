@@ -95,6 +95,192 @@
     .hist-item{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:12px;padding:10px;background:#fafafa}
     .hist-item .amt{font-weight:900}
     .hist-empty{padding:12px;border:1px dashed #e5e7eb;border-radius:12px;text-align:center;color:#6b7280}
+
+/* ✅ إصلاح خطأ حرف (س) */
+.toast{ transition:opacity .25s, transform .25s; }
+
+/* ✅ شكل فخم للكانفس */
+.canvas-wrap{
+  position:relative;
+  border-radius:14px;
+  overflow:hidden;
+  border:1px solid rgba(15,23,42,.10);
+  background:
+    radial-gradient(1200px 520px at 20% 0%, rgba(243,101,35,.10), transparent 55%),
+    radial-gradient(900px 520px at 100% 20%, rgba(30,58,138,.10), transparent 55%),
+    linear-gradient(180deg,#ffffff,#fbfbfb);
+}
+#candle{ height:340px; }
+
+/* ✅ Tooltip */
+.tip{
+  position:absolute;
+  inset-inline-start:10px;
+  top:10px;
+  background:rgba(255,255,255,.92);
+  border:1px solid rgba(15,23,42,.10);
+  border-radius:12px;
+  padding:8px 10px;
+  font-size:12px;
+  font-weight:900;
+  box-shadow:0 16px 40px rgba(0,0,0,.12);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display:none;
+  z-index:5;
+}
+.tip.show{display:block}
+.tip .muted{color:#64748b;font-weight:800}
+.tip .ltr{direction:ltr}
+
+
+
+
+
+
+/* =========================================
+   ✅ DESKTOP ONLY (PC) - تصميم فخم
+   ضع هذا الكود آخر الـ <style>
+   ========================================= */
+@media (min-width: 900px){
+
+  :root{
+    --top:64px;
+  }
+
+  body{
+    background:
+      radial-gradient(1200px 600px at 10% 0%, rgba(243,101,35,.12), transparent 55%),
+      radial-gradient(900px 520px at 100% 0%, rgba(30,58,138,.10), transparent 55%),
+      linear-gradient(180deg, #ffffff, #fbfbfb);
+  }
+
+  /* ✅ شريط علوي أفخم */
+  .appbar{
+    height:var(--top);
+    padding:8px 18px;
+    box-shadow:0 10px 28px rgba(0,0,0,.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background:rgba(199,199,199,.92);
+  }
+  .accent-line{ height:4px; }
+
+  /* ✅ أزرار أعلى أفضل للماوس */
+  .btn{
+    width:46px;height:46px;
+    border-radius:14px;
+    transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    box-shadow:0 8px 18px rgba(0,0,0,.10);
+  }
+  .btn:hover{
+    transform: translateY(-2px);
+    border-color: rgba(243,101,35,.35);
+    box-shadow:0 14px 28px rgba(0,0,0,.14);
+  }
+
+  /* ✅ صفحة أعرض + تخطيط أجمل */
+  .page{
+    width:min(1200px, 92vw);
+    padding-top: calc(var(--top) + 22px);
+  }
+
+  /* ✅ عنوان */
+  h1{
+    font-size:24px;
+    margin:10px 10px 16px;
+  }
+
+  /* ✅ كرت الملخص (summary) يكون فخم */
+  .summary{
+    border-radius:22px;
+    padding:16px;
+    margin:0 10px 14px;
+    box-shadow:0 18px 46px rgba(0,0,0,.10);
+    background:
+      radial-gradient(900px 260px at 30% 0%, rgba(243,101,35,.10), transparent 55%),
+      linear-gradient(180deg, #ffffff, #fbfbfb);
+  }
+
+  /* ✅ أرقام أجمل */
+  .price{ font-size:30px; }
+  .pair{ font-size:20px; }
+
+  /* ✅ شارت (الرسم) أضخم ومهيب */
+  .chart-card{
+    border-radius:24px;
+    padding:14px;
+    box-shadow:0 24px 70px rgba(0,0,0,.12);
+    margin:0 10px 16px;
+  }
+  #candle{ height:440px; }
+
+  /* ✅ خلي المحتوى على الكمبيوتر بنظام عمودين */
+  .page{
+    display:grid;
+    grid-template-columns: 1.25fr .75fr;
+    gap:14px;
+    align-items:start;
+  }
+
+  /* الأماكن حسب ترتيب صفحتك: summary + chart يسار، stats + miniList يمين */
+  .stats{ grid-column: 2; grid-row: 1; margin-bottom:0; }
+  .summary{ grid-column: 1; grid-row: 1; }
+  .chart-card{ grid-column: 1; grid-row: 2; }
+  .list{ grid-column: 2; grid-row: 2; padding:0 10px; }
+
+  /* ✅ بطاقات اليمين فخمة */
+  .stat, .card{
+    border-radius:20px;
+    box-shadow:0 16px 40px rgba(0,0,0,.10);
+    background:
+      linear-gradient(180deg,#ffffff,#fbfbfb);
+  }
+  .stat .value{ font-size:20px; }
+
+  /* ✅ أدوات (zoom) تكون واضحة للماوس */
+  .zoom-range{ width:180px; }
+  .btn-solid{
+    padding:12px 14px;
+    border-radius:14px;
+    transition:transform .15s ease, box-shadow .15s ease;
+    box-shadow:0 10px 24px rgba(0,0,0,.10);
+  }
+  .btn-solid:hover{
+    transform: translateY(-2px);
+    box-shadow:0 16px 34px rgba(0,0,0,.14);
+  }
+
+  /* ✅ الـ FAB مكانه أحلى على الكمبيوتر */
+  .fab{
+    right:22px;
+    bottom:22px;
+    width:60px;height:60px;
+    border-radius:18px;
+    box-shadow:0 18px 46px rgba(0,0,0,.20);
+  }
+
+  /* ✅ الـ Sidepanel (المؤشرات) على الكمبيوتر يكون ألطف */
+  .sidepanel{
+    width:360px;
+    border-left:1px solid rgba(15,23,42,.10);
+    box-shadow:-20px 0 60px rgba(0,0,0,.20);
+  }
+
+  /* ✅ تحسين الـ Tooltip (لو مضاف) */
+  .tip{
+    font-size:13px;
+    padding:10px 12px;
+    border-radius:14px;
+  }
+}
+
+/* ✅ مهم: إصلاح خطأ حرف "س" عندك في toast */
+.toast{ transition:opacity .25s, transform .25s; }
+
+
+
+
  </style>
   
   <link rel="manifest" href="manifest.json">
@@ -178,10 +364,10 @@
         <div class="row" style="gap:6px">
           <button class="btn" id="resetZoom" title="إعادة الضبط"><img class="ms" src="الاماشرات.png" alt="تحديث" width="24" height="24" loading="lazy"></button>
         </div>
-      </div>
-      <div class="canvas-wrap">
-        <canvas id="candle"></canvas>
-      </div>
+     <div class="canvas-wrap">
+  <div class="tip" id="tip"></div>
+  <canvas id="candle"></canvas>
+</div>
     </div>
 
     <div class="list" id="miniList">
@@ -544,42 +730,206 @@
       ctx.stroke();
     }
 
-    function draw(){
-      const W = canvas.clientWidth, H = canvas.clientHeight;
-      ctx.clearRect(0,0,W,H);
-      if(!chart.candles.length) return;
+    // ====== Fancy Candle Renderer ======
+const tipEl = $('#tip');
+let hover = { on:false, x:0, idx:-1 };
 
-      const pad=[40,10,16,20]; const vw=W-pad[0]-pad[2], vh=H-pad[1]-pad[3];
-      const N = Math.max(10, Math.floor(chart.candles.length/(chart.zoom||1)));
-      const data = chart.candles.slice(-N);
-      const xStep = vw/data.length; const bodyW = Math.max(3, xStep*chart.widthFactor);
-      const maxP=Math.max(...data.map(d=>d.h)), minP=Math.min(...data.map(d=>d.l)), range=maxP-minP||1;
-      const yOf = p => pad[1] + vh - ((p-minP)/range)*vh;
+function roundRect(ctx, x, y, w, h, r){
+  r = Math.max(0, Math.min(r, Math.min(w,h)/2));
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.arcTo(x+w, y, x+w, y+h, r);
+  ctx.arcTo(x+w, y+h, x, y+h, r);
+  ctx.arcTo(x, y+h, x, y, r);
+  ctx.arcTo(x, y, x+w, y, r);
+  ctx.closePath();
+}
 
-      ctx.strokeStyle='#eaecef'; ctx.lineWidth=1; 
-      for(let i=0;i<=4;i++){ const y=pad[1]+vh*i/4; ctx.beginPath(); ctx.moveTo(pad[0],y); ctx.lineTo(pad[0]+vw,y); ctx.stroke(); }
+function drawBgGrid(W,H,pad){
+  const [pl,pt,pr,pb]=pad;
+  ctx.save();
 
-      const xs=[], closes=[];
-      data.forEach((d,i)=>{
-        const x = pad[0] + i*xStep + xStep/2; xs.push(x); closes.push(d.c);
-        const up = d.c>=d.o; const col = up?'#16a34a':'#ef4444';
-        ctx.strokeStyle=col; ctx.beginPath(); ctx.moveTo(x,yOf(d.h)); ctx.lineTo(x,yOf(d.l)); ctx.stroke();
-        ctx.fillStyle=col; const yO=yOf(d.o), yC=yOf(d.c); const top=Math.min(yO,yC); const h=Math.max(2, Math.abs(yO-yC));
-        ctx.fillRect(x-bodyW/2, top, bodyW, h);
-      });
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'rgba(15,23,42,.02)');
+  g.addColorStop(1,'rgba(15,23,42,.00)');
+  ctx.fillStyle=g;
+  ctx.fillRect(0,0,W,H);
 
-      const last=data[data.length-1]; const yLast=yOf(last.c);
-      ctx.strokeStyle='rgba(243,101,35,.6)'; ctx.setLineDash([6,4]); ctx.beginPath(); ctx.moveTo(pad[0],yLast); ctx.lineTo(pad[0]+vw,yLast); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle='#64748b'; ctx.font='12px Cairo, sans-serif';
-      ctx.fillText(maxP.toFixed(2), 4, pad[1]+10);
-      ctx.fillText(minP.toFixed(2), 4, pad[1]+vh);
-      ctx.fillText(last.c.toFixed(2), 4, yLast+4);
+  ctx.strokeStyle='rgba(148,163,184,.25)';
+  ctx.lineWidth=1;
+  for(let i=0;i<=5;i++){
+    const y = pt + (H-pt-pb)*i/5;
+    ctx.beginPath(); ctx.moveTo(pl,y); ctx.lineTo(W-pr,y); ctx.stroke();
+  }
+  for(let i=0;i<=6;i++){
+    const x = pl + (W-pl-pr)*i/6;
+    ctx.beginPath(); ctx.moveTo(x,pt); ctx.lineTo(x,H-pb); ctx.stroke();
+  }
+  ctx.restore();
+}
 
-      const SMA = (arr,p)=>arr.map((_,i)=> i+1<p?null:(arr.slice(i-p+1,i+1).reduce((a,b)=>a+b,0)/p));
-      const xsAll = xs;
-      const closesAll = chart.candles.slice(-N).map(d=>d.c);
-      drawLine(xsAll, SMA(closesAll, 20), '#0ea5e9', [40,10,16,20], Math.min(...data.map(d=>d.l)), Math.max(...data.map(d=>d.h)), H);
+function yMapper(minP,maxP,H,pad){
+  const [pl,pt,pr,pb]=pad;
+  const vh = H-pt-pb;
+  const range = (maxP-minP)||1;
+  return p => pt + vh - ((p-minP)/range)*vh;
+}
+
+function drawPriceTag(price, y, W){
+  const tagW = 86, tagH = 22;
+  const x = W - tagW - 6;
+  ctx.save();
+  ctx.shadowColor='rgba(0,0,0,.14)';
+  ctx.shadowBlur=14;
+  ctx.fillStyle='rgba(243,101,35,.92)';
+  roundRect(ctx, x, y-tagH/2, tagW, tagH, 10);
+  ctx.fill();
+  ctx.shadowBlur=0;
+  ctx.fillStyle='#fff';
+  ctx.font='12px Cairo, sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(price.toFixed(2), x+tagW/2, y);
+  ctx.restore();
+}
+
+function draw(){
+  const W = canvas.clientWidth, H = canvas.clientHeight;
+  ctx.clearRect(0,0,W,H);
+  if(!chart.candles.length) return;
+
+  const pad=[48,14,18,26];
+  const vw=W-pad[0]-pad[2];
+
+  const N = Math.max(20, Math.floor(chart.candles.length/(chart.zoom||1)));
+  const data = chart.candles.slice(-N);
+
+  const maxP=Math.max(...data.map(d=>d.h));
+  const minP=Math.min(...data.map(d=>d.l));
+  const yOf = yMapper(minP,maxP,H,pad);
+
+  drawBgGrid(W,H,pad);
+
+  ctx.save();
+  const glow = ctx.createRadialGradient(W*0.2, H*0.1, 10, W*0.2, H*0.1, W);
+  glow.addColorStop(0,'rgba(243,101,35,.10)');
+  glow.addColorStop(1,'rgba(243,101,35,0)');
+  ctx.fillStyle=glow;
+  ctx.fillRect(0,0,W,H);
+  ctx.restore();
+
+  const xStep = vw/data.length;
+  const bodyW = Math.max(4, xStep*chart.widthFactor);
+  const wickW = Math.max(1.2, bodyW*0.18);
+
+  ctx.fillStyle='rgba(100,116,139,.9)';
+  ctx.font='12px Cairo, sans-serif';
+  ctx.textAlign='left';
+  ctx.fillText(maxP.toFixed(2), 8, pad[1]+10);
+  ctx.fillText(minP.toFixed(2), 8, H-pad[3]);
+
+  for(let i=0;i<data.length;i++){
+    const d=data[i];
+    const x = pad[0] + i*xStep + xStep/2;
+    const yH=yOf(d.h), yL=yOf(d.l), yO=yOf(d.o), yC=yOf(d.c);
+    const up = d.c>=d.o;
+
+    const colBody = up ? 'rgba(22,163,74,.95)' : 'rgba(239,68,68,.95)';
+    const colEdge = up ? 'rgba(22,163,74,1)'  : 'rgba(239,68,68,1)';
+
+    ctx.save();
+    ctx.strokeStyle=colEdge;
+    ctx.lineWidth=wickW;
+    ctx.lineCap='round';
+    ctx.beginPath();
+    ctx.moveTo(x, yH);
+    ctx.lineTo(x, yL);
+    ctx.stroke();
+    ctx.restore();
+
+    const top = Math.min(yO,yC);
+    const h = Math.max(3, Math.abs(yO-yC));
+
+    ctx.save();
+    ctx.shadowColor = up ? 'rgba(22,163,74,.20)' : 'rgba(239,68,68,.20)';
+    ctx.shadowBlur = 18;
+    ctx.fillStyle = colBody;
+    ctx.strokeStyle = 'rgba(255,255,255,.35)';
+    ctx.lineWidth = 1;
+
+    roundRect(ctx, x-bodyW/2, top, bodyW, h, 7);
+    ctx.fill();
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  const last=data[data.length-1];
+  const yLast=yOf(last.c);
+
+  ctx.save();
+  ctx.strokeStyle='rgba(243,101,35,.55)';
+  ctx.setLineDash([6,4]);
+  ctx.beginPath();
+  ctx.moveTo(pad[0], yLast);
+  ctx.lineTo(W-pad[2], yLast);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.restore();
+
+  drawPriceTag(last.c, yLast, W);
+
+  if(hover.on && hover.idx>=0){
+    const i = hover.idx;
+    const d = data[i];
+    const x = pad[0] + i*xStep + xStep/2;
+
+    ctx.save();
+    ctx.strokeStyle='rgba(15,23,42,.22)';
+    ctx.lineWidth=1;
+    ctx.setLineDash([4,4]);
+    ctx.beginPath(); ctx.moveTo(x, pad[1]); ctx.lineTo(x, H-pad[3]); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+
+    if(tipEl){
+      const dt = new Date(d.t);
+      tipEl.innerHTML = `
+        <div class="muted">XAU/USD</div>
+        <div class="ltr">O: ${d.o.toFixed(2)} • H: ${d.h.toFixed(2)} • L: ${d.l.toFixed(2)} • C: ${d.c.toFixed(2)}</div>
+        <div class="muted ltr">${dt.toLocaleString('en-GB',{hour12:false})}</div>
+      `;
+      tipEl.classList.add('show');
     }
+  }else{
+    tipEl?.classList.remove('show');
+  }
+}
+
+// ✅ Hover (للـ PC)
+function pickIndexFromX(x){
+  const W = canvas.clientWidth;
+  const pad=[48,14,18,26];
+  const N = Math.max(20, Math.floor(chart.candles.length/(chart.zoom||1)));
+  const data = chart.candles.slice(-N);
+  const vw=W-pad[0]-pad[2];
+  const xStep = vw/data.length;
+  const rel = x - pad[0];
+  let idx = Math.floor(rel / xStep);
+  idx = Math.max(0, Math.min(data.length-1, idx));
+  return idx;
+}
+
+canvas.addEventListener('mousemove', (e)=>{
+  const rect = canvas.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  hover.on = true;
+  hover.x = x;
+  hover.idx = pickIndexFromX(x);
+  draw();
+});
+canvas.addEventListener('mouseleave', ()=>{
+  hover.on=false; hover.idx=-1;
+  draw();
+});
 
     function renderSummary(){
       const d=chart.candles; if(!d.length) return;

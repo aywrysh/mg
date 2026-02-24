@@ -101,6 +101,215 @@
       #printArea{display:block}
       body{background:#fff}
     }
+    
+    
+    
+    
+    /* ==========================================================
+   ✅✅✅ PC DESKTOP MODE — صفحة التقارير فقط
+   (لا يغيّر الجوال) — ضع هذا البلوك آخر الـ <style>
+   ========================================================== */
+@media (min-width: 1024px){
+
+  body{
+    background:
+      radial-gradient(1200px 700px at 10% 0%, rgba(243,101,35,.10), transparent 55%),
+      radial-gradient(1100px 650px at 100% 10%, rgba(30,58,138,.10), transparent 55%),
+      linear-gradient(180deg, #ffffff, #ffffff);
+  }
+
+  /* Topbar زجاجي */
+  .appbar{
+    background:rgba(199,199,199,.55);
+    border-bottom:1px solid rgba(15,23,42,.10);
+    box-shadow:none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding:8px 14px;
+  }
+  .accent-line{
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:.95;
+  }
+
+  /* أزرار الهيدر */
+  .btn{
+    width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.88);
+    box-shadow:0 10px 22px rgba(2,6,23,.10);
+    transition:transform .14s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 34px rgba(2,6,23,.14);
+    background:rgba(255,255,255,.96);
+    border-color:rgba(15,23,42,.18);
+  }
+
+  /* الصفحة تصير عريضة مثل لوحة تقارير */
+  .page{
+    width:min(1280px, 92vw);
+    padding-top:calc(var(--top) + 26px);
+    padding-bottom:28px;
+  }
+
+  h1{ font-size:28px; margin:10px 10px 16px; letter-spacing:.2px; }
+
+  /* فلاتر: صفّين احترافي */
+  .filters{
+    background:rgba(255,255,255,.86);
+    border:1px solid rgba(15,23,42,.10);
+    border-radius:22px;
+    padding:14px 14px 12px;
+    box-shadow:0 22px 70px rgba(2,6,23,.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    margin:0 10px 14px;
+  }
+  .filters .row{
+    gap:12px;
+  }
+  label{ font-size:12.5px; }
+
+  .input{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.92);
+    box-shadow:0 10px 22px rgba(2,6,23,.06);
+  }
+
+  /* Chips */
+  .chip{
+    padding:10px 12px;
+    border-radius:999px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.90);
+    box-shadow:0 10px 20px rgba(2,6,23,.06);
+    transition:transform .12s ease, box-shadow .18s ease;
+  }
+  .chip:hover{
+    transform:translateY(-1px);
+    box-shadow:0 14px 28px rgba(2,6,23,.10);
+  }
+  .chip.active{
+    background:linear-gradient(180deg, rgba(243,101,35,.95), rgba(243,101,35,.75));
+    border-color:rgba(243,101,35,.35);
+    color:#fff;
+    box-shadow:0 16px 34px rgba(243,101,35,.22);
+  }
+
+  /* ملخص الأرقام: شبكة أكبر */
+  .cards{
+    grid-template-columns:repeat(6, minmax(0, 1fr));
+    gap:12px;
+    margin:0 10px 12px;
+    padding:0;
+  }
+  .card{
+    background:rgba(255,255,255,.88);
+    border:1px solid rgba(15,23,42,.10);
+    border-radius:20px;
+    padding:14px 14px 12px;
+    box-shadow:0 22px 70px rgba(2,6,23,.10);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition:transform .12s ease, box-shadow .18s ease;
+  }
+  .card:hover{
+    transform:translateY(-2px);
+    box-shadow:0 30px 85px rgba(2,6,23,.14);
+  }
+  .card .title{ font-size:12.5px; color:#334155; }
+  .card .amount{ font-size:18px; }
+
+  /* أزرار الطباعة / PDF */
+  .export-actions{
+    margin:0 10px 12px;
+    padding:0;
+    justify-content:flex-start;
+  }
+  .xbtn{
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.92);
+    box-shadow:0 10px 24px rgba(2,6,23,.08);
+    transition:transform .12s ease, box-shadow .18s ease;
+  }
+  .xbtn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 34px rgba(2,6,23,.12);
+  }
+  .xbtn.primary{
+    box-shadow:0 14px 34px rgba(243,101,35,.28);
+  }
+
+  /* القائمة: جدول معاملات أنيق */
+  .list{
+    margin:0 10px;
+    padding:0 0 10px;
+    display:grid;
+    gap:12px;
+  }
+  .tx{
+    border-radius:20px;
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(255,255,255,.92);
+    box-shadow:0 22px 70px rgba(2,6,23,.10);
+    transition:transform .12s ease, box-shadow .18s ease;
+  }
+  .tx:hover{
+    transform:translateY(-2px);
+    box-shadow:0 30px 85px rgba(2,6,23,.14);
+  }
+  .icon{
+    width:44px;height:44px;border-radius:14px;
+    background:rgba(248,250,252,.95);
+    border:1px solid rgba(15,23,42,.10);
+  }
+  .tx .meta{ font-size:12.5px; }
+  .tx .more{
+    margin-top:10px;
+    padding-top:10px;
+    border-top:1px dashed rgba(15,23,42,.12);
+  }
+
+  /* Sheet اللغة */
+  .sheet{
+    max-width:520px;
+    border-radius:18px 18px 0 0;
+    border:1px solid rgba(15,23,42,.12);
+    box-shadow:0 -22px 60px rgba(2,6,23,.20);
+  }
+  .sheet-backdrop{
+    background:rgba(255,255,255,.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Toast */
+  .toast{
+    bottom:26px;
+    background:rgba(255,255,255,.95);
+    color:#0f172a;
+    border:1px solid rgba(15,23,42,.12);
+    box-shadow:0 16px 40px rgba(2,6,23,.18);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* تحسين الطباعة: خلي العرض A4 مضبوط */
+  .pr-a4{
+    box-shadow:0 18px 50px rgba(0,0,0,.12);
+    border:1px solid #e5e7eb;
+    border-radius:10px;
+  }
+}
+    
+    
+    
   </style>
 
   <link rel="manifest" href="manifest.json">
@@ -753,7 +962,7 @@
   document.getElementById("backBtn").addEventListener("click", function () {
 
     // ✨ غير اسم الصفحة هنا إذا تريد
-    window.location.href = "index1.html";
+    window.location.href = "index100.html";
 
   });
 </script>

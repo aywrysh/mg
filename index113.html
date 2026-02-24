@@ -106,6 +106,215 @@
   position:absolute; inset-inline-end:10px; top:10px; width:38px; height:38px; border-radius:50%;
   border:1px solid #e5e7eb; background:#fff; cursor:pointer; font-weight:900;
 }
+
+
+
+/* ==========================================================
+   ✅✅✅ PC DESKTOP MODE — لهذه الصفحة فقط (إيداع + إيصال)
+   ضع هذا البلوك آخر الـ <style>
+   ========================================================== */
+@media (min-width: 1024px){
+
+  body{
+    background:
+      radial-gradient(1200px 700px at 10% 0%, rgba(243,101,35,.10), transparent 55%),
+      radial-gradient(1100px 650px at 100% 10%, rgba(30,58,138,.10), transparent 55%),
+      linear-gradient(180deg, #ffffff, #ffffff);
+  }
+
+  /* Topbar زجاجي */
+  .appbar{
+    background:rgba(199,199,199,.55);
+    border-bottom:1px solid rgba(15,23,42,.10);
+    box-shadow:none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding:8px 14px;
+  }
+  .accent-line{
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:.95;
+  }
+
+  /* أزرار الهيدر (عندك .btn) */
+  .btn{
+    width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.88);
+    box-shadow:0 10px 22px rgba(2,6,23,.10);
+    transition:transform .14s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 34px rgba(2,6,23,.14);
+    background:rgba(255,255,255,.96);
+    border-color:rgba(15,23,42,.18);
+  }
+
+  /* الصفحة تصير عريضة مثل لوحة */
+  .page{
+    width:min(1180px, 92vw);
+    padding-top:calc(var(--top) + 26px);
+    padding-bottom:38px;
+  }
+
+  h1{
+    font-size:28px;
+    margin:10px 10px 16px;
+    letter-spacing:.2px;
+  }
+
+  /* توزيع الكروت: كرت الرصيد + كرت الإدخال جنب بعض */
+  .page .card:nth-of-type(1),
+  .page .card:nth-of-type(2){
+    margin:0;
+  }
+  .page{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:16px;
+    align-content:start;
+  }
+  .page > h1{
+    grid-column: 1 / -1;
+  }
+
+  /* الكروت أفخم */
+  .card{
+    border-radius:24px;
+    padding:18px 18px 16px;
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(255,255,255,.90);
+    box-shadow:0 28px 85px rgba(2,6,23,.14);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .balance-box{
+    border-radius:18px;
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(249,250,251,.85);
+    padding:14px 14px;
+    box-shadow:0 14px 34px rgba(2,6,23,.08);
+  }
+  #myBal{
+    font-size:14px;
+    padding:6px 10px;
+  }
+
+  /* الحقول */
+  .input{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.92);
+    box-shadow:0 10px 24px rgba(2,6,23,.06);
+  }
+
+  /* أزرار عرض/إرسال */
+  .actions{
+    gap:12px;
+    margin-top:14px;
+  }
+  .btn.primary{
+    box-shadow:0 14px 30px rgba(243,101,35,.25);
+  }
+  .btn.primary:hover{
+    box-shadow:0 18px 40px rgba(243,101,35,.32);
+  }
+
+  /* نتيجة المستخدم تصير أقوى */
+  .result .kv{
+    border-radius:14px;
+    border:1px dashed rgba(15,23,42,.14);
+    background:rgba(255,255,255,.88);
+  }
+
+  /* Bottom sheet اللغة */
+  .sheet{
+    max-width:520px;
+    border-radius:18px 18px 0 0;
+    border:1px solid rgba(15,23,42,.12);
+    box-shadow:0 -22px 60px rgba(2,6,23,.20);
+  }
+  .sheet-backdrop{
+    background:rgba(255,255,255,.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Toast على الكمبيوتر */
+  .toast{
+    bottom:28px;
+    background:rgba(255,255,255,.95);
+    color:#0f172a;
+    border:1px solid rgba(15,23,42,.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* ✅ الإيصال (Receipt) يصير أفخم على الكمبيوتر */
+  .receipt{
+    width:min(860px, 86vw);
+    padding:18px 18px 16px;
+    border-radius:26px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  .rc-head{
+    justify-content:flex-start;
+    gap:12px;
+  }
+  .rc-title{ font-size:20px; }
+
+  /* خلي تفاصيل الإيصال Grid عمودين */
+  .rc-row{
+    border-radius:14px;
+    border:1px dashed rgba(15,23,42,.14);
+    background:rgba(255,255,255,.92);
+    margin-top:10px;
+  }
+  .receipt .rc-row{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    align-items:center;
+  }
+  .receipt .rc-row .k{ justify-self:start; }
+  .receipt .rc-row .v{ justify-self:end; }
+
+  .rc-amount{
+    border-radius:18px;
+    background:rgba(248,250,252,.90);
+    border:1px solid rgba(15,23,42,.10);
+  }
+  .rc-amount .val{ font-size:30px; }
+
+  .rc-actions{
+    margin-top:16px;
+    justify-content:flex-start;
+  }
+  .rc-btn{
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.92);
+    box-shadow:0 10px 24px rgba(2,6,23,.08);
+    transition:transform .12s ease, box-shadow .18s ease;
+  }
+  .rc-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 34px rgba(2,6,23,.12);
+  }
+  .rc-btn.primary{
+    box-shadow:0 14px 34px rgba(243,101,35,.30);
+  }
+}
+
+
+
   </style>
   
   <link rel="manifest" href="manifest.json">

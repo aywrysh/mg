@@ -69,6 +69,139 @@
     .toast.show{opacity:1;transform:translateX(-50%) scale(1)}
     .ripple{position:absolute;border-radius:50%;transform:scale(0);background:rgba(0,0,0,.18);animation:ripple .6s linear;pointer-events:none}
     @keyframes ripple{to{transform:scale(3);opacity:0}}
+    
+    
+    /* ==========================================================
+   ✅✅✅ DESKTOP MODE (PC) — تنسيق أفخم للكمبيوتر فقط
+   ضع هذا البلوك آخر الـ style عندك
+   ========================================================== */
+@media (min-width: 1024px){
+
+  body{
+    background:
+      radial-gradient(1200px 700px at 10% 0%, rgba(243,101,35,.10), transparent 55%),
+      radial-gradient(1100px 650px at 100% 10%, rgba(30,58,138,.10), transparent 55%),
+      linear-gradient(180deg, #ffffff, #ffffff);
+  }
+
+  /* الشريط العلوي يصبح زجاجي احترافي */
+  .appbar{
+    background:rgba(199,199,199,.55);
+    border-bottom:1px solid rgba(15,23,42,.10);
+    box-shadow:none;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding:8px 14px;
+  }
+  .accent-line{
+    height:2px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity:.95;
+  }
+
+  /* نفس HTML عندك يستخدم .btn — نخليه أفخم بالديسكتوب */
+  .btn{
+    width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.85);
+    box-shadow:0 10px 22px rgba(2,6,23,.10);
+    transition:transform .14s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 16px 34px rgba(2,6,23,.14);
+    background:rgba(255,255,255,.95);
+    border-color:rgba(15,23,42,.18);
+  }
+
+  /* الحاوية تصير واسعة ومرتبة */
+  .page{
+    width:min(1100px, 92vw);
+    padding-top:calc(var(--top) + 24px);
+    padding-bottom:32px;
+  }
+
+  /* العنوان أكبر */
+  h1{
+    font-size:26px;
+    margin:8px 10px 14px;
+    letter-spacing:.2px;
+  }
+
+  /* الكرت يصير منصة (Trading Card) */
+  .card{
+    border-radius:24px;
+    padding:18px 18px 16px;
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(255,255,255,.88);
+    box-shadow:0 28px 85px rgba(2,6,23,.14);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* صف الحسابات يتحسن */
+  .account{
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(249,250,251,.85);
+    padding:12px;
+    border-radius:16px;
+    transition:transform .12s ease, box-shadow .2s ease, border-color .2s ease;
+  }
+  .account:hover{
+    transform:translateY(-1px);
+    box-shadow:0 16px 34px rgba(2,6,23,.10);
+    border-color:rgba(243,101,35,.25);
+  }
+  .account .icon{
+    width:44px;height:44px;border-radius:14px;
+    border:1px solid rgba(15,23,42,.10);
+    background:rgba(255,255,255,.9);
+  }
+
+  /* حقل الإدخال يصير أفخم */
+  .input{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(15,23,42,.12);
+    background:rgba(255,255,255,.9);
+    box-shadow:0 10px 24px rgba(2,6,23,.06);
+  }
+
+  /* أزرار الإجراء أكبر + أحلى */
+  .actions{ gap:12px; }
+  .btn.primary{
+    box-shadow:0 14px 30px rgba(243,101,35,.25);
+  }
+  .btn.primary:hover{
+    box-shadow:0 18px 40px rgba(243,101,35,.32);
+  }
+
+  /* Bottom sheet (اللغة) يتوسّط ويصير أنيق */
+  .sheet{
+    max-width:520px;
+    border-radius:18px 18px 0 0;
+    border:1px solid rgba(15,23,42,.12);
+    box-shadow:0 -22px 60px rgba(2,6,23,.20);
+  }
+  .sheet-backdrop{
+    background:rgba(255,255,255,.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  /* Toast أفضل بالديسكتوب */
+  .toast{
+    bottom:28px;
+    background:rgba(255,255,255,.95);
+    color:#0f172a;
+    border:1px solid rgba(15,23,42,.12);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+    
+    
+    
   </style>
   
     <link rel="manifest" href="manifest.json">
