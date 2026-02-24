@@ -195,11 +195,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 
-<script src="i18n.js"></script>
-
-
-
-
+  <script src="i18n.js"></script>
 
 <script>
   /* ===== أدوات عامة (توست + ربل) ===== */
@@ -370,7 +366,8 @@
     let code = randCode(8);
     let tries = 0;
     while(tries < 6){
-      const snap = await db.ref(`${PC_LINKS_PATH}/${code}`).get();
+      /* ✅ FIX: compat-safe read */
+      const snap = await db.ref(`${PC_LINKS_PATH}/${code}`).once('value');
       if(!snap.exists()) break;
       code = randCode(8);
       tries++;
@@ -518,43 +515,44 @@
     reqApprove.addEventListener('click', (e)=>{ ripple(e); setStatus('approved'); });
     reqReject .addEventListener('click', (e)=>{ ripple(e); setStatus('rejected'); });
 
-    db.ref(`${REQ_PATH_ROOT}/${UID}`)
+    /* ✅ FIX: reliable listener for NEW requests */
+    const listRef = db.ref(`${REQ_PATH_ROOT}/${UID}`)
       .orderByChild('createdAt')
-      .limitToLast(1)
-      .on('value', (snap)=>{
-        if(!snap.exists()) return;
+      .limitToLast(10);
 
-        let reqId=null, v=null;
-        snap.forEach(ch=>{ reqId=ch.key; v=ch.val()||{}; });
+    listRef.on('child_added', (ch)=>{
+      const reqId = ch.key;
+      const v = ch.val() || {};
 
-        const st = String(v.status||'pending').toLowerCase();
-        if(st !== 'pending') return;
-        if(currentReqId === reqId) return;
+      const st = String(v.status || 'pending').toLowerCase();
+      if(st !== 'pending') return;
+      if(currentReqId === reqId) return;
 
-        currentReqId = reqId;
-        currentReqRef = db.ref(`${REQ_PATH_ROOT}/${UID}/${reqId}`);
+      currentReqId = reqId;
+      currentReqRef = db.ref(`${REQ_PATH_ROOT}/${UID}/${reqId}`);
 
-        reqCodeEl.textContent = v.code || '—';
-        reqTimeEl.textContent = fmtTime(v.createdAt || Date.now());
+      reqCodeEl.textContent = v.code || '—';
+      reqTimeEl.textContent = fmtTime(v.createdAt || Date.now());
 
-        const dev = v.device || {};
-        const ua = (dev.ua || '').slice(0, 120);
-        const info = [
-          dev.platform ? ('platform: ' + dev.platform) : '',
-          dev.lang ? ('lang: ' + dev.lang) : '',
-          ua ? ('ua: ' + ua) : ''
-        ].filter(Boolean).join(' | ');
-        reqDeviceEl.textContent = info || '—';
+      const dev = v.device || {};
+      const ua = (dev.ua || '').slice(0, 120);
+      const info = [
+        dev.platform ? ('platform: ' + dev.platform) : '',
+        dev.lang ? ('lang: ' + dev.lang) : '',
+        ua ? ('ua: ' + ua) : ''
+      ].filter(Boolean).join(' | ');
+      reqDeviceEl.textContent = info || '—';
 
-        try{
-          currentReqRef.__lastDeviceBrowser  = ua ? ua : '';
-          currentReqRef.__lastDevicePlatform = dev.platform || '';
-          currentReqRef.__lastDeviceUA       = ua || '';
-        }catch(_){}
+      try{
+        currentReqRef.__lastDeviceBrowser  = ua ? ua : '';
+        currentReqRef.__lastDevicePlatform = dev.platform || '';
+        currentReqRef.__lastDeviceUA       = ua || '';
+      }catch(_){}
 
-        openReq();
-        toast(t('new_req'));
-      });
+      openReq();
+      toast(t('new_req'));
+    });
+
   })();
 </script>
 
